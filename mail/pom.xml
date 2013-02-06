@@ -5,8 +5,9 @@
   <artifactId>mail</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
+ 
   <modules>
-  	<module>client</module>
-  	<module>server</module>
+    <module>client</module>
+    <module>server</module>
   </modules>
 </project>
