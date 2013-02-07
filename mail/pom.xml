@@ -9,5 +9,6 @@
   <modules>
     <module>client</module>
     <module>server</module>
+    <module>business</module>
   </modules>
 </project>
