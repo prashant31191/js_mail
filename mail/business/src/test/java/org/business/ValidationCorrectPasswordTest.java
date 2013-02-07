@@ -37,6 +37,7 @@ public class ValidationCorrectPasswordTest {
 	            { "wer_888", false},
 	            { ",dfsd88I", true},
 	            { ".,fgdfgdf,.", true},
+	            { "Опвтвыдыа", false},
 	            });
 	}
 	    

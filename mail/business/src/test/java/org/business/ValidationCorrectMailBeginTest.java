@@ -10,13 +10,13 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(value = Parameterized.class)
-public class ValidationCorrectFirstNameTest {
+public class ValidationCorrectMailBeginTest {
 
-	private String name;
+	private String mailBegin;
 	private boolean result;
 
-	public ValidationCorrectFirstNameTest(String name, boolean result) {
-	    this.name = name;
+	public ValidationCorrectMailBeginTest(String mailBegin, boolean result) {
+	    this.mailBegin = mailBegin;
 	    this.result = result;
 	}
 
@@ -24,24 +24,23 @@ public class ValidationCorrectFirstNameTest {
 	public static Collection<Object[]> data() {
 	    return Arrays.asList(new Object[][] { 
 	            { "", false},
-	            { "Man", true},
+	            { "Man", false},
 	            { "jerk", true},
-	            { "vova85", false},
+	            { "vova85", true},
 	            { "8vova5", false},
-	            { "dfs-fsdfs", false},
-	            { "dfs_dfse33", false},
+	            { "dfs-f", true},
+	            { "dfs_dfs", true},
 	            { "_dfs", false},
 	            { "-rtr8", false},
-	            { "df%ereds", false},
-	            { "Nikolay", true},
-	            { "Петруха", true},
-	            { "П", true},
+	            { "df%ere", false},
+	            { "ds*sffd", false},
+	            { "wer_888", true},
 	            });
 	}
 	    
 	@Test
 	public void test() {
 	    Validation validation = new Validation();
-	    Assert.assertEquals("first name = \"" + name + "\"", result, validation.correctFirstName(name));
+	    Assert.assertEquals("mailBegin = \"" + mailBegin + "\"", result, validation.correctMailBegin(mailBegin));
 	}
 }

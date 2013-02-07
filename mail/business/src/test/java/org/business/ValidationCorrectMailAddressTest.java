@@ -24,17 +24,20 @@ public class ValidationCorrectMailAddressTest {
 	public static Collection<Object[]> data() {
 	    return Arrays.asList(new Object[][] { 
 	            { "", false},
-	            { "Man", true},
-	            { "jerk", true},
-	            { "vova85", true},
-	            { "8vova5", false},
-	            { "dfs-f", true},
-	            { "dfs_dfs", true},
-	            { "_dfs", false},
-	            { "-rtr8", false},
-	            { "df%ere", false},
-	            { "ds*sffd", false},
-	            { "wer_888", true},
+	            { "Man@ya.ru", true},
+	            { "jerk.er-23@com.com", true},
+	            { "vova85@com.com.ru", true},
+	            { "8vova5@rutr.rt", false},
+	            { "dfs-f@c", false},
+	            { "dfs_dfs@@cr.com", false},
+	            { "_dfs@com.com", false},
+	            { "-rtr8@er.er", false},
+	            { "df%ere@mail.ru", false},
+	            { "ds*sffd@tr.tr", false},
+	            { "wer_888.com.er@com", false},
+	            { "wer_888.com.er.@com", false},
+	            { "war__--..343.dfd@com.ru", true},
+	            { "wer_888.com.ds@com.ru.", false},
 	            });
 	}
 	    

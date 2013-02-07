@@ -29,12 +29,7 @@ public class ValidationCorrectPhoneTest {
 	            { "vova85", false},
 	            { "8945343", true},
 	            { "+(35354345)", false},
-	            { "8-(8454)-453", true},
-	            { "+258934(34)-4", true},
-	            { "-45648)353)", false},
-	            { "34534()435", false},
-	            { "3453(34)-(7654)334", true},
-	            { "34533*435", false},
+	            { "8-8454-453", false},
 	            });
 	}
 	    

@@ -10,12 +10,12 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(value = Parameterized.class)
-public class ValidationCorrectLastNameTest {
+public class ValidationCorrectNameTest {
 
 	private String name;
 	private boolean result;
 
-	public ValidationCorrectLastNameTest(String name, boolean result) {
+	public ValidationCorrectNameTest(String name, boolean result) {
 	    this.name = name;
 	    this.result = result;
 	}
@@ -33,6 +33,9 @@ public class ValidationCorrectLastNameTest {
 	            { "_dfs", false},
 	            { "-rtr8", false},
 	            { "df%ereds", false},
+	            { "Nikolay", true},
+	            { "Петруха", true},
+	            { "П", false},
 	            { "Johns", true},
 	            { "Сидоров", true},
 	            { "Ли", true},
@@ -42,6 +45,6 @@ public class ValidationCorrectLastNameTest {
 	@Test
 	public void test() {
 	    Validation validation = new Validation();
-	    Assert.assertEquals("last name = \"" + name + "\"", result, validation.correctLastName(name));
+	    Assert.assertEquals("first name = \"" + name + "\"", result, validation.correctName(name));
 	}
 }

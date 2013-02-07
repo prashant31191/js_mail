@@ -27,14 +27,15 @@ public class ValidationCorrectFieldToTest {
 	            { "sdf@efe.ru; sdf@453.ru", true},
 	            { "sdf@efe.ru, sdf@453.ru", false},
 	            { "sdf@efe.ru; sdf@453.ru; sdfd@dsf.rfr", true},
+	            { "sdf@efe.ru; sdf@453.ru; sdfd@dsf.rfr;", true},
 	            { "sdf@efe.ru", true},
-	            { "djskdfgkdsjhfgjgkjsbg", true},
+	            { "djskdfgkdsjhfgjgkjsbg", false},
 	            });
 	}
 	    
 	@Test
 	public void test() {
 	    Validation validation = new Validation();
-	    Assert.assertEquals("field = \"" + fieldTo + "\"", result, validation.correctFieldTo(fieldTo));
+	    Assert.assertEquals("fieldTo = \"" + fieldTo + "\"", result, validation.correctFieldTo(fieldTo));
 	}
 }
