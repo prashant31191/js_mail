@@ -1,24 +1,59 @@
 package org.business;
 
+/**
+ * Validation class
+ * 
+ * @author Фома
+ * @version 1.0
+ */
 public class Validation {
+	/**
+	 * Checks if passwords match
+	 * 
+	 * @param password Password
+	 * @param repeatPassword Password dublicate
+	 * @return true, in case if the passwords match, otherwise false
+	 */
 	public boolean passwordsMatch(String password, String repeatPassword) {
 		if (password.equals(repeatPassword))
 			return true;
 		return false;
 	}
 	
+	/**
+	 * Checks if a field is not clear
+	 * 
+	 * @param field 
+	 * @return true, in case if the field is not clear, otherwise false
+	 */
 	public boolean fieldIsNotClear(String field) {
 		if (field.equals("")) 
 			return false;
 		return true;
 	}
 	
+	/**
+	 * Checks if a prefix of mail-address is correct,
+	 * i.e begins with Latin letter, contains letters or ".", "-", "_",
+	 * and consists of more than 3 characters
+	 * 
+	 * @param mailBegin
+	 * @return true, in case if the prefix is correct, otherwise false
+	 */
 	public boolean correctMailBegin(String mailBegin) {
 		if (!mailBegin.matches("([a-zA-Z][\\w\u002E\u005F\u002D]*)") || mailBegin.length() < 4)
 			return false;
 		return true;
 	}
 	
+	/**
+	 * Checks if a mail-address is correct,
+	 * i.e. begins with Latin letter, contains letters or ".", "-", "_" before @,
+	 * matches ...@??.??.?? and consists of more than 5 characters
+	 * 
+	 * @param address
+	 * @return true, in case if the address is correct, otherwise false
+	 */
 	public boolean correctMailAddress(String address) {
 		if (!address.matches("(([a-zA-Z][\\w\u002E\u005F\u002D]*)@[\\w[.]]*\\.+([a-z]+))")
 				|| address.length() < 6)
@@ -26,6 +61,14 @@ public class Validation {
 		return true;
 	}
 	
+	/**
+	 * Checks if a password is correct,
+	 * i.e. contains only letters, ".", ",", "-", "_", "%", "*" and
+	 * consists of more than 7 characters
+	 * 
+	 * @param password
+	 * @return true, in case if the password is correct, otherwise false
+	 */
 	public boolean correctPassword(String password) {
 		if (!password.matches("([\\w\u002C\u0025\u002A\u002E\u005F\u002D]*)") 
 				|| password.length() < 8)
@@ -33,19 +76,42 @@ public class Validation {
 		return true;
 	}
 	
+	/**
+	 * Checks if a first name of last name is correct,
+	 * i.e. contains only letters and consists of more than 1 character
+	 * 
+	 * @param name
+	 * @return true, in case if the name is correct, otherwise false
+	 */
 	public boolean correctName(String name) {
 		if (!name.matches("([a-zA-Zа-яА-Я]*)") || name.length() < 2)
 			return false;
 		return true;
 	}
 	
+	/**
+	 * Checks if a phone number is correct,
+	 * i.e. contains only numbers or "+" at the beginning and 
+	 * consists of more than 5 letters
+	 * 
+	 * @param phone
+	 * @return true, in case if the number is correct, otherwise false
+	 */
 	public boolean correctPhone(String phone) {
 		if (!phone.matches("([\u002B]?[\\d]*)") || phone.length() < 6)
 			return false;
 		return true;
 	}
 	
+	/**
+	 * Check if a line is correct, i.e. contains only correct addresses
+	 * 
+	 * @param fieldTo Line of semicolon-separated email addresses
+	 * @return true, in case if the line is correct, otherwise false
+	 */
 	public boolean correctFieldTo(String fieldTo) {
+		if (fieldTo.equals(""))
+			return false;
 		String[] emails = fieldTo.trim().split(";");
 		
 		for (String email: emails) {
