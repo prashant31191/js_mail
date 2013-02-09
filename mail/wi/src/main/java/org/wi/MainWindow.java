@@ -3,6 +3,7 @@ package org.wi;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -11,6 +12,10 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 import javax.swing.JButton;
+import javax.swing.JList;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import javax.swing.SwingConstants;
 
 public class MainWindow extends JFrame {
 
@@ -43,23 +48,20 @@ public class MainWindow extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JTextArea ta1 = new JTextArea();
-		ta1.setLineWrap(true);
-		JScrollPane spFolders = new JScrollPane(ta1);
+		JList<String> lstFolders = new JList<String>();
+		JScrollPane spFolders = new JScrollPane(lstFolders);
 		spFolders.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		spFolders.setBounds(10, 28, 224, 177);
 		contentPane.add(spFolders);
 		
-		JTextArea ta2 = new JTextArea();
-		ta2.setLineWrap(true);
-		JScrollPane spMessages = new JScrollPane(ta2);
+		JList<String> lstMessages = new JList<String>();
+		JScrollPane spMessages = new JScrollPane(lstMessages);
 		spMessages.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		spMessages.setBounds(265, 28, 447, 177);
 		contentPane.add(spMessages);
 		
-		JTextArea ta3 = new JTextArea();
-		ta3.setLineWrap(true);
-		JScrollPane spMessageDetailed = new JScrollPane(ta3);
+		JTextArea taMessText = new JTextArea("Plain TextArea");
+		JScrollPane spMessageDetailed = new JScrollPane(taMessText);
 		spMessageDetailed.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		spMessageDetailed.setBounds(10, 258, 702, 296);
 		contentPane.add(spMessageDetailed);
@@ -72,24 +74,24 @@ public class MainWindow extends JFrame {
 		label_1.setBounds(265, 11, 46, 14);
 		contentPane.add(label_1);
 		
-		JButton button = new JButton("Удалить");
-		button.setBounds(143, 216, 91, 23);
-		contentPane.add(button);
+		JButton btnDeleteFolder = new JButton("Удалить");
+		btnDeleteFolder.setBounds(143, 216, 91, 23);
+		contentPane.add(btnDeleteFolder);
 		
-		JButton button_1 = new JButton("Создать");
-		button_1.setBounds(42, 216, 91, 23);
-		contentPane.add(button_1);
+		JButton btnCreateFolder = new JButton("Создать");
+		btnCreateFolder.setBounds(42, 216, 91, 23);
+		contentPane.add(btnCreateFolder);
 		
-		JButton button_2 = new JButton("Удалить");
-		button_2.setBounds(621, 216, 91, 23);
-		contentPane.add(button_2);
+		JButton btnDelMess = new JButton("Удалить");
+		btnDelMess.setBounds(621, 216, 91, 23);
+		contentPane.add(btnDelMess);
 		
-		JButton button_3 = new JButton("Написать");
-		button_3.setBounds(520, 216, 91, 23);
-		contentPane.add(button_3);
+		JButton btnCreatMess = new JButton("Написать");
+		btnCreatMess.setBounds(520, 216, 91, 23);
+		contentPane.add(btnCreatMess);
 		
-		JButton button_4 = new JButton("Переместить");
-		button_4.setBounds(419, 216, 91, 23);
-		contentPane.add(button_4);
+		JButton btnMoveMess = new JButton("Переместить");
+		btnMoveMess.setBounds(419, 216, 91, 23);
+		contentPane.add(btnMoveMess);
 	}
 }
