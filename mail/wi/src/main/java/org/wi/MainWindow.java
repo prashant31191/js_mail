@@ -15,38 +15,36 @@ import javax.swing.JButton;
 import javax.swing.JList;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Socket;
+
 import javax.swing.SwingConstants;
 
 public class MainWindow extends JFrame {
 
 	private JPanel contentPane;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					MainWindow frame = new MainWindow();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	/**
-	 * Create the frame.
-	 */
-	public MainWindow() {
+	private Socket socket = null;
+	private DataInputStream in = null;
+	private DataOutputStream out = null;
+	private int key;
+	
+	public MainWindow(final Socket socket, final DataInputStream in, 
+			final DataOutputStream out, int key) {
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 731, 590);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
+		
+		this.socket = socket;
+		this.in = in;
+		this.out = out;
+		this.key = key;
 		
 		JList<String> lstFolders = new JList<String>();
 		JScrollPane spFolders = new JScrollPane(lstFolders);
@@ -60,7 +58,8 @@ public class MainWindow extends JFrame {
 		spMessages.setBounds(265, 28, 447, 177);
 		contentPane.add(spMessages);
 		
-		JTextArea taMessText = new JTextArea("Plain TextArea");
+		final JTextArea taMessText = new JTextArea("" + key);
+		taMessText.setEditable(false);
 		JScrollPane spMessageDetailed = new JScrollPane(taMessText);
 		spMessageDetailed.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		spMessageDetailed.setBounds(10, 258, 702, 296);
@@ -83,6 +82,47 @@ public class MainWindow extends JFrame {
 		contentPane.add(btnCreateFolder);
 		
 		JButton btnDelMess = new JButton("Удалить");
+		btnDelMess.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					String requestInfo = "PAPA";
+
+					byte[] requestBytes = Serializer.serialize(requestInfo);
+					out.writeByte(3);
+					out.writeInt(requestBytes.length);
+					out.write(requestBytes);
+
+					boolean answer = in.readBoolean();
+					if (answer) {
+						int length = in.readInt();
+						byte[] answerBytes = new byte[length];
+						for (int i = 0; i < length; i++)
+							answerBytes[i] = in.readByte();
+						String answers = (String) Serializer
+								.deserialize(answerBytes);
+						taMessText.setText(answers);
+					}
+				} catch (IOException e1) {
+					e1.printStackTrace();
+					try {
+						in.close();
+						out.close();
+						socket.close();
+					} catch (IOException e2) {
+						e2.printStackTrace();
+					}
+				} catch (ClassNotFoundException e1) {
+					e1.printStackTrace();
+					try {
+						in.close();
+						out.close();
+						socket.close();
+					} catch (IOException e2) {
+						e2.printStackTrace();
+					}
+				}
+			}
+		});
 		btnDelMess.setBounds(621, 216, 91, 23);
 		contentPane.add(btnDelMess);
 		
