@@ -1,7 +1,7 @@
 package org.dms;
 
 import java.util.Date;
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -34,7 +34,7 @@ public class User {
 	private String phone;
 	
 	@OneToMany(mappedBy="user")
-    private Set<Email> emails;
+    private List<Email> emails;
 	
 	public Integer getId() {
 		return id;

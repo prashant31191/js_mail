@@ -1,7 +1,7 @@
 package org.dms;
 
 import java.util.Date;
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -37,10 +37,10 @@ public class Message {
 	private String text;
 	
 	@OneToMany(mappedBy="message")
-    private Set<MessToFold> messToFolds;
+    private List<MessToFold> messToFolds;
 	
 	@OneToMany(mappedBy="tMessage")
-    private Set<MessToMail> messToMails;
+    private List<MessToMail> messToMails;
 	
 	public Integer getId() {
 		return id;

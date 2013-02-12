@@ -1,6 +1,6 @@
 package org.dms;
 
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -31,7 +31,7 @@ public class Folder {
 	private Boolean undel;
 	
 	@OneToMany(mappedBy="folder")
-    private Set<MessToFold> messToFolds;
+    private List<MessToFold> messToFolds;
 	
 	public Integer getId() {
 		return id;

@@ -27,13 +27,9 @@ public class UserValidation {
 	
 	public boolean enterUserCheck(String[] data) {
 		Validation valid = new Validation();
-		if (!valid.fieldIsNotClear(data[0]) || !valid.fieldIsNotClear(data[1]))
+		if (!valid.fieldIsNotClear(data[0]) || !valid.fieldIsNotClear(data[1])
+				|| !valid.correctMailAddress(data[0]))
 			return false;
-		
-		/*
-		 * 
-		 * РЕАЛИЗОВАТЬ ПРОВЕРКУ В БАЗЕ
-		 */
 		return true;
 	}
 }

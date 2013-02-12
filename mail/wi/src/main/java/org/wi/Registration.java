@@ -6,6 +6,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
+import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
@@ -27,10 +28,10 @@ public class Registration extends JFrame {
 
 	private JPanel contentPane;
 	private JTextField fldEnterMail;
-	private JTextField fldEnterPass;
+	private JPasswordField fldEnterPass;
 	private JTextField fldLogin;
-	private JTextField fldFirstPass;
-	private JTextField fldSecPass;
+	private JPasswordField fldFirstPass;
+	private JPasswordField fldSecPass;
 	private JTextField fldFirstName;
 	private JTextField fldSecName;
 	private JTextField fldBirthDate;
@@ -106,7 +107,7 @@ public class Registration extends JFrame {
 		lblEmail.setBounds(10, 14, 46, 14);
 		contentPane.add(lblEmail);
 
-		fldEnterPass = new JTextField();
+		fldEnterPass = new JPasswordField();
 		fldEnterPass.setBounds(214, 11, 106, 20);
 		contentPane.add(fldEnterPass);
 		fldEnterPass.setColumns(10);
@@ -133,12 +134,12 @@ public class Registration extends JFrame {
 		label_3.setBounds(245, 92, 100, 14);
 		contentPane.add(label_3);
 
-		fldFirstPass = new JTextField();
+		fldFirstPass = new JPasswordField();
 		fldFirstPass.setBounds(346, 89, 86, 20);
 		contentPane.add(fldFirstPass);
 		fldFirstPass.setColumns(10);
 
-		fldSecPass = new JTextField();
+		fldSecPass = new JPasswordField();
 		fldSecPass.setBounds(346, 120, 86, 20);
 		contentPane.add(fldSecPass);
 		fldSecPass.setColumns(10);
@@ -203,16 +204,17 @@ public class Registration extends JFrame {
 					out.writeInt(requestBytes.length);
 					out.write(requestBytes);
 
-					boolean answer = in.readBoolean();
-					if (answer) {
+					byte answer = in.readByte();
+					if (answer == 0) {
 						int key = in.readInt();
 						taInfo.setText("" + key);
 						MainWindow mw = new MainWindow(socket, in, out, key);
 						mw.setVisible(true);
 						Registration.this.setVisible(false);
-					} else {
+					} else if (answer == 2) {
 						taInfo.setText("- Неверная пара ел.адресс/пароль");
-					}
+					} else 
+						taInfo.setText("- Некорректные входные данные");
 				} catch (IOException ex) {
 					System.out.println("IO error");
 					ex.printStackTrace();
@@ -243,14 +245,14 @@ public class Registration extends JFrame {
 					out.writeInt(requestBytes.length);
 					out.write(requestBytes);
 
-					boolean answer = in.readBoolean();
-					if (answer) {
+					byte answer = in.readByte();
+					if (answer == 0) {
 						int key = in.readInt();
 						taInfo.setText(""+key);
 						MainWindow mw = new MainWindow(socket, in, out, key);
 						mw.setVisible(true);
 						Registration.this.setVisible(false);
-					} else {
+					} else if (answer == 1) {
 						StringBuilder sb = new StringBuilder();
 						int length = in.readInt();
 						byte[] answerBytes = new byte[length];
@@ -274,7 +276,8 @@ public class Registration extends JFrame {
 						if (!answers[8])
 							sb.append("- Некоректный телефон\n");
 						taInfo.setText(sb.toString());
-					}
+					} else 
+						taInfo.setText("Неполадки с сервером");
 				} catch (IOException er) {
 					er.printStackTrace();
 					try {

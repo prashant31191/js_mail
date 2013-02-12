@@ -3,6 +3,7 @@ package org.business;
 import java.net.*;
 import java.util.Random;
 import java.io.*;
+import org.dms.Managing;
 
 public class Server {
 	private final static int portNumber = 6789;
@@ -86,16 +87,20 @@ public class Server {
 						boolean[] checkedData = new UserValidation()
 								.regDataCheck(requestInfo);
 
-						if (checkedData[0]) {
-							out.writeBoolean(true);
-							out.writeInt(key);
-							workWith = requestInfo[0] + "@mail.js";
-						} else {
+						if (!checkedData[0]) {
 							byte[] answerBytes = Serializer
 									.serialize(checkedData);
-							out.writeBoolean(false);
+							out.writeByte(1);
 							out.writeInt(answerBytes.length);
 							out.write(answerBytes);
+						} else {
+							workWith = Managing.creatUser(requestInfo);
+							if (!workWith.equals("")) {
+								out.writeByte(0);
+								out.writeInt(key);
+								
+							} else
+								out.writeByte(2);
 						}
 					}
 
@@ -111,12 +116,19 @@ public class Server {
 						boolean userChecked = new UserValidation()
 								.enterUserCheck(requestInfo);
 
-						if (userChecked) {
-							out.writeBoolean(true);
-							out.writeInt(key);
-							workWith = requestInfo[0];
+						if (!userChecked) {
+							out.writeByte(1);
 						} else {
-							out.writeBoolean(false);
+							boolean userExists = Managing.checkUser(
+									requestInfo[0], requestInfo[1]);
+
+							if (userExists) {
+								out.writeByte(0);
+								out.writeInt(key);
+								workWith = requestInfo[0];
+							} else {
+								out.writeByte(2);
+							}
 						}
 					}
 

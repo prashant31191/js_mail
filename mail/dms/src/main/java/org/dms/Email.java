@@ -1,7 +1,7 @@
 package org.dms;
 
 import java.util.Date;
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -32,13 +32,13 @@ public class Email {
 	private String password;
 	
 	@OneToMany(mappedBy="from")
-    private Set<Message> messages;
+    private List<Message> messages;
 	
 	@OneToMany(mappedBy="whose")
-    private Set<Folder> folders;
+    private List<Folder> folders;
 	
 	@OneToMany(mappedBy="to")
-    private Set<MessToMail> MessToMails;
+    private List<MessToMail> MessToMails;
 	
 	public String getEaddress() {
 		return eaddress;
