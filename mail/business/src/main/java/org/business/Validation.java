@@ -45,7 +45,8 @@ public class Validation {
 	 * @return true, in case the prefix is correct, otherwise false
 	 */
 	public boolean correctMailBegin(String mailBegin) {
-		if (!mailBegin.matches("([a-zA-Z][\\w\u002E\u005F\u002D]*)") || mailBegin.length() < 4)
+		if (!mailBegin.matches("([a-zA-Z][\\w\u002E\u005F\u002D]*)")
+				|| mailBegin.length() < 4 || mailBegin.length() > 20)
 			return false;
 		return true;
 	}
@@ -60,7 +61,7 @@ public class Validation {
 	 */
 	public boolean correctMailAddress(String address) {
 		if (!address.matches("(([a-zA-Z][\\w\u002E\u005F\u002D]*)@[\\w[.]]*\\.+([a-z]+))")
-				|| address.length() < 6)
+				|| address.length() < 6 || address.length() > 29)
 			return false;
 		return true;
 	}
@@ -88,7 +89,8 @@ public class Validation {
 	 * @return true, in case the name is correct, otherwise false
 	 */
 	public boolean correctName(String name) {
-		if (!name.matches("([a-zA-Zа-яА-Я]*)") || name.length() < 2)
+		if (!name.matches("([a-zA-Zа-яА-Я]*)") || name.length() < 2 
+				|| name.length() > 29)
 			return false;
 		return true;
 	}
@@ -102,7 +104,8 @@ public class Validation {
 	 * @return true, in case the number is correct, otherwise false
 	 */
 	public boolean correctPhone(String phone) {
-		if (!phone.matches("([\u002B]?[\\d]*)") || phone.length() < 6)
+		if (!phone.matches("([\u002B]?[\\d]*)") || phone.length() < 6
+				|| phone.length() > 19)
 			return false;
 		return true;
 	}

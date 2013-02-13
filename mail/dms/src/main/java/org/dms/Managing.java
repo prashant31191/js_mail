@@ -70,13 +70,18 @@ public class Managing {
 		List<Email> mailList = null;
 		try {
 			transaction = session.beginTransaction();
-			String hashedPass = BCrypt.hashpw(pass, BCrypt.gensalt(12));
 			
-			Query query = session.createQuery("from Email where e_address = :mail AND " +
-					"e_password = :pass");
+			Query query = session.createQuery("from Email where e_address = :mail");
 			query.setParameter("mail", mailAddress);
-			query.setParameter("pass", hashedPass);
 			mailList = (List<Email>) query.list();
+			
+			if (mailList.isEmpty())
+				return false;
+			
+			if (BCrypt.checkpw(pass, mailList.get(0).getPassword()))
+				return true;
+			else 
+				return false;
 			
 		} catch (HibernateException e) {
 			transaction.rollback();
@@ -84,8 +89,6 @@ public class Managing {
 		} finally {
 			session.close();
 		}
-		if (mailList.isEmpty())
-			return false;
-		return true;
+		return false;
 	}
 }

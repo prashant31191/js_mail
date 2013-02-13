@@ -185,6 +185,7 @@ public class Registration extends JFrame {
 		contentPane.add(label_8);
 
 		final JTextArea taInfo = new JTextArea();
+		taInfo.setLineWrap(true);
 		taInfo.setEditable(false);
 		taInfo.setForeground(Color.RED);
 		JScrollPane spInfo = new JScrollPane(taInfo);
@@ -212,7 +213,7 @@ public class Registration extends JFrame {
 						mw.setVisible(true);
 						Registration.this.setVisible(false);
 					} else if (answer == 2) {
-						taInfo.setText("- Неверная пара ел.адресс/пароль");
+						taInfo.setText("- Неверная пара ел.адресс / пароль");
 					} else 
 						taInfo.setText("- Некорректные входные данные");
 				} catch (IOException ex) {
@@ -262,19 +263,27 @@ public class Registration extends JFrame {
 								.deserialize(answerBytes);
 
 						if (!answers[1])
-							sb.append("- Некоректный логин\n");
+							sb.append("- Некоректный логин\n" +
+									"(Минимальная длина 4 символа. Латинские буквы," +
+									" \".\", \"-\", \"_\")\n\n");
 						if (!answers[2] || !answers[3])
-							sb.append("- Некорректный пароль\n");
+							sb.append("- Некорректный пароль\n" +
+									"(Минимальная длина 8 символов. Латинские буквы," +
+									" \".\", \",\", \"-\", \"_\", \"%\", \"*\")\n\n");
 						if (!answers[4])
-							sb.append("- Пароли не совпадают\n");
+							sb.append("- Пароли не совпадают\n\n");
 						if (!answers[5])
-							sb.append("- Некорректное имя\n");
+							sb.append("- Некорректное имя\n" +
+									"(Минимальная длина 2 символа. Только русские и латинские буквы)\n\n");
 						if (!answers[6])
-							sb.append("- Некоректная фамилия\n");
+							sb.append("- Некоректная фамилия\n" +
+									"(Минимальная длина 2 символа. Только русские и латинские буквы)\n\n");
 						if (!answers[7])
-							sb.append("- Некоректная дата рождения\n");
+							sb.append("- Некоректная дата рождения\n" +
+									"(Формат даты дд.мм.гггг)\n\n");
 						if (!answers[8])
-							sb.append("- Некоректный телефон\n");
+							sb.append("- Некоректный телефон\n" +
+									"(Минимальная длина 6 символов. Только цифры и знак + вначале)\n\n");
 						taInfo.setText(sb.toString());
 					} else 
 						taInfo.setText("Неполадки с сервером");
