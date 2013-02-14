@@ -12,6 +12,12 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+/**
+ * Entity for 'users' table in DB
+ * 
+ * @author Fomin
+ * @version 1.0
+ */
 @Entity
 @Table(name = "users")
 public class User {

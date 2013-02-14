@@ -12,6 +12,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+/**
+ * Entity for 'folders' table in DB
+ * 
+ * @author Fomin
+ * @version 1.0
+ */
 @Entity
 @Table(name = "folders")
 public class Folder {
@@ -56,6 +62,13 @@ public class Folder {
 	}
 	public void setUndel(Boolean undel) {
 		this.undel = undel;
+	}
+
+	public List<MessToFold> getMessToFolds() {
+		return messToFolds;
+	}
+	public void setMessToFolds(List<MessToFold> messToFolds) {
+		this.messToFolds = messToFolds;
 	}
 	
 }

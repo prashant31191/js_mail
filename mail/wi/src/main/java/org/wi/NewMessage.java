@@ -1,7 +1,5 @@
 package org.wi;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -10,8 +8,6 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JButton;
-import javax.swing.DropMode;
-import javax.swing.JScrollBar;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.JTextField;
 
@@ -20,22 +16,6 @@ public class NewMessage extends JFrame {
 	private JPanel contentPane;
 	private JTextField textField_1;
 	private JTextField textField_2;
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					NewMessage frame = new NewMessage();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
 	/**
 	 * Create the frame.

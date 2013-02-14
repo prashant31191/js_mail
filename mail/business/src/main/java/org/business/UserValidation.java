@@ -1,6 +1,18 @@
 package org.business;
 
+/**
+ * Class, containing methods for checking the data, sent by a user
+ * 
+ * @author Fomin
+ * @version 1.0
+ */
 public class UserValidation {
+	/**
+	 * Checks if the registration data is correct
+	 * 
+	 * @param a data Array of Strings, containing an information for registration 
+	 * @return a mask-array of booleans, containing correctness of the data 
+	 */
 	public boolean[] regDataCheck(String[] data) {
 		boolean[] checkedData = new boolean[9];
 		Validation valid = new Validation();
@@ -25,6 +37,12 @@ public class UserValidation {
 		return checkedData;
 	}
 	
+	/**
+	 * Checks if the data for logging in is correct
+	 * 
+	 * @param data an array of Strings, containing email-address and password
+	 * @return true, in case the data is correct, otherwise false
+	 */
 	public boolean enterUserCheck(String[] data) {
 		Validation valid = new Validation();
 		if (!valid.fieldIsNotClear(data[0]) || !valid.fieldIsNotClear(data[1])

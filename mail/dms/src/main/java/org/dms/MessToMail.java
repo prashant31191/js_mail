@@ -8,8 +8,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Type;
 
+/**
+ * Entity for 'mess_mail' table in DB
+ * 
+ * @author Fomin
+ * @version 1.0
+ */
 @Entity
 @Table(name = "mess_mail")
 public class MessToMail {
@@ -27,7 +32,6 @@ public class MessToMail {
 	private Email to;
 	
 	@Column(name = "t_read")
-	@Type(type = "org.hibernate.type.NumericBooleanType")
 	private Boolean read;
 	
 	public Integer getId() {

@@ -1,9 +1,11 @@
 package org.business;
 
 import java.net.*;
+import java.util.List;
 import java.util.Random;
 import java.io.*;
 import org.dms.Managing;
+import org.cc.*;
 
 public class Server {
 	private final static int portNumber = 6789;
@@ -133,20 +135,23 @@ public class Server {
 					}
 
 					if (requestNumber == 3) {
-						int length = in.readInt();
-						byte[] requestBytes = new byte[length];
+						int gotKey = in.readInt();
+						if (key != gotKey)
+							out.writeByte(1);
+						else {
+							List<SimpleFolder> answer = Managing
+									.getEverything(workWith);
+							if (answer == null)
+								out.writeByte(2);
+							else {
+								byte[] answerBytes = Serializer
+										.serialize(answer);
+								out.writeByte(0);
+								out.writeInt(answerBytes.length);
+								out.write(answerBytes);
+							}
+						}
 
-						for (int i = 0; i < length; i++)
-							requestBytes[i] = in.readByte();
-						String requestInfo = (String) Serializer
-								.deserialize(requestBytes);
-
-						String tmp = requestInfo + "HAHA";
-						byte[] answerBytes = Serializer.serialize(tmp);
-
-						out.writeBoolean(true);
-						out.writeInt(answerBytes.length);
-						out.write(answerBytes);
 					}
 				}
 			} catch (IOException io) {
@@ -158,6 +163,7 @@ public class Server {
 					in.close();
 					out.close();
 					socket.close();
+					System.out.println(socket.getPort() + " - closed");
 				} catch (IOException e) {
 					System.out.println("Closing error");
 					e.printStackTrace();
@@ -165,6 +171,5 @@ public class Server {
 
 			}
 		}
-
 	}
 }

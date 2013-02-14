@@ -19,5 +19,6 @@
     <module>business</module>
     <module>wi</module>
     <module>dms</module>
+    <module>cc</module>
   </modules>
 </project>

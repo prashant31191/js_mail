@@ -8,6 +8,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+/**
+ * Entity for 'mess_fold' table in DB
+ * 
+ * @author Fomin
+ * @version 1.0
+ */
 @Entity
 @Table(name = "mess_fold")
 public class MessToFold {

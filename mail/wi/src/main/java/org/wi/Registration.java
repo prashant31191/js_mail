@@ -15,6 +15,8 @@ import javax.swing.JButton;
 import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -93,6 +95,23 @@ public class Registration extends JFrame {
 			}
 		}
 
+		addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+				try {
+					out.writeByte(0);
+				} catch (IOException e1) {
+					e1.printStackTrace();
+					try {
+						in.close();
+						out.close();
+						socket.close();
+					} catch (IOException e2) {
+						e2.printStackTrace();
+					}
+				}
+			}
+		});
+		
 		JLabel lblGfhjkm = new JLabel("Пароль:");
 		lblGfhjkm.setBounds(163, 14, 53, 14);
 		lblGfhjkm.setHorizontalAlignment(SwingConstants.LEFT);
@@ -197,7 +216,7 @@ public class Registration extends JFrame {
 		btnLogIn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					String[] requestInfo = { fldEnterMail.getText(),
+					String[] requestInfo = { fldEnterMail.getText().toLowerCase(),
 							fldEnterPass.getText() };
 
 					byte[] requestBytes = Serializer.serialize(requestInfo);
@@ -208,7 +227,6 @@ public class Registration extends JFrame {
 					byte answer = in.readByte();
 					if (answer == 0) {
 						int key = in.readInt();
-						taInfo.setText("" + key);
 						MainWindow mw = new MainWindow(socket, in, out, key);
 						mw.setVisible(true);
 						Registration.this.setVisible(false);
@@ -236,11 +254,11 @@ public class Registration extends JFrame {
 		btnSignUp.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					String[] requestInfo = { fldLogin.getText(),
+					String[] requestInfo = { fldLogin.getText().toLowerCase(),
 							fldFirstPass.getText(), fldSecPass.getText(),
 							fldFirstName.getText(), fldSecName.getText(),
 							fldBirthDate.getText(), fldPhone.getText() };
-
+					
 					byte[] requestBytes = Serializer.serialize(requestInfo);
 					out.writeByte(1);
 					out.writeInt(requestBytes.length);
@@ -249,7 +267,6 @@ public class Registration extends JFrame {
 					byte answer = in.readByte();
 					if (answer == 0) {
 						int key = in.readInt();
-						taInfo.setText(""+key);
 						MainWindow mw = new MainWindow(socket, in, out, key);
 						mw.setVisible(true);
 						Registration.this.setVisible(false);
@@ -286,7 +303,7 @@ public class Registration extends JFrame {
 									"(Минимальная длина 6 символов. Только цифры и знак + вначале)\n\n");
 						taInfo.setText(sb.toString());
 					} else 
-						taInfo.setText("Неполадки с сервером");
+						taInfo.setText("Ошибка при создании учетной записи");
 				} catch (IOException er) {
 					er.printStackTrace();
 					try {
@@ -313,7 +330,13 @@ public class Registration extends JFrame {
 		JButton btnClear = new JButton("Очистить");
 		btnClear.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				taInfo.setText(""+socket.getPort());
+				fldLogin.setText("");
+				fldFirstPass.setText("");
+				fldSecPass.setText("");
+				fldFirstName.setText("");
+				fldSecName.setText("");
+				fldBirthDate.setText("");
+				fldPhone.setText("");
 			}
 		});
 		btnClear.setBounds(245, 281, 91, 23);

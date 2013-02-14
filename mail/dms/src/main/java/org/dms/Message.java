@@ -14,6 +14,12 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+/**
+ * Entity for 'messages' table in DB
+ * 
+ * @author Fomin
+ * @version 1.0
+ */
 @Entity
 @Table(name = "messages")
 public class Message {
@@ -72,5 +78,17 @@ public class Message {
 	public void setText(String text) {
 		this.text = text;
 	}
-	
+
+	public List<MessToFold> getMessToFolds() {
+		return messToFolds;
+	}
+	public void setMessToFolds(List<MessToFold> messToFolds) {
+		this.messToFolds = messToFolds;
+	}
+	public List<MessToMail> getMessToMails() {
+		return messToMails;
+	}
+	public void setMessToMails(List<MessToMail> messToMails) {
+		this.messToMails = messToMails;
+	}
 }

@@ -13,6 +13,12 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+/**
+ * Entity for 'emails' table in DB
+ * 
+ * @author Fomin
+ * @version 1.0
+ */
 @Entity
 @Table(name = "emails")
 public class Email {
@@ -65,4 +71,11 @@ public class Email {
 		this.password = password;
 	}
 
+	public List<Folder> getFolders() {
+		return folders;
+	}
+	public void setFolders(List<Folder> folders) {
+		this.folders = folders;
+	}
+	
 }
