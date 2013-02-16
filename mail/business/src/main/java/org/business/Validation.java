@@ -116,10 +116,10 @@ public class Validation {
 	 * @param fieldTo Line of semicolon-separated email addresses
 	 * @return true, in case the line is correct, otherwise false
 	 */
-	public boolean correctFieldTo(String fieldTo) {
-		if (fieldTo.equals(""))
+	public boolean correctFieldTo(String to) {
+		if (to.equals(""))
 			return false;
-		String[] emails = fieldTo.trim().split(";");
+		String[] emails = to.trim().split(";");
 		
 		for (String email: emails) {
 			if (!correctMailAddress(email.trim()))
@@ -146,6 +146,18 @@ public class Validation {
 			return false;
 		}
 		
+		return true;
+	}
+	
+	public boolean correctAbout(String about) {
+		if (about.length() < 1 || about.length() > 49)
+			return false;
+		return true;
+	}
+	
+	public boolean correctMessText(String text) {
+		if (text.length() < 1)
+			return false;
 		return true;
 	}
 }

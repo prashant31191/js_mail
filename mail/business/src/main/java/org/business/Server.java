@@ -137,7 +137,7 @@ public class Server {
 					if (requestNumber == 3) {
 						int gotKey = in.readInt();
 						if (key != gotKey)
-							out.writeByte(1);
+							out.writeByte(3);
 						else {
 							List<SimpleFolder> answer = Managing
 									.getEverything(workWith);
@@ -152,6 +152,64 @@ public class Server {
 							}
 						}
 
+					}
+					
+					if (requestNumber == 4) {
+						int gotKey = in.readInt();
+						int length = in.readInt();
+						byte[] requestBytes = new byte[length];
+
+						for (int i = 0; i < length; i++)
+							requestBytes[i] = in.readByte();
+						String[] requestInfo = (String[]) Serializer
+								.deserialize(requestBytes);
+
+						if (key != gotKey)
+							out.writeByte(3);
+						else {
+							boolean[] checkedData = new ActionValidation()
+									.checkMessage(requestInfo);
+							if (!checkedData[0]) {
+								byte[] answerBytes = Serializer
+										.serialize(checkedData);
+								out.writeByte(1);
+								out.writeInt(answerBytes.length);
+								out.write(answerBytes);	
+							} else {
+								Object[] answer = Managing
+										.sendMessage(requestInfo, workWith);
+								if (answer == null) {
+									out.writeByte(2);
+								} else {
+									byte[] answerBytes = Serializer
+											.serialize(answer);
+									out.writeByte(0);
+									out.writeInt(answerBytes.length);
+									out.write(answerBytes);
+								}
+							}
+						}
+					}
+					
+					if (requestNumber == 5) {
+						int gotKey = in.readInt();
+						int length = in.readInt();
+						byte[] requestBytes = new byte[length];
+
+						for (int i = 0; i < length; i++)
+							requestBytes[i] = in.readByte();
+						SimpleMessage requestInfo = (SimpleMessage) Serializer
+								.deserialize(requestBytes);
+
+						if (key != gotKey)
+							out.writeByte(3);
+						else {
+							boolean set = Managing.setRead(requestInfo, workWith);
+							if (set) {
+								out.writeByte(0);
+							} else
+								out.writeByte(2);
+						}
 					}
 				}
 			} catch (IOException io) {

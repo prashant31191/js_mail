@@ -216,7 +216,7 @@ public class Registration extends JFrame {
 		btnLogIn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					String[] requestInfo = { fldEnterMail.getText().toLowerCase(),
+					String[] requestInfo = { fldEnterMail.getText().toLowerCase().trim(),
 							fldEnterPass.getText() };
 
 					byte[] requestBytes = Serializer.serialize(requestInfo);
@@ -256,8 +256,8 @@ public class Registration extends JFrame {
 				try {
 					String[] requestInfo = { fldLogin.getText().toLowerCase(),
 							fldFirstPass.getText(), fldSecPass.getText(),
-							fldFirstName.getText(), fldSecName.getText(),
-							fldBirthDate.getText(), fldPhone.getText() };
+							fldFirstName.getText().trim(), fldSecName.getText().trim(),
+							fldBirthDate.getText().trim(), fldPhone.getText().trim() };
 					
 					byte[] requestBytes = Serializer.serialize(requestInfo);
 					out.writeByte(1);

@@ -77,5 +77,16 @@ public class Email {
 	public void setFolders(List<Folder> folders) {
 		this.folders = folders;
 	}
-	
+	public List<Message> getMessages() {
+		return messages;
+	}
+	public void setMessages(List<Message> messages) {
+		this.messages = messages;
+	}
+	public List<MessToMail> getMessToMails() {
+		return MessToMails;
+	}
+	public void setMessToMails(List<MessToMail> messToMails) {
+		MessToMails = messToMails;
+	}
 }

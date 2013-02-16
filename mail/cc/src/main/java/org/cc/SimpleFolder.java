@@ -19,4 +19,7 @@ public class SimpleFolder implements Serializable{
 	public void setMessages(List<SimpleMessage> messages) {
 		this.messages = messages;
 	}
+	public void addMessage(SimpleMessage message) {
+		messages.add(0, message);
+	}
 }
