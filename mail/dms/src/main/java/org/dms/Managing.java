@@ -414,4 +414,42 @@ public class Managing {
 			emf.close();
 		}
 	}
+	
+	public static SimpleFolder createFolder(String folderName, String whose) {
+		EntityManagerFactory emf = Persistence
+				.createEntityManagerFactory("mail");
+		EntityManager em = emf.createEntityManager();
+		EntityTransaction trx = em.getTransaction();
+		try {
+			trx.begin();
+			Email email = em.find(Email.class, whose);
+			boolean thereIsSuchFolder = false;
+			List<Folder> folders = email.getFolders();
+			for (Folder folder : folders) {
+				if (folder.getName().equalsIgnoreCase(folderName)) {
+					thereIsSuchFolder = true;
+					break;
+				}
+			}
+			if (thereIsSuchFolder)
+				return null;
+			Folder folder = new Folder();
+			folder.setName(folderName);
+			folder.setUndel(false);
+			folder.setWhose(email);
+			em.persist(folder);
+			trx.commit();
+			
+			SimpleFolder simpleFolder = new SimpleFolder();
+			simpleFolder.setName(folderName);
+			return simpleFolder;
+		} catch (Exception e) {
+			e.printStackTrace();
+			if (trx.isActive())
+				trx.rollback();
+			return null;
+		} finally {
+			emf.close();
+		}
+	}
 }

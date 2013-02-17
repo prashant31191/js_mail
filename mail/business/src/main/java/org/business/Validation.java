@@ -160,4 +160,10 @@ public class Validation {
 			return false;
 		return true;
 	}
+	
+	public boolean correctFolder(String folderName) {
+		if (folderName.length() < 1 || folderName.length() > 29)
+			return false;
+		return true;
+	}
 }

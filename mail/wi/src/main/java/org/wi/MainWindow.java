@@ -182,6 +182,12 @@ public class MainWindow extends JFrame {
 		contentPane.add(btnDeleteFolder);
 
 		JButton btnCreateFolder = new JButton("Создать");
+		btnCreateFolder.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				CreateFold sm = new CreateFold(socket, in, out, key);
+				sm.setVisible(true);
+			}
+		});
 		btnCreateFolder.setBounds(42, 216, 91, 23);
 		contentPane.add(btnCreateFolder);
 
@@ -299,6 +305,11 @@ public class MainWindow extends JFrame {
 			inFolder.addMessage(sm);
 
 		drawMessages();
+	}
+	
+	private void sendFolderAfterCreation(SimpleFolder folder) {
+		folders.add(folder);
+		listModelFolders.add(listModelFolders.size(), folder.getName());
 	}
 
 	private void drawMessages() {
@@ -504,4 +515,104 @@ public class MainWindow extends JFrame {
 			contentPane.add(lblMailmailjs);
 		}
 	}
+	
+	private class CreateFold extends JFrame {
+
+		private JPanel contentPane;
+		
+		private Socket socket = null;
+		private DataInputStream in = null;
+		private DataOutputStream out = null;
+		private int key;
+		private JTextField fldFoldName;
+
+		public CreateFold(final Socket socket, final DataInputStream in,
+				final DataOutputStream out, final int key) {
+			setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+			setBounds(100, 100, 270, 154);
+			contentPane = new JPanel();
+			contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+			setContentPane(contentPane);
+			contentPane.setLayout(null);
+			
+			JLabel lblName = new JLabel("Имя папки");
+			lblName.setBounds(10, 11, 114, 14);
+			contentPane.add(lblName);
+			
+			fldFoldName = new JTextField();
+			fldFoldName.setBounds(10, 26, 237, 20);
+			contentPane.add(fldFoldName);
+			fldFoldName.setColumns(10);
+			
+			final JLabel lblError = new JLabel("");
+			lblError.setBounds(10, 49, 237, 14);
+			lblError.setForeground(Color.RED);
+			contentPane.add(lblError);
+			
+			JButton btnCreateFold = new JButton("Создать папку");
+			btnCreateFold.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					String requestInfo = fldFoldName.getText().trim();
+					try {
+						byte[] requestBytes = Serializer.serialize(requestInfo);
+						out.writeByte(7);
+						out.writeInt(key);
+						out.writeInt(requestBytes.length);
+						out.write(requestBytes);
+
+						byte answer = in.readByte();
+						if (answer == 0) {
+							int length = in.readInt();
+							byte[] answerBytes = new byte[length];
+							for (int i = 0; i < length; i++)
+								answerBytes[i] = in.readByte();
+							SimpleFolder folder = (SimpleFolder) Serializer
+									.deserialize(answerBytes);
+
+							lblError.setText("");
+
+							MainWindow.this.sendFolderAfterCreation(folder);
+
+							CreateFold.this.dispose();
+						} else if (answer == 1) {
+							lblError.setText("Неверное название папки");
+						} else if (answer == 2) {
+							lblError.setText("Проблемы с сервером");
+						} else  if (answer == 3) {
+							lblError.setText("Несанкционированный пользователь");
+						} else {
+							lblError.setText("Папка с таким именем уже есть");
+						}
+					} catch (IOException ex) {
+						System.out.println("IO error");
+						ex.printStackTrace();
+						try {
+							in.close();
+							out.close();
+							socket.close();
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
+					} catch (ClassNotFoundException er) {
+						try {
+							in.close();
+							out.close();
+							socket.close();
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
+					}
+				}
+			});
+			btnCreateFold.setBounds(127, 74, 120, 23);
+			contentPane.add(btnCreateFold);
+			
+			this.socket = socket;
+			this.in = in;
+			this.out = out;
+			this.key = key;
+			
+		}
+	}
+
 }

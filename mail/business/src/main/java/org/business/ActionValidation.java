@@ -19,4 +19,10 @@ public class ActionValidation {
 		
 		return checkedData;
 	}
+	
+	public boolean checkFolderName(String data) {
+		Validation valid = new Validation();
+		
+		return valid.correctFolder(data);
+	}
 }
