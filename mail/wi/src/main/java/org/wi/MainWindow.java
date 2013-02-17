@@ -85,9 +85,13 @@ public class MainWindow extends JFrame {
 		JScrollPane spMessageDetailed = new JScrollPane(taMessText);
 		spMessageDetailed
 				.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		spMessageDetailed.setBounds(10, 258, 702, 296);
+		spMessageDetailed.setBounds(10, 258, 702, 269);
 		contentPane.add(spMessageDetailed);
 
+		final JLabel lblError = new JLabel("");
+		lblError.setBounds(10, 527, 301, 14);
+		contentPane.add(lblError);
+		
 		lstFolders = new JList<String>(listModelFolders);
 		lstFolders.addMouseListener(new MouseAdapter() {
 			@Override
@@ -178,6 +182,45 @@ public class MainWindow extends JFrame {
 		contentPane.add(label_1);
 
 		JButton btnDeleteFolder = new JButton("Удалить");
+		btnDeleteFolder.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int selectedFolder = lstFolders.getSelectedIndex();
+				if (selectedFolder < 0)
+					return;
+				SimpleFolder sFolder = folders.get(selectedFolder);
+				try {
+					byte[] requestBytes = Serializer
+							.serialize(sFolder);
+					out.writeByte(8);
+					out.writeInt(key);
+					out.writeInt(requestBytes.length);
+					out.write(requestBytes);
+
+					byte answer = in.readByte();
+					if (answer == 0) {
+						folders.remove(selectedFolder);
+						listModelFolders.remove(selectedFolder);
+						listModelMessages.removeAllElements();
+						lblError.setText("");
+					} else if (answer == 1) {
+						lblError.setText("Эту папку нельзя удалить");
+					} else if (answer == 2) {
+						lblError.setText("Проблемы с сервером");
+					} else {
+						lblError.setText("Несанкционированный пользователь");
+					}
+				} catch (IOException er) {
+					er.printStackTrace();
+					try {
+						in.close();
+						out.close();
+						socket.close();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+				}
+			}
+		});
 		btnDeleteFolder.setBounds(143, 216, 91, 23);
 		contentPane.add(btnDeleteFolder);
 

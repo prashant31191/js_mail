@@ -263,6 +263,31 @@ public class Server {
 							}
 						}
 					}
+					
+					if (requestNumber == 8) {
+						int gotKey = in.readInt();
+						int length = in.readInt();
+						byte[] requestBytes = new byte[length];
+
+						for (int i = 0; i < length; i++)
+							requestBytes[i] = in.readByte();
+						SimpleFolder requestInfo = (SimpleFolder) Serializer
+								.deserialize(requestBytes);
+
+						if (key != gotKey)
+							out.writeByte(3);
+						else {
+							byte deleted = Managing.deleteFolder(requestInfo,
+									workWith);
+							if (deleted == 1)
+								out.writeByte(1);
+							else if (deleted == 2) {
+								out.writeByte(2);
+							} else if (deleted == 0) {
+								out.writeByte(0);
+							}
+						}
+					}
 				}
 			} catch (IOException io) {
 
