@@ -492,7 +492,7 @@ public class Managing {
 					em.remove(message);
 				}
 			}
-			
+			em.remove(foundFolder);
 			trx.commit();
 		} catch (Exception e) {
 			e.printStackTrace();

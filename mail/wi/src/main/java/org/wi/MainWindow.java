@@ -89,6 +89,7 @@ public class MainWindow extends JFrame {
 		contentPane.add(spMessageDetailed);
 
 		final JLabel lblError = new JLabel("");
+		lblError.setForeground(Color.RED);
 		lblError.setBounds(10, 527, 301, 14);
 		contentPane.add(lblError);
 		
