@@ -368,4 +368,50 @@ public class Managing {
 		}
 		return false;
 	}
+	
+	public static boolean deleteMess(SimpleMessage message, String whose) {
+		EntityManagerFactory emf = Persistence
+				.createEntityManagerFactory("mail");
+		EntityManager em = emf.createEntityManager();
+		EntityTransaction trx = em.getTransaction();
+		try {
+			trx.begin();
+
+			Email email = em.find(Email.class, whose);
+			Message foundMessage = null;
+
+			List<Folder> folders = email.getFolders();
+			label:
+			for (Folder folder : folders) {
+				for (MessToFold messToFold : folder.getMessToFolds()) {
+					foundMessage = messToFold.getMessage();
+					if (foundMessage.getAbout().equals(message.getAbout())
+							&& foundMessage.getText().equals(message.getText())
+							&& format.format(foundMessage.getSentDate())
+									.equals(format.format(message.getDate()))) {
+						em.remove(messToFold);
+						trx.commit();
+						trx.begin();
+						break label;
+					}
+				}
+			}
+			List<MessToFold> messToFolds = foundMessage.getMessToFolds();
+			if (messToFolds.size() == 0) {
+				List<MessToMail> messToMails = foundMessage.getMessToMails();
+				for (MessToMail messToMail : messToMails)
+					em.remove(messToMail);
+				em.remove(foundMessage);
+			}
+			trx.commit();
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			if (trx.isActive())
+				trx.rollback();
+			return false;
+		} finally {
+			emf.close();
+		}
+	}
 }

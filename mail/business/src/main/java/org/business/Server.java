@@ -211,6 +211,26 @@ public class Server {
 								out.writeByte(2);
 						}
 					}
+					if (requestNumber == 6) {
+						int gotKey = in.readInt();
+						int length = in.readInt();
+						byte[] requestBytes = new byte[length];
+
+						for (int i = 0; i < length; i++)
+							requestBytes[i] = in.readByte();
+						SimpleMessage requestInfo = (SimpleMessage) Serializer
+								.deserialize(requestBytes);
+
+						if (key != gotKey)
+							out.writeByte(3);
+						else {
+							boolean deleted = Managing.deleteMess(requestInfo, workWith);
+							if (deleted) {
+								out.writeByte(0);
+							} else
+								out.writeByte(2);
+						}
+					}
 				}
 			} catch (IOException io) {
 

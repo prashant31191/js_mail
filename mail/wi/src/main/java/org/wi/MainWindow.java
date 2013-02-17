@@ -146,6 +146,7 @@ public class MainWindow extends JFrame {
 									String messAppearance = read + direction + date + address + about;
 									listModelMessages.remove(selectedMessage);
 									listModelMessages.add(selectedMessage, messAppearance);
+									lstMessages.setSelectedIndex(selectedMessage);
 								}
 							} catch (IOException er) {
 								er.printStackTrace();
@@ -187,7 +188,39 @@ public class MainWindow extends JFrame {
 		JButton btnDelMess = new JButton("Удалить");
 		btnDelMess.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				int selectedMessage = lstMessages.getSelectedIndex();
+				if (selectedMessage < 0)
+					return;
+				int selectedFolder = lstFolders.getSelectedIndex();
+				SimpleMessage message = folders.get(selectedFolder)
+						.getMessages().get(selectedMessage);
+				try {
+					byte[] requestBytes = Serializer.serialize(message);
+					out.writeByte(6);
+					out.writeInt(key);
+					out.writeInt(requestBytes.length);
+					out.write(requestBytes);
 
+					byte answer = in.readByte();
+					if (answer == 0) {
+						folders.get(selectedFolder).getMessages().remove(selectedMessage);
+						listModelMessages.remove(selectedMessage);
+						taMessText.setText("");
+					} else if (answer == 3) {
+						
+					} else {
+						
+					}
+				} catch (IOException er) {
+					er.printStackTrace();
+					try {
+						in.close();
+						out.close();
+						socket.close();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+				}
 			}
 		});
 		btnDelMess.setBounds(621, 216, 91, 23);
