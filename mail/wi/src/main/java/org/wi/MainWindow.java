@@ -37,9 +37,9 @@ public class MainWindow extends JFrame {
 	private DataInputStream in = null;
 	private DataOutputStream out = null;
 	private int key;
-	
+
 	SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy hh:mm:ss");
-	
+
 	JList<String> lstFolders;
 	JList<String> lstMessages;
 
@@ -92,7 +92,7 @@ public class MainWindow extends JFrame {
 		lblError.setForeground(Color.RED);
 		lblError.setBounds(10, 527, 301, 14);
 		contentPane.add(lblError);
-		
+
 		lstFolders = new JList<String>(listModelFolders);
 		lstFolders.addMouseListener(new MouseAdapter() {
 			@Override
@@ -123,7 +123,7 @@ public class MainWindow extends JFrame {
 						sb.append("Тема: " + message.getAbout() + "\n\n");
 						sb.append(message.getText());
 						taMessText.setText(sb.toString());
-						
+
 						if (!message.isRead()) {
 							try {
 								byte[] requestBytes = Serializer
@@ -146,12 +146,16 @@ public class MainWindow extends JFrame {
 										direction = " \u2190";
 										address = message.getFrom() + " ";
 									}
-									String date = format.format(message.getDate()) + " ";
-									String about =  message.getAbout();
-									String messAppearance = read + direction + date + address + about;
+									String date = format.format(message
+											.getDate()) + " ";
+									String about = message.getAbout();
+									String messAppearance = read + direction
+											+ date + address + about;
 									listModelMessages.remove(selectedMessage);
-									listModelMessages.add(selectedMessage, messAppearance);
-									lstMessages.setSelectedIndex(selectedMessage);
+									listModelMessages.add(selectedMessage,
+											messAppearance);
+									lstMessages
+											.setSelectedIndex(selectedMessage);
 								}
 							} catch (IOException er) {
 								er.printStackTrace();
@@ -190,8 +194,7 @@ public class MainWindow extends JFrame {
 					return;
 				SimpleFolder sFolder = folders.get(selectedFolder);
 				try {
-					byte[] requestBytes = Serializer
-							.serialize(sFolder);
+					byte[] requestBytes = Serializer.serialize(sFolder);
 					out.writeByte(8);
 					out.writeInt(key);
 					out.writeInt(requestBytes.length);
@@ -228,7 +231,7 @@ public class MainWindow extends JFrame {
 		JButton btnCreateFolder = new JButton("Создать");
 		btnCreateFolder.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				CreateFold sm = new CreateFold(socket, in, out, key);
+				CreateFold sm = new CreateFold();
 				sm.setVisible(true);
 			}
 		});
@@ -253,13 +256,14 @@ public class MainWindow extends JFrame {
 
 					byte answer = in.readByte();
 					if (answer == 0) {
-						folders.get(selectedFolder).getMessages().remove(selectedMessage);
+						folders.get(selectedFolder).getMessages()
+								.remove(selectedMessage);
 						listModelMessages.remove(selectedMessage);
 						taMessText.setText("");
 					} else if (answer == 3) {
-						
+
 					} else {
-						
+
 					}
 				} catch (IOException er) {
 					er.printStackTrace();
@@ -292,7 +296,8 @@ public class MainWindow extends JFrame {
 				int selectedMessage = lstMessages.getSelectedIndex();
 				if (selectedMessage < 0)
 					return;
-				MoveFold move = new MoveFold(lstFolders.getSelectedIndex(), selectedMessage);
+				MoveFold move = new MoveFold(lstFolders.getSelectedIndex(),
+						selectedMessage);
 				move.setVisible(true);
 			}
 		});
@@ -341,29 +346,9 @@ public class MainWindow extends JFrame {
 
 	}
 
-	private void sendMessagesAfterSending(Object[] messages) {
-		SimpleFolder outFolder = null;
-		SimpleFolder inFolder = null;
-
-		for (SimpleFolder sf : folders) {
-			if (sf.getName().equals("Исходящие"))
-				outFolder = sf;
-			if (sf.getName().equals("Входящие"))
-				inFolder = sf;
-		}
-		if (messages[0] != null)
-			outFolder.addMessage((SimpleMessage) messages[0]);
-		List<SimpleMessage> incomeMessages = (List<SimpleMessage>) messages[1];
-		for (SimpleMessage sm : incomeMessages)
-			inFolder.addMessage(sm);
-
-		drawMessages();
-	}
-	
-	private void sendFolderAfterCreation(SimpleFolder folder) {
-		folders.add(folder);
-		listModelFolders.add(listModelFolders.size(), folder.getName());
-	}
+	// private void sendMessagesAfterSending(Object[] messages) {
+	//
+	// }
 
 	private void drawMessages() {
 		int index = lstFolders.getSelectedIndex();
@@ -371,7 +356,7 @@ public class MainWindow extends JFrame {
 			listModelMessages.removeAllElements();
 			SimpleFolder folder = folders.get(index);
 			List<SimpleMessage> messages = folder.getMessages();
-			
+
 			for (SimpleMessage message : messages) {
 				String read = message.isRead() ? "   " : " \u00B7 ";
 				String direction = null;
@@ -384,10 +369,11 @@ public class MainWindow extends JFrame {
 					address = message.getFrom() + " ";
 				}
 				String date = format.format(message.getDate()) + " ";
-				String about =  message.getAbout();
-				String messAppearance = read + direction + date + address + about;
-				listModelMessages.add(messages.indexOf(message),
-						messAppearance);
+				String about = message.getAbout();
+				String messAppearance = read + direction + date + address
+						+ about;
+				listModelMessages
+						.add(messages.indexOf(message), messAppearance);
 			}
 		}
 	}
@@ -482,7 +468,23 @@ public class MainWindow extends JFrame {
 							lblErrorTo.setText("");
 							lblErrorMess.setText("");
 
-							MainWindow.this.sendMessagesAfterSending(messages);
+							SimpleFolder outFolder = null;
+							SimpleFolder inFolder = null;
+
+							for (SimpleFolder sf : folders) {
+								if (sf.getName().equals("Исходящие"))
+									outFolder = sf;
+								if (sf.getName().equals("Входящие"))
+									inFolder = sf;
+							}
+							if (messages[0] != null)
+								outFolder
+										.addMessage((SimpleMessage) messages[0]);
+							List<SimpleMessage> incomeMessages = (List<SimpleMessage>) messages[1];
+							for (SimpleMessage sm : incomeMessages)
+								inFolder.addMessage(sm);
+
+							drawMessages();
 
 							SendMessage.this.dispose();
 						} else if (answer == 1) {
@@ -568,40 +570,35 @@ public class MainWindow extends JFrame {
 			contentPane.add(lblMailmailjs);
 		}
 	}
-	
+
 	private class CreateFold extends JFrame {
 
 		private JPanel contentPane;
-		
-		private Socket socket = null;
-		private DataInputStream in = null;
-		private DataOutputStream out = null;
-		private int key;
+
 		private JTextField fldFoldName;
 
-		public CreateFold(final Socket socket, final DataInputStream in,
-				final DataOutputStream out, final int key) {
+		public CreateFold() {
 			setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 			setBounds(100, 100, 270, 154);
 			contentPane = new JPanel();
 			contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 			setContentPane(contentPane);
 			contentPane.setLayout(null);
-			
+
 			JLabel lblName = new JLabel("Имя папки");
 			lblName.setBounds(10, 11, 114, 14);
 			contentPane.add(lblName);
-			
+
 			fldFoldName = new JTextField();
 			fldFoldName.setBounds(10, 26, 237, 20);
 			contentPane.add(fldFoldName);
 			fldFoldName.setColumns(10);
-			
+
 			final JLabel lblError = new JLabel("");
 			lblError.setBounds(10, 49, 237, 14);
 			lblError.setForeground(Color.RED);
 			contentPane.add(lblError);
-			
+
 			JButton btnCreateFold = new JButton("Создать папку");
 			btnCreateFold.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -622,16 +619,16 @@ public class MainWindow extends JFrame {
 							SimpleFolder folder = (SimpleFolder) Serializer
 									.deserialize(answerBytes);
 
-							lblError.setText("");
-
-							MainWindow.this.sendFolderAfterCreation(folder);
+							folders.add(folder);
+							listModelFolders.add(listModelFolders.size(),
+									folder.getName());
 
 							CreateFold.this.dispose();
 						} else if (answer == 1) {
 							lblError.setText("Неверное название папки");
 						} else if (answer == 2) {
 							lblError.setText("Проблемы с сервером");
-						} else  if (answer == 3) {
+						} else if (answer == 3) {
 							lblError.setText("Несанкционированный пользователь");
 						} else {
 							lblError.setText("Папка с таким именем уже есть");
@@ -659,20 +656,21 @@ public class MainWindow extends JFrame {
 			});
 			btnCreateFold.setBounds(127, 74, 120, 23);
 			contentPane.add(btnCreateFold);
-			
-			this.socket = socket;
-			this.in = in;
-			this.out = out;
-			this.key = key;
-			
+
+			// this.socket = socket;
+			// this.in = in;
+			// this.out = out;
+			// this.key = key;
+
 		}
 	}
+
 	private class MoveFold extends JFrame {
 
 		private JPanel contentPane;
 		private int selectedFolder;
 		private int selectedMessage;
-		
+
 		JList<String> lstMoveFolders;
 		private JLabel lblError;
 
@@ -683,25 +681,25 @@ public class MainWindow extends JFrame {
 			contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 			setContentPane(contentPane);
 			contentPane.setLayout(null);
-			
+
 			this.selectedFolder = selectedFolder;
 			this.selectedMessage = selectedMessage;
-			
+
 			JLabel label = new JLabel("Папки:");
 			label.setBounds(10, 11, 46, 14);
 			contentPane.add(label);
-			
+
 			lstMoveFolders = new JList<String>(listModelFolders);
 			JScrollPane spFolders = new JScrollPane(lstMoveFolders);
 			spFolders
 					.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 			spFolders.setBounds(10, 28, 224, 108);
 			contentPane.add(spFolders);
-			
+
 			lblError = new JLabel("");
 			lblError.setBounds(10, 136, 224, 14);
 			contentPane.add(lblError);
-			
+
 			JButton btnMove = new JButton("Переместить");
 			btnMove.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -709,9 +707,11 @@ public class MainWindow extends JFrame {
 					if (selectedMoveFolder < 0)
 						return;
 					Object[] requestInfo = new Object[3];
-					SimpleMessage message = folders.get(selectedFolder).getMessages().get(selectedMessage);
+					SimpleMessage message = folders.get(selectedFolder)
+							.getMessages().get(selectedMessage);
 					String folder = folders.get(selectedFolder).getName();
-					String moveFolder = folders.get(selectedMoveFolder).getName();
+					String moveFolder = folders.get(selectedMoveFolder)
+							.getName();
 					requestInfo[0] = message;
 					requestInfo[1] = folder;
 					requestInfo[2] = moveFolder;
@@ -724,10 +724,12 @@ public class MainWindow extends JFrame {
 
 						byte answer = in.readByte();
 						if (answer == 0) {
-							String messageAppearance = listModelMessages.get(selectedMessage);
+							String messageAppearance = listModelMessages
+									.get(selectedMessage);
 							listModelMessages.remove(selectedMessage);
-							folders.get(selectedFolder).getMessages().remove(selectedMessage);
-							folders.get(selectedMoveFolder).getMessages().add(message);
+							folders.get(selectedFolder).getMessages()
+									.remove(selectedMessage);
+							folders.get(selectedMoveFolder).addMessage(message);
 							dispose();
 						} else if (answer == 1) {
 							lblError.setText("Невозможно переместить");
