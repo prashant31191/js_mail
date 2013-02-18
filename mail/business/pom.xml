@@ -1,41 +1,40 @@
 <?xml version="1.0"?>
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.example</groupId>
-    <artifactId>mail</artifactId>
-    <version>1.0-SNAPSHOT</version>
-  </parent>
-  <groupId>org.example</groupId>
-  <artifactId>business</artifactId>
-  <version>1.0-SNAPSHOT</version>
-  <name>business</name>
-  <url>http://maven.apache.org</url>
-  <properties>
+<modelVersion>4.0.0</modelVersion>
+<parent>
+	<groupId>mail</groupId>
+	<artifactId>main</artifactId>
+	<version>1.0</version>
+</parent>
+<groupId>mail</groupId>
+<artifactId>business</artifactId>
+<version>1.0</version>
+<name>business</name>
+<properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
-  <dependencies>
-    <dependency>
-      <groupId>org.example</groupId>
-      <artifactId>dms</artifactId>
-      <version>1.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-log4j12</artifactId>
-        <version>1.5.6</version>
-    </dependency>
-    <dependency>
-           <groupId>javassist</groupId>
-           <artifactId>javassist</artifactId>
-           <version>3.4.GA</version>
-           <optional>true</optional>
-    </dependency>
-    <dependency>
-    <groupId>org.example</groupId>
-  <artifactId>cc</artifactId>
-  <version>1.0-SNAPSHOT</version>
-  </dependency>
-  </dependencies> 
+</properties>
+<dependencies>
+	<dependency>
+		<groupId>mail</groupId>
+		<artifactId>dms</artifactId>
+		<version>1.0</version>
+	</dependency>
+	<dependency>
+		<groupId>org.slf4j</groupId>
+		<artifactId>slf4j-log4j12</artifactId>
+		<version>1.5.6</version>
+	</dependency>
+	<dependency>
+		<groupId>javassist</groupId>
+		<artifactId>javassist</artifactId>
+		<version>3.4.GA</version>
+		<optional>true</optional>
+	</dependency>
+	<dependency>
+		<groupId>mail</groupId>
+		<artifactId>cc</artifactId>
+		<version>1.0</version>
+	</dependency>
+</dependencies> 
 </project>
