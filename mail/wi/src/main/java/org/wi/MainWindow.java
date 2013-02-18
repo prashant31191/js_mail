@@ -287,6 +287,15 @@ public class MainWindow extends JFrame {
 		contentPane.add(btnCreatMess);
 
 		JButton btnMoveMess = new JButton("Переместить");
+		btnMoveMess.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int selectedMessage = lstMessages.getSelectedIndex();
+				if (selectedMessage < 0)
+					return;
+				MoveFold move = new MoveFold(lstFolders.getSelectedIndex(), selectedMessage);
+				move.setVisible(true);
+			}
+		});
 		btnMoveMess.setBounds(419, 216, 91, 23);
 		contentPane.add(btnMoveMess);
 
@@ -658,5 +667,90 @@ public class MainWindow extends JFrame {
 			
 		}
 	}
+	private class MoveFold extends JFrame {
 
+		private JPanel contentPane;
+		private int selectedFolder;
+		private int selectedMessage;
+		
+		JList<String> lstMoveFolders;
+		private JLabel lblError;
+
+		public MoveFold(final int selectedFolder, final int selectedMessage) {
+			setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+			setBounds(100, 100, 252, 212);
+			contentPane = new JPanel();
+			contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+			setContentPane(contentPane);
+			contentPane.setLayout(null);
+			
+			this.selectedFolder = selectedFolder;
+			this.selectedMessage = selectedMessage;
+			
+			JLabel label = new JLabel("Папки:");
+			label.setBounds(10, 11, 46, 14);
+			contentPane.add(label);
+			
+			lstMoveFolders = new JList<String>(listModelFolders);
+			JScrollPane spFolders = new JScrollPane(lstMoveFolders);
+			spFolders
+					.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+			spFolders.setBounds(10, 28, 224, 108);
+			contentPane.add(spFolders);
+			
+			lblError = new JLabel("");
+			lblError.setBounds(10, 136, 224, 14);
+			contentPane.add(lblError);
+			
+			JButton btnMove = new JButton("Переместить");
+			btnMove.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					int selectedMoveFolder = lstMoveFolders.getSelectedIndex();
+					if (selectedMoveFolder < 0)
+						return;
+					Object[] requestInfo = new Object[3];
+					SimpleMessage message = folders.get(selectedFolder).getMessages().get(selectedMessage);
+					String folder = folders.get(selectedFolder).getName();
+					String moveFolder = folders.get(selectedMoveFolder).getName();
+					requestInfo[0] = message;
+					requestInfo[1] = folder;
+					requestInfo[2] = moveFolder;
+					try {
+						byte[] requestBytes = Serializer.serialize(requestInfo);
+						out.writeByte(9);
+						out.writeInt(key);
+						out.writeInt(requestBytes.length);
+						out.write(requestBytes);
+
+						byte answer = in.readByte();
+						if (answer == 0) {
+							String messageAppearance = listModelMessages.get(selectedMessage);
+							listModelMessages.remove(selectedMessage);
+							folders.get(selectedFolder).getMessages().remove(selectedMessage);
+							folders.get(selectedMoveFolder).getMessages().add(message);
+							dispose();
+						} else if (answer == 1) {
+							lblError.setText("Невозможно переместить");
+						} else if (answer == 2) {
+							lblError.setText("Проблемы с сервером");
+						} else if (answer == 3) {
+							lblError.setText("Несанкционированный пользватель");
+						}
+					} catch (IOException ex) {
+						System.out.println("IO error");
+						ex.printStackTrace();
+						try {
+							in.close();
+							out.close();
+							socket.close();
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
+					}
+				}
+			});
+			btnMove.setBounds(142, 151, 91, 23);
+			contentPane.add(btnMove);
+		}
+	}
 }

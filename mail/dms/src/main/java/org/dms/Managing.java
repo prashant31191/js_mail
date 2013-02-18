@@ -504,4 +504,52 @@ public class Managing {
 		}
 		return 0;
 	}
+	
+	public static boolean moveFolder(SimpleMessage message, String fromFolder, String toFolder, String whose) {
+		EntityManagerFactory emf = Persistence
+				.createEntityManagerFactory("mail");
+		EntityManager em = emf.createEntityManager();
+		EntityTransaction trx = em.getTransaction();
+		try {
+			trx.begin();
+			Email email = em.find(Email.class, whose);
+			List<Folder> folders = email.getFolders();
+			Message foundMessage = null;
+			Folder fFolder = null;
+			Folder tFolder = null;
+			for (Folder folder : folders) {
+				if (folder.getName().equals(fromFolder)) {
+					fFolder = folder;
+					break;
+				}
+			}
+			for (Folder folder : folders) {
+				if (folder.getName().equals(toFolder)) {
+					tFolder = folder;
+					break;
+				}
+			}
+			
+			List<MessToFold> messToFolds = fFolder.getMessToFolds();
+			for (MessToFold messToFold : messToFolds) {
+				foundMessage = messToFold.getMessage();
+				if (foundMessage.getAbout().equals(message.getAbout())
+						&& foundMessage.getText().equals(message.getText())
+						&& format.format(foundMessage.getSentDate())
+								.equals(format.format(message.getDate()))) {
+					messToFold.setFolder(tFolder);
+					break;
+				}
+			}
+			trx.commit();
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			if (trx.isActive())
+				trx.rollback();
+			return false;
+		} finally {
+			emf.close();
+		}
+	}
 }

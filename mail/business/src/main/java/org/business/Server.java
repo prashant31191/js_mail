@@ -288,6 +288,35 @@ public class Server {
 							}
 						}
 					}
+					
+					if (requestNumber == 9) {
+						int gotKey = in.readInt();
+						int length = in.readInt();
+						byte[] requestBytes = new byte[length];
+
+						for (int i = 0; i < length; i++)
+							requestBytes[i] = in.readByte();
+						Object[] requestInfo = (Object[]) Serializer
+								.deserialize(requestBytes);
+
+						if (key != gotKey)
+							out.writeByte(3);
+						else {
+							SimpleMessage message = (SimpleMessage)requestInfo[0];
+							String folder = (String)requestInfo[1];
+							String moveFolder = (String)requestInfo[2];
+							
+							if (folder.equals(moveFolder))
+								out.writeByte(1);
+							else {
+								boolean moved = Managing.moveFolder(message, folder, moveFolder, workWith);
+								if (moved)
+									out.writeByte(0);
+								else 
+									out.writeByte(2);
+							}
+						}
+					}
 				}
 			} catch (IOException io) {
 
