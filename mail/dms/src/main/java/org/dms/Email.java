@@ -25,48 +25,55 @@ public class Email {
 	@Id
 	@Column(name = "e_address", length = 30)
 	private String eaddress;
-	
+
 	@Column(name = "e_cr_date")
-	@Temporal(value=TemporalType.DATE)
+	@Temporal(value = TemporalType.DATE)
 	private Date creationDate;
-	
+
 	@ManyToOne
-    @JoinColumn(name = "u_id")
+	@JoinColumn(name = "u_id")
 	private User user;
-	
+
 	@Column(name = "e_password")
 	private String password;
-	
-	@OneToMany(mappedBy="from")
-    private List<Message> messages;
-	
-	@OneToMany(mappedBy="whose")
-    private List<Folder> folders;
-	
-	@OneToMany(mappedBy="to")
-    private List<MessToMail> MessToMails;
-	
+
+	@OneToMany(mappedBy = "from")
+	private List<Message> messages;
+
+	@OneToMany(mappedBy = "whose")
+	private List<Folder> folders;
+
+	@OneToMany(mappedBy = "to")
+	private List<MessToMail> MessToMails;
+
 	public String getEaddress() {
 		return eaddress;
 	}
+
 	public void setEaddress(String eaddress) {
 		this.eaddress = eaddress;
 	}
+
 	public Date getCreationDate() {
 		return creationDate;
 	}
+
 	public void setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
 	}
+
 	public User getUser() {
 		return user;
 	}
+
 	public void setUser(User user) {
 		this.user = user;
 	}
+
 	public String getPassword() {
 		return password;
 	}
+
 	public void setPassword(String password) {
 		this.password = password;
 	}
@@ -74,18 +81,23 @@ public class Email {
 	public List<Folder> getFolders() {
 		return folders;
 	}
+
 	public void setFolders(List<Folder> folders) {
 		this.folders = folders;
 	}
+
 	public List<Message> getMessages() {
 		return messages;
 	}
+
 	public void setMessages(List<Message> messages) {
 		this.messages = messages;
 	}
+
 	public List<MessToMail> getMessToMails() {
 		return MessToMails;
 	}
+
 	public void setMessToMails(List<MessToMail> messToMails) {
 		MessToMails = messToMails;
 	}

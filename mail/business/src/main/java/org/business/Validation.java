@@ -97,8 +97,8 @@ public class Validation {
 	}
 
 	/**
-	 * Checks if the phone number is correct, i.e. contains only numbers or "+" at
-	 * the beginning and consists of more than 5 letters
+	 * Checks if the phone number is correct, i.e. contains only numbers or "+"
+	 * at the beginning and consists of more than 5 letters
 	 * 
 	 * @param phone
 	 * @return true, in case the number is correct, otherwise false

@@ -12,6 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JButton;
 import javax.swing.JList;
 
+import org.cc.Serializer;
 import org.cc.SimpleFolder;
 import org.cc.SimpleMessage;
 
@@ -29,27 +30,33 @@ import java.util.List;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+/**
+ * Main window for dealing with mail-server
+ * 
+ * @author Fomin
+ * @version 1.0
+ */
 public class MainWindow extends JFrame {
-
 	private JPanel contentPane;
+	private JLabel lblError;
 
 	private Socket socket = null;
 	private DataInputStream in = null;
 	private DataOutputStream out = null;
 	private int key;
-	
-	private JLabel lblError;
 
-	SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy hh:mm:ss");
+	private SimpleDateFormat format = new SimpleDateFormat(
+			"dd.MM.yyyy hh:mm:ss");
 
-	JList<String> lstFolders;
-	JList<String> lstMessages;
+	private JList<String> lstFolders;
+	private JList<String> lstMessages;
 
-	List<SimpleFolder> folders = null;
-	List<SimpleMessage> messages = null;
-	DefaultListModel<String> listModelMessages = new DefaultListModel<String>();
-	DefaultListModel<String> listModelFolders = new DefaultListModel<String>();
+	private List<SimpleFolder> folders = null;
+	private List<SimpleMessage> messages = null;
+	private DefaultListModel<String> listModelMessages = new DefaultListModel<String>();
+	private DefaultListModel<String> listModelFolders = new DefaultListModel<String>();
 
+	@SuppressWarnings("unchecked")
 	public MainWindow(final Socket socket, final DataInputStream in,
 			final DataOutputStream out, final int key) {
 
@@ -345,7 +352,7 @@ public class MainWindow extends JFrame {
 		for (SimpleFolder sf : folders) {
 			listModelFolders.add(folders.indexOf(sf), sf.getName());
 		}
-		
+
 		Thread thread = new Thread(new newMessageChecker());
 		thread.setDaemon(true);
 		thread.start();
@@ -750,7 +757,7 @@ public class MainWindow extends JFrame {
 			contentPane.add(btnMove);
 		}
 	}
-	
+
 	private class newMessageChecker implements Runnable {
 
 		public void run() {
@@ -762,19 +769,19 @@ public class MainWindow extends JFrame {
 				}
 			}
 			List<SimpleMessage> inputMessages = inputFolder.getMessages();
-			
+
 			while (true) {
 				try {
 					Thread.sleep(15000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				
+
 				try {
 					out.writeByte(10);
 					out.writeInt(key);
 					out.writeInt(inputMessages.size());
-					
+
 					byte answer = in.readByte();
 					if (answer == 0) {
 						int length = in.readInt();
@@ -783,13 +790,13 @@ public class MainWindow extends JFrame {
 							answerBytes[i] = in.readByte();
 						List<SimpleMessage> gotMessages = (List<SimpleMessage>) Serializer
 								.deserialize(answerBytes);
-						
+
 						for (SimpleMessage sMessage : gotMessages)
 							inputFolder.addMessage(sMessage);
-						
+
 						drawMessages();
 					} else if (answer == 1) {
-						
+
 					} else if (answer == 2) {
 						lblError.setText("Проблемы с сервером");
 					} else if (answer == 3) {
@@ -816,6 +823,6 @@ public class MainWindow extends JFrame {
 				}
 			}
 		}
-		
+
 	}
 }

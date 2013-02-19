@@ -62,7 +62,8 @@ public class Server {
 		/**
 		 * Public constructor for request hendler
 		 * 
-		 * @param socket Accepted socket
+		 * @param socket
+		 *            Accepted socket
 		 */
 		public ConnectionRequestHandler(Socket socket) {
 			this.socket = socket;
@@ -116,7 +117,7 @@ public class Server {
 							if (!workWith.equals("")) {
 								out.writeByte(0);
 								out.writeInt(key);
-								
+
 							} else
 								out.writeByte(2);
 						}
@@ -169,7 +170,7 @@ public class Server {
 						}
 
 					}
-					
+
 					if (requestNumber == 4) {
 						int gotKey = in.readInt();
 						int length = in.readInt();
@@ -190,10 +191,10 @@ public class Server {
 										.serialize(checkedData);
 								out.writeByte(1);
 								out.writeInt(answerBytes.length);
-								out.write(answerBytes);	
+								out.write(answerBytes);
 							} else {
-								Object[] answer = Managing
-										.sendMessage(requestInfo, workWith);
+								Object[] answer = Managing.sendMessage(
+										requestInfo, workWith);
 								if (answer == null) {
 									out.writeByte(2);
 								} else {
@@ -206,7 +207,7 @@ public class Server {
 							}
 						}
 					}
-					
+
 					if (requestNumber == 5) {
 						int gotKey = in.readInt();
 						int length = in.readInt();
@@ -220,7 +221,8 @@ public class Server {
 						if (key != gotKey)
 							out.writeByte(3);
 						else {
-							boolean set = Managing.setRead(requestInfo, workWith);
+							boolean set = Managing.setRead(requestInfo,
+									workWith);
 							if (set) {
 								out.writeByte(0);
 							} else
@@ -240,14 +242,15 @@ public class Server {
 						if (key != gotKey)
 							out.writeByte(3);
 						else {
-							boolean deleted = Managing.deleteMess(requestInfo, workWith);
+							boolean deleted = Managing.deleteMess(requestInfo,
+									workWith);
 							if (deleted) {
 								out.writeByte(0);
 							} else
 								out.writeByte(2);
 						}
 					}
-					
+
 					if (requestNumber == 7) {
 						int gotKey = in.readInt();
 						int length = in.readInt();
@@ -279,7 +282,7 @@ public class Server {
 							}
 						}
 					}
-					
+
 					if (requestNumber == 8) {
 						int gotKey = in.readInt();
 						int length = in.readInt();
@@ -304,7 +307,7 @@ public class Server {
 							}
 						}
 					}
-					
+
 					if (requestNumber == 9) {
 						int gotKey = in.readInt();
 						int length = in.readInt();
@@ -318,38 +321,42 @@ public class Server {
 						if (key != gotKey)
 							out.writeByte(3);
 						else {
-							SimpleMessage message = (SimpleMessage)requestInfo[0];
-							String folder = (String)requestInfo[1];
-							String moveFolder = (String)requestInfo[2];
-							
+							SimpleMessage message = (SimpleMessage) requestInfo[0];
+							String folder = (String) requestInfo[1];
+							String moveFolder = (String) requestInfo[2];
+
 							if (folder.equals(moveFolder))
 								out.writeByte(1);
 							else {
-								boolean moved = Managing.moveFolder(message, folder, moveFolder, workWith);
+								boolean moved = Managing.moveMessage(message,
+										folder, moveFolder, workWith);
 								if (moved)
 									out.writeByte(0);
-								else 
+								else
 									out.writeByte(2);
 							}
 						}
 					}
-					
+
 					if (requestNumber == 10) {
 						int gotKey = in.readInt();
 						int amount = in.readInt();
-						
+
 						if (key != gotKey)
 							out.writeByte(3);
 						else {
-							int amountOfNew = Managing.hasNewMessages(amount, workWith);
+							int amountOfNew = Managing.hasNewMessages(amount,
+									workWith);
 							if (amountOfNew == -1)
 								out.writeByte(2);
 							else {
-								if (amountOfNew == 0) 
+								if (amountOfNew == 0)
 									out.writeByte(1);
 								else {
-									List<SimpleMessage> newMessages = Managing.getNewMessages(amountOfNew, workWith);
-									if (newMessages == null) 
+									List<SimpleMessage> newMessages = Managing
+											.getNewMessages(amountOfNew,
+													workWith);
+									if (newMessages == null)
 										out.writeByte(2);
 									else {
 										for (SimpleMessage mess : newMessages)

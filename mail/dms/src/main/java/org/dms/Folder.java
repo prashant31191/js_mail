@@ -25,41 +25,48 @@ public class Folder {
 	@Column(name = "f_id")
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
-	
+
 	@Column(name = "f_name", length = 30)
 	private String name;
-	
+
 	@ManyToOne
-    @JoinColumn(name = "e_address")
+	@JoinColumn(name = "e_address")
 	private Email whose;
-	
+
 	@Column(name = "f_undel")
 	private Boolean undel;
-	
-	@OneToMany(mappedBy="folder")
-    private List<MessToFold> messToFolds;
-	
+
+	@OneToMany(mappedBy = "folder")
+	private List<MessToFold> messToFolds;
+
 	public Integer getId() {
 		return id;
 	}
+
 	public void setId(Integer id) {
 		this.id = id;
 	}
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	public Email getWhose() {
 		return whose;
 	}
+
 	public void setWhose(Email whose) {
 		this.whose = whose;
 	}
+
 	public Boolean getUndel() {
 		return undel;
 	}
+
 	public void setUndel(Boolean undel) {
 		this.undel = undel;
 	}
@@ -67,8 +74,9 @@ public class Folder {
 	public List<MessToFold> getMessToFolds() {
 		return messToFolds;
 	}
+
 	public void setMessToFolds(List<MessToFold> messToFolds) {
 		this.messToFolds = messToFolds;
 	}
-	
+
 }

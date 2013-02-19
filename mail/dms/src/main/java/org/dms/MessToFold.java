@@ -21,34 +21,40 @@ public class MessToFold {
 	@Column(name = "mf_id")
 	@GeneratedValue
 	private Integer id;
-	
+
 	@ManyToOne
-    @JoinColumn(name = "m_id")
+	@JoinColumn(name = "m_id")
 	private Message message;
-	
+
 	@ManyToOne
-    @JoinColumn(name = "f_id")
+	@JoinColumn(name = "f_id")
 	private Folder folder;
-	
-	public MessToFold() {}	
-		
+
+	public MessToFold() {
+	}
+
 	public Integer getId() {
 		return id;
 	}
+
 	public void setId(Integer id) {
 		this.id = id;
 	}
+
 	public Message getMessage() {
 		return message;
 	}
+
 	public void setMessage(Message message) {
 		this.message = message;
 	}
+
 	public Folder getFolder() {
 		return folder;
 	}
+
 	public void setFolder(Folder folder) {
 		this.folder = folder;
 	}
-	
+
 }

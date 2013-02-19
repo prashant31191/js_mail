@@ -27,54 +27,63 @@ public class Message {
 	@Column(name = "m_id")
 	@GeneratedValue
 	private Integer id;
-	
+
 	@ManyToOne
-    @JoinColumn(name = "e_from")
+	@JoinColumn(name = "e_from")
 	private Email from;
-	
+
 	@Column(name = "m_date")
-	@Temporal(value=TemporalType.TIMESTAMP)
+	@Temporal(value = TemporalType.TIMESTAMP)
 	private Date sentDate;
-	
+
 	@Column(name = "m_about")
 	private String about;
-	
+
 	@Column(name = "m_text")
 	private String text;
-	
-	@OneToMany(mappedBy="message")
-    private List<MessToFold> messToFolds;
-	
-	@OneToMany(mappedBy="tMessage")
-    private List<MessToMail> messToMails;
-	
+
+	@OneToMany(mappedBy = "message")
+	private List<MessToFold> messToFolds;
+
+	@OneToMany(mappedBy = "tMessage")
+	private List<MessToMail> messToMails;
+
 	public Integer getId() {
 		return id;
 	}
+
 	public void setId(Integer id) {
 		this.id = id;
 	}
+
 	public Email getEmail() {
 		return from;
 	}
+
 	public void setEmail(Email from) {
 		this.from = from;
 	}
+
 	public Date getSentDate() {
 		return sentDate;
 	}
+
 	public void setSentDate(Date sentDate) {
 		this.sentDate = sentDate;
 	}
+
 	public String getAbout() {
 		return about;
 	}
+
 	public void setAbout(String about) {
 		this.about = about;
 	}
+
 	public String getText() {
 		return text;
 	}
+
 	public void setText(String text) {
 		this.text = text;
 	}
@@ -82,12 +91,15 @@ public class Message {
 	public List<MessToFold> getMessToFolds() {
 		return messToFolds;
 	}
+
 	public void setMessToFolds(List<MessToFold> messToFolds) {
 		this.messToFolds = messToFolds;
 	}
+
 	public List<MessToMail> getMessToMails() {
 		return messToMails;
 	}
+
 	public void setMessToMails(List<MessToMail> messToMails) {
 		this.messToMails = messToMails;
 	}

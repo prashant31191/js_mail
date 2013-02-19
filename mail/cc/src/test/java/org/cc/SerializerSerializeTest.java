@@ -1,9 +1,10 @@
-package org.business;
+package org.cc;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
+import org.cc.Serializer;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

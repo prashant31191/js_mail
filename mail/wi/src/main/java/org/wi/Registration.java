@@ -24,8 +24,17 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import javax.swing.JTextArea;
+
+import org.cc.Serializer;
+
 import java.awt.Color;
 
+/**
+ * Window to log in or sign up
+ * 
+ * @author Fomin
+ * @version 1.0
+ */
 public class Registration extends JFrame {
 
 	private JPanel contentPane;
@@ -39,13 +48,10 @@ public class Registration extends JFrame {
 	private JTextField fldBirthDate;
 	private JTextField fldPhone;
 
-	Socket socket = null;
-	DataInputStream in = null;
-	DataOutputStream out = null;
+	private Socket socket = null;
+	private DataInputStream in = null;
+	private DataOutputStream out = null;
 
-	/**
-	 * Launch the application.
-	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -59,9 +65,6 @@ public class Registration extends JFrame {
 		});
 	}
 
-	/**
-	 * Create the frame.
-	 */
 	public Registration() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 343);
@@ -111,7 +114,7 @@ public class Registration extends JFrame {
 				}
 			}
 		});
-		
+
 		JLabel lblGfhjkm = new JLabel("Пароль:");
 		lblGfhjkm.setBounds(163, 14, 53, 14);
 		lblGfhjkm.setHorizontalAlignment(SwingConstants.LEFT);
@@ -216,7 +219,8 @@ public class Registration extends JFrame {
 		btnLogIn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					String[] requestInfo = { fldEnterMail.getText().toLowerCase().trim(),
+					String[] requestInfo = {
+							fldEnterMail.getText().toLowerCase().trim(),
 							fldEnterPass.getText() };
 
 					byte[] requestBytes = Serializer.serialize(requestInfo);
@@ -232,7 +236,7 @@ public class Registration extends JFrame {
 						Registration.this.setVisible(false);
 					} else if (answer == 2) {
 						taInfo.setText("- Неверная пара ел.адресс / пароль");
-					} else 
+					} else
 						taInfo.setText("- Некорректные входные данные");
 				} catch (IOException ex) {
 					System.out.println("IO error");
@@ -244,7 +248,7 @@ public class Registration extends JFrame {
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
-				} 
+				}
 			}
 		});
 		btnLogIn.setBounds(341, 10, 91, 23);
@@ -256,9 +260,11 @@ public class Registration extends JFrame {
 				try {
 					String[] requestInfo = { fldLogin.getText().toLowerCase(),
 							fldFirstPass.getText(), fldSecPass.getText(),
-							fldFirstName.getText().trim(), fldSecName.getText().trim(),
-							fldBirthDate.getText().trim(), fldPhone.getText().trim() };
-					
+							fldFirstName.getText().trim(),
+							fldSecName.getText().trim(),
+							fldBirthDate.getText().trim(),
+							fldPhone.getText().trim() };
+
 					byte[] requestBytes = Serializer.serialize(requestInfo);
 					out.writeByte(1);
 					out.writeInt(requestBytes.length);
@@ -280,29 +286,29 @@ public class Registration extends JFrame {
 								.deserialize(answerBytes);
 
 						if (!answers[1])
-							sb.append("- Некоректный логин\n" +
-									"(Минимальная длина 4 символа. Латинские буквы," +
-									" \".\", \"-\", \"_\")\n\n");
+							sb.append("- Некоректный логин\n"
+									+ "(Минимальная длина 4 символа. Латинские буквы,"
+									+ " \".\", \"-\", \"_\")\n\n");
 						if (!answers[2] || !answers[3])
-							sb.append("- Некорректный пароль\n" +
-									"(Минимальная длина 8 символов. Латинские буквы," +
-									" \".\", \",\", \"-\", \"_\", \"%\", \"*\")\n\n");
+							sb.append("- Некорректный пароль\n"
+									+ "(Минимальная длина 8 символов. Латинские буквы,"
+									+ " \".\", \",\", \"-\", \"_\", \"%\", \"*\")\n\n");
 						if (!answers[4])
 							sb.append("- Пароли не совпадают\n\n");
 						if (!answers[5])
-							sb.append("- Некорректное имя\n" +
-									"(Минимальная длина 2 символа. Только русские и латинские буквы)\n\n");
+							sb.append("- Некорректное имя\n"
+									+ "(Минимальная длина 2 символа. Только русские и латинские буквы)\n\n");
 						if (!answers[6])
-							sb.append("- Некоректная фамилия\n" +
-									"(Минимальная длина 2 символа. Только русские и латинские буквы)\n\n");
+							sb.append("- Некоректная фамилия\n"
+									+ "(Минимальная длина 2 символа. Только русские и латинские буквы)\n\n");
 						if (!answers[7])
-							sb.append("- Некоректная дата рождения\n" +
-									"(Формат даты дд.мм.гггг)\n\n");
+							sb.append("- Некоректная дата рождения\n"
+									+ "(Формат даты дд.мм.гггг)\n\n");
 						if (!answers[8])
-							sb.append("- Некоректный телефон\n" +
-									"(Минимальная длина 6 символов. Только цифры и знак + вначале)\n\n");
+							sb.append("- Некоректный телефон\n"
+									+ "(Минимальная длина 6 символов. Только цифры и знак + вначале)\n\n");
 						taInfo.setText(sb.toString());
-					} else 
+					} else
 						taInfo.setText("Ошибка при создании учетной записи");
 				} catch (IOException er) {
 					er.printStackTrace();

@@ -24,6 +24,7 @@ import org.mindrot.jbcrypt.BCrypt;
  */
 public class Managing {
 	static SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy hh:mm:ss");
+
 	/**
 	 * Creates a user in DB
 	 * 
@@ -145,6 +146,15 @@ public class Managing {
 		return false;
 	}
 
+	/**
+	 * Gets amount of new messages in input Folder
+	 * 
+	 * @param amount
+	 *            Amount of messages the user has right now in Input folder
+	 * @param whose
+	 *            user's email address
+	 * @return Amount of new messages
+	 */
 	public static int hasNewMessages(int amount, String whose) {
 		int amountOfNew = 0;
 		EntityManagerFactory emf = Persistence
@@ -168,8 +178,18 @@ public class Managing {
 		}
 		return amountOfNew;
 	}
-	
-	public static List<SimpleMessage> getNewMessages(int amountOfNew, String whose) {
+
+	/**
+	 * Gets given amount of last messages in Input folder
+	 * 
+	 * @param amountOfNew
+	 *            Amount of messages to get
+	 * @param whose
+	 *            user's email address
+	 * @return List of SimpleMessages, that is, given amount of last messages
+	 */
+	public static List<SimpleMessage> getNewMessages(int amountOfNew,
+			String whose) {
 		List<SimpleMessage> newMessages = null;
 		EntityManagerFactory emf = Persistence
 				.createEntityManagerFactory("mail");
@@ -205,13 +225,14 @@ public class Managing {
 					sm.setTo("Мне");
 					List<MessToMail> messToMail = message.getMessToMails();
 					for (MessToMail mm : messToMail)
-						if (mm.getTo().getEaddress().equals(mail)) 
+						if (mm.getTo().getEaddress().equals(mail))
 							sm.setRead(mm.getRead());
 				}
 				simpleMessages.add(0, sm);
 			}
 			Collections.sort(simpleMessages);
-			newMessages = new ArrayList<SimpleMessage>(simpleMessages.subList(0, amountOfNew));
+			newMessages = new ArrayList<SimpleMessage>(simpleMessages.subList(
+					0, amountOfNew));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -220,7 +241,15 @@ public class Managing {
 		}
 		return newMessages;
 	}
-	
+
+	/**
+	 * Gets everything the user has
+	 * 
+	 * @param email
+	 *            User's email address
+	 * @return List of SimpleFolder, that is, all folders and messages of given
+	 *         user
+	 */
 	public static List<SimpleFolder> getEverything(String email) {
 		EntityManagerFactory emf = Persistence
 				.createEntityManagerFactory("mail");
@@ -228,8 +257,6 @@ public class Managing {
 
 		try {
 			Email mail = em.find(Email.class, email);
-
-			User user = mail.getUser();
 
 			List<Folder> dbFolders = mail.getFolders();
 			List<SimpleFolder> sFolders = new ArrayList<SimpleFolder>();
@@ -258,7 +285,7 @@ public class Managing {
 						sm.setTo("Мне");
 						List<MessToMail> messToMail = message.getMessToMails();
 						for (MessToMail mm : messToMail)
-							if (mm.getTo().getEaddress().equals(email)) 
+							if (mm.getTo().getEaddress().equals(email))
 								sm.setRead(mm.getRead());
 					}
 					simpleMessages.add(0, sm);
@@ -276,42 +303,53 @@ public class Managing {
 		}
 	}
 
+	/**
+	 * Sends a message
+	 * 
+	 * @param data
+	 *            Information about the message
+	 * @param sender
+	 *            User's email address
+	 * @return array of Object, containing input and output messages after
+	 *         sending
+	 */
 	public static Object[] sendMessage(String[] data, String sender) {
-		EntityManagerFactory emf = Persistence.createEntityManagerFactory("mail");
+		EntityManagerFactory emf = Persistence
+				.createEntityManagerFactory("mail");
 		EntityManager em = emf.createEntityManager();
 		EntityTransaction trx = em.getTransaction();
 		boolean thereIsGoodGetter = false;
 		try {
 			String[] emails = data[0].trim().split(";");
-			
+
 			trx.begin();
-			
+
 			Email noreply = em.find(Email.class, "noreply@mail.js");
 			Email senderEmail = em.find(Email.class, sender);
 			List<Folder> senderFolders = senderEmail.getFolders();
 			Folder senderInput = null;
 			Folder senderOutput = null;
-			for (Folder folder: senderFolders) {
+			for (Folder folder : senderFolders) {
 				if (folder.getName().equals("Входящие"))
 					senderInput = folder;
 				if (folder.getName().equals("Исходящие"))
 					senderOutput = folder;
 			}
-			
+
 			Message newMessage = new Message();
 			newMessage.setEmail(senderEmail);
 			newMessage.setAbout(data[1]);
 			newMessage.setText(data[2]);
 			Date messDate = new Date(System.currentTimeMillis());
 			newMessage.setSentDate(messDate);
-			
+
 			StringBuilder getters = new StringBuilder();
 			SimpleMessage outcomeMess = new SimpleMessage();
 			List<SimpleMessage> incomeMessages = new ArrayList<SimpleMessage>();
-			
-			for (String tmp: emails) {
+
+			for (String tmp : emails) {
 				Email emailTo = em.find(Email.class, tmp.trim());
-				
+
 				if (emailTo == null || tmp.trim().equals("noreply@mail.js")
 						|| tmp.trim().equals(sender)) {
 
@@ -319,15 +357,16 @@ public class Managing {
 					message.setAbout("Ошибка отправки");
 					message.setEmail(noreply);
 					message.setSentDate(messDate);
-					StringBuilder text = new StringBuilder("Ошибка отправки на адрес ");
+					StringBuilder text = new StringBuilder(
+							"Ошибка отправки на адрес ");
 					text.append(tmp.trim());
-					text.append(". Адресса не существует.\n\nСлужба mail.js.");
+					text.append(". Адреса не существует.\n\nСлужба mail.js.");
 					text.append("\n\nВаше сообщение: \n");
 					text.append("Тема: " + data[1]);
 					text.append("\n" + data[2]);
 					message.setText(text.toString());
 					em.persist(message);
-					
+
 					SimpleMessage incomeMessage = new SimpleMessage();
 					incomeMessage.setAbout("Ошибка отправки");
 					incomeMessage.setDate(messDate);
@@ -336,7 +375,7 @@ public class Managing {
 					incomeMessage.setText(text.toString());
 					incomeMessage.setTo("Мне");
 					incomeMessages.add(incomeMessage);
-					
+
 					MessToFold mf = new MessToFold();
 					mf.setFolder(senderInput);
 					mf.setMessage(message);
@@ -349,7 +388,7 @@ public class Managing {
 					em.persist(mm);
 				} else {
 					getters.append(tmp.trim() + "; ");
-					
+
 					if (!thereIsGoodGetter) {
 						em.persist(newMessage);
 						MessToFold mf = new MessToFold();
@@ -357,22 +396,21 @@ public class Managing {
 						mf.setMessage(newMessage);
 						em.persist(mf);
 						thereIsGoodGetter = true;
-						
-						
+
 						outcomeMess.setAbout(data[1]);
 						outcomeMess.setDate(messDate);
 						outcomeMess.setText(data[2]);
 						outcomeMess.setFrom("Меня");
 						outcomeMess.setRead(true);
 					}
-					
+
 					List<Folder> getterFolders = emailTo.getFolders();
 					Folder getterInput = null;
-					for (Folder folder: getterFolders) {
+					for (Folder folder : getterFolders) {
 						if (folder.getName().equals("Входящие"))
 							getterInput = folder;
 					}
-					
+
 					MessToFold mf = new MessToFold();
 					mf.setFolder(getterInput);
 					mf.setMessage(newMessage);
@@ -383,31 +421,40 @@ public class Managing {
 					mm.setTo(emailTo);
 					mm.setRead(false);
 					em.persist(mm);
-				}	
+				}
 			}
 			trx.commit();
-			
+
 			Object[] serverMessages = new Object[2];
 			if (thereIsGoodGetter) {
 				outcomeMess.setTo(getters.toString());
 				serverMessages[0] = outcomeMess;
-			} else 
+			} else
 				serverMessages[0] = null;
-			
+
 			serverMessages[1] = incomeMessages;
 			return serverMessages;
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			if (trx.isActive())
 				trx.rollback();
 			return null;
 		} finally {
-			
+
 			emf.close();
 		}
 	}
-	
+
+	/**
+	 * Set the message as read
+	 * 
+	 * @param message
+	 *            Simple message to set as read
+	 * @param whose
+	 *            User's email address
+	 * @return true, in case the message has been set as read
+	 */
 	public static boolean setRead(SimpleMessage message, String whose) {
 		EntityManagerFactory emf = Persistence
 				.createEntityManagerFactory("mail");
@@ -415,15 +462,14 @@ public class Managing {
 		EntityTransaction trx = em.getTransaction();
 		try {
 			trx.begin();
-			
+
 			Email email = em.find(Email.class, whose);
 			Message foundMessage = null;
-			
+
 			List<MessToMail> messToMails = email.getMessToMails();
 
-
-				for (MessToMail messToMail : messToMails) {
-					foundMessage = messToMail.getMessage();
+			for (MessToMail messToMail : messToMails) {
+				foundMessage = messToMail.getMessage();
 				if (foundMessage.getAbout().equals(message.getAbout())
 						&& foundMessage.getText().equals(message.getText())
 						&& format.format(foundMessage.getSentDate()).equals(
@@ -434,8 +480,7 @@ public class Managing {
 					return true;
 				}
 			}
-					
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			if (trx.isActive())
@@ -446,7 +491,16 @@ public class Managing {
 		}
 		return false;
 	}
-	
+
+	/**
+	 * Deletes given message
+	 * 
+	 * @param message
+	 *            Message to delete
+	 * @param whose
+	 *            User's email
+	 * @return true, in case the message has been deleted
+	 */
 	public static boolean deleteMess(SimpleMessage message, String whose) {
 		EntityManagerFactory emf = Persistence
 				.createEntityManagerFactory("mail");
@@ -459,8 +513,7 @@ public class Managing {
 			Message foundMessage = null;
 
 			List<Folder> folders = email.getFolders();
-			label:
-			for (Folder folder : folders) {
+			label: for (Folder folder : folders) {
 				for (MessToFold messToFold : folder.getMessToFolds()) {
 					foundMessage = messToFold.getMessage();
 					if (foundMessage.getAbout().equals(message.getAbout())
@@ -492,7 +545,16 @@ public class Managing {
 			emf.close();
 		}
 	}
-	
+
+	/**
+	 * Creates folder
+	 * 
+	 * @param folderName
+	 *            Name of folder to create
+	 * @param whose
+	 *            User's email address
+	 * @return true, in case the folder has been created
+	 */
 	public static SimpleFolder createFolder(String folderName, String whose) {
 		EntityManagerFactory emf = Persistence
 				.createEntityManagerFactory("mail");
@@ -517,7 +579,7 @@ public class Managing {
 			folder.setWhose(email);
 			em.persist(folder);
 			trx.commit();
-			
+
 			SimpleFolder simpleFolder = new SimpleFolder();
 			simpleFolder.setName(folderName);
 			return simpleFolder;
@@ -530,7 +592,17 @@ public class Managing {
 			emf.close();
 		}
 	}
-	
+
+	/**
+	 * Deletes given folder
+	 * 
+	 * @param sFolder
+	 *            Folder to delete
+	 * @param whose
+	 *            User's email address
+	 * @return 1 in case, the folder can't be deleted, 0 in case the folder has
+	 *         been deleted
+	 */
 	public static byte deleteFolder(SimpleFolder sFolder, String whose) {
 		EntityManagerFactory emf = Persistence
 				.createEntityManagerFactory("mail");
@@ -545,12 +617,12 @@ public class Managing {
 				if (folder.getName().equals(sFolder.getName())) {
 					foundFolder = folder;
 					break;
-				}	
-			
+				}
+
 			if (foundFolder.getUndel()) {
 				return 1;
 			}
-			
+
 			List<MessToFold> messToFolds = foundFolder.getMessToFolds();
 			if (messToFolds.size() == 0) {
 				em.remove(foundFolder);
@@ -564,7 +636,7 @@ public class Managing {
 					em.remove(messToFold);
 				} else {
 					List<MessToMail> mtms = message.getMessToMails();
-					for (MessToMail mtm : mtms) 
+					for (MessToMail mtm : mtms)
 						em.remove(mtm);
 					em.remove(messToFold);
 					em.remove(message);
@@ -582,8 +654,22 @@ public class Managing {
 		}
 		return 0;
 	}
-	
-	public static boolean moveFolder(SimpleMessage message, String fromFolder, String toFolder, String whose) {
+
+	/**
+	 * Moves given message from one folder to another
+	 * 
+	 * @param message
+	 *            Message to move
+	 * @param fromFolder
+	 *            Name of source folder
+	 * @param toFolder
+	 *            Name of target folder
+	 * @param whose
+	 *            User's email address
+	 * @return true, in case the folder has been moved
+	 */
+	public static boolean moveMessage(SimpleMessage message, String fromFolder,
+			String toFolder, String whose) {
 		EntityManagerFactory emf = Persistence
 				.createEntityManagerFactory("mail");
 		EntityManager em = emf.createEntityManager();
@@ -607,14 +693,14 @@ public class Managing {
 					break;
 				}
 			}
-			
+
 			List<MessToFold> messToFolds = fFolder.getMessToFolds();
 			for (MessToFold messToFold : messToFolds) {
 				foundMessage = messToFold.getMessage();
 				if (foundMessage.getAbout().equals(message.getAbout())
 						&& foundMessage.getText().equals(message.getText())
-						&& format.format(foundMessage.getSentDate())
-								.equals(format.format(message.getDate()))) {
+						&& format.format(foundMessage.getSentDate()).equals(
+								format.format(message.getDate()))) {
 					messToFold.setFolder(tFolder);
 					break;
 				}
