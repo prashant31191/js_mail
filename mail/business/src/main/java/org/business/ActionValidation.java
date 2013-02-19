@@ -16,7 +16,6 @@ public class ActionValidation {
 				break;
 			}
 		}
-		
 		return checkedData;
 	}
 	
