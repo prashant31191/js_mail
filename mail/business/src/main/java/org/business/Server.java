@@ -7,9 +7,20 @@ import java.io.*;
 import org.dms.Managing;
 import org.cc.*;
 
+/**
+ * Mail server
+ * 
+ * @author Fomin
+ * @version 1.0
+ */
 public class Server {
 	private final static int portNumber = 6789;
 
+	/**
+	 * Main method for starting server
+	 * 
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		try {
 			new Server().startServer();
@@ -48,6 +59,11 @@ public class Server {
 		private int key = 0;
 		private String workWith = null;
 
+		/**
+		 * Public constructor for request hendler
+		 * 
+		 * @param socket Accepted socket
+		 */
 		public ConnectionRequestHandler(Socket socket) {
 			this.socket = socket;
 		}

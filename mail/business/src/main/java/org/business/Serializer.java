@@ -7,7 +7,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 /**
- * Class, containing methods for serialization and deserialization of an object
+ * Class, containing methods for serialization and deserialization of some Object
  * 
  * @author Фома
  * @version 1.0

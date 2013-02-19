@@ -11,7 +11,7 @@ import java.text.SimpleDateFormat;
  */
 public class Validation {
 	/**
-	 * Checks if passwords match
+	 * Checks if the passwords match
 	 * 
 	 * @param password
 	 *            Password
@@ -26,7 +26,7 @@ public class Validation {
 	}
 
 	/**
-	 * Checks if a field is not clear
+	 * Checks if the field is not clear
 	 * 
 	 * @param field
 	 * @return true, in case the field is not clear, otherwise false
@@ -38,7 +38,7 @@ public class Validation {
 	}
 
 	/**
-	 * Checks if a prefix of mail-address is correct, i.e begins with Latin
+	 * Checks if the prefix of mail-address is correct, i.e begins with Latin
 	 * letter, contains letters or ".", "-", "_", and consists of more than 3
 	 * characters
 	 * 
@@ -53,7 +53,7 @@ public class Validation {
 	}
 
 	/**
-	 * Checks if a mail-address is correct, i.e. begins with Latin letter,
+	 * Checks if the mail-address is correct, i.e. begins with Latin letter,
 	 * contains letters or ".", "-", "_" before @, matches ...@??.??.?? and
 	 * consists of more than 5 characters
 	 * 
@@ -69,7 +69,7 @@ public class Validation {
 	}
 
 	/**
-	 * Checks if a password is correct, i.e. contains only letters, ".", ",",
+	 * Checks if the password is correct, i.e. contains only letters, ".", ",",
 	 * "-", "_", "%", "*" and consists of more than 7 characters
 	 * 
 	 * @param password
@@ -83,7 +83,7 @@ public class Validation {
 	}
 
 	/**
-	 * Checks if a first name of last name is correct, i.e. contains only
+	 * Checks if the first name or last name is correct, i.e. contains only
 	 * letters and consists of more than 1 character
 	 * 
 	 * @param name
@@ -97,7 +97,7 @@ public class Validation {
 	}
 
 	/**
-	 * Checks if a phone number is correct, i.e. contains only numbers or "+" at
+	 * Checks if the phone number is correct, i.e. contains only numbers or "+" at
 	 * the beginning and consists of more than 5 letters
 	 * 
 	 * @param phone
@@ -111,7 +111,7 @@ public class Validation {
 	}
 
 	/**
-	 * Checks if a line is correct, i.e. contains only correct addresses
+	 * Checks if the line is correct, i.e. contains only correct addresses
 	 * 
 	 * @param fieldTo
 	 *            Line of semicolon-separated email addresses
@@ -130,7 +130,7 @@ public class Validation {
 	}
 
 	/**
-	 * Checks if a date is correct i.e. matches dd.mm.yyyy
+	 * Checks if the date is correct i.e. matches dd.mm.yyyy
 	 * 
 	 * @param date
 	 * @return true, in case the date is correct, otherwise false
@@ -163,7 +163,7 @@ public class Validation {
 	}
 
 	/**
-	 * Checks if the text of the message is correct, i.e. not empty
+	 * Checks if the text of some message is correct, i.e. not empty
 	 * 
 	 * @param text
 	 * @return true, in case the text is correct, otherwise false
