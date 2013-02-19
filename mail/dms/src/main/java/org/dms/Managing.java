@@ -3,6 +3,7 @@ package org.dms;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -144,6 +145,82 @@ public class Managing {
 		return false;
 	}
 
+	public static int hasNewMessages(int amount, String whose) {
+		int amountOfNew = 0;
+		EntityManagerFactory emf = Persistence
+				.createEntityManagerFactory("mail");
+		EntityManager em = emf.createEntityManager();
+		try {
+			Email mail = em.find(Email.class, whose);
+			List<Folder> folders = mail.getFolders();
+			Folder inputFolder = null;
+			for (Folder folder : folders)
+				if (folder.getName().equals("Входящие")) {
+					inputFolder = folder;
+					break;
+				}
+			amountOfNew = inputFolder.getMessToFolds().size() - amount;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return -1;
+		} finally {
+			emf.close();
+		}
+		return amountOfNew;
+	}
+	
+	public static List<SimpleMessage> getNewMessages(int amountOfNew, String whose) {
+		List<SimpleMessage> newMessages = null;
+		EntityManagerFactory emf = Persistence
+				.createEntityManagerFactory("mail");
+		EntityManager em = emf.createEntityManager();
+		try {
+			Email mail = em.find(Email.class, whose);
+			List<Folder> folders = mail.getFolders();
+			Folder inputFolder = null;
+			for (Folder folder : folders)
+				if (folder.getName().equals("Входящие")) {
+					inputFolder = folder;
+					break;
+				}
+			List<MessToFold> messToFold = inputFolder.getMessToFolds();
+			List<SimpleMessage> simpleMessages = new ArrayList<SimpleMessage>();
+			for (MessToFold mf : messToFold) {
+				Message message = mf.getMessage();
+				SimpleMessage sm = new SimpleMessage();
+
+				sm.setDate(message.getSentDate());
+				sm.setAbout(message.getAbout());
+				sm.setText(message.getText());
+				if (message.getEmail().getEaddress().equals(mail)) {
+					sm.setFrom("Меня");
+					List<MessToMail> messToMail = message.getMessToMails();
+					StringBuilder sb = new StringBuilder();
+					for (MessToMail mm : messToMail)
+						sb.append(mm.getTo().getEaddress() + "; ");
+					sm.setTo(sb.toString());
+					sm.setRead(true);
+				} else {
+					sm.setFrom(message.getEmail().getEaddress());
+					sm.setTo("Мне");
+					List<MessToMail> messToMail = message.getMessToMails();
+					for (MessToMail mm : messToMail)
+						if (mm.getTo().getEaddress().equals(mail)) 
+							sm.setRead(mm.getRead());
+				}
+				simpleMessages.add(0, sm);
+			}
+			Collections.sort(simpleMessages);
+			newMessages = new ArrayList<SimpleMessage>(simpleMessages.subList(0, amountOfNew));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+			emf.close();
+		}
+		return newMessages;
+	}
+	
 	public static List<SimpleFolder> getEverything(String email) {
 		EntityManagerFactory emf = Persistence
 				.createEntityManagerFactory("mail");
@@ -186,6 +263,7 @@ public class Managing {
 					}
 					simpleMessages.add(0, sm);
 				}
+				Collections.sort(simpleMessages);
 				sFolder.setMessages(simpleMessages);
 				sFolders.add(sFolder);
 			}

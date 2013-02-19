@@ -22,7 +22,7 @@ public class SimpleFolder implements Serializable{
 	public void setMessages(List<SimpleMessage> messages) {
 		this.messages = messages;
 	}
-	public void addMessage(SimpleMessage message) {
+	public synchronized void addMessage(SimpleMessage message) {
 		int index = 0;
 		for (SimpleMessage tmpMess : messages) {
 			if (message.getDate().compareTo(tmpMess.getDate()) >= 0) {

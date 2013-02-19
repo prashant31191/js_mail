@@ -146,7 +146,7 @@ public class Registration extends JFrame {
 		fldLogin.setColumns(10);
 
 		JLabel lblmailjs = new JLabel("@mail.js");
-		lblmailjs.setBounds(177, 92, 46, 14);
+		lblmailjs.setBounds(177, 92, 58, 14);
 		contentPane.add(lblmailjs);
 
 		JLabel label_3 = new JLabel("Пароль:");

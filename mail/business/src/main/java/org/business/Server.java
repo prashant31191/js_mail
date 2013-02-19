@@ -317,11 +317,42 @@ public class Server {
 							}
 						}
 					}
+					
+					if (requestNumber == 10) {
+						int gotKey = in.readInt();
+						int amount = in.readInt();
+						
+						if (key != gotKey)
+							out.writeByte(3);
+						else {
+							int amountOfNew = Managing.hasNewMessages(amount, workWith);
+							if (amountOfNew == -1)
+								out.writeByte(2);
+							else {
+								if (amountOfNew == 0) 
+									out.writeByte(1);
+								else {
+									List<SimpleMessage> newMessages = Managing.getNewMessages(amountOfNew, workWith);
+									if (newMessages == null) 
+										out.writeByte(2);
+									else {
+										for (SimpleMessage mess : newMessages)
+											System.out.println(mess.getText());
+										byte[] answerBytes = Serializer
+												.serialize(newMessages);
+										out.writeByte(0);
+										out.writeInt(answerBytes.length);
+										out.write(answerBytes);
+									}
+								}
+							}
+						}
+					}
 				}
 			} catch (IOException io) {
-
+				io.printStackTrace();
 			} catch (ClassNotFoundException cnf) {
-
+				cnf.printStackTrace();
 			} finally {
 				try {
 					in.close();

@@ -37,6 +37,8 @@ public class MainWindow extends JFrame {
 	private DataInputStream in = null;
 	private DataOutputStream out = null;
 	private int key;
+	
+	private JLabel lblError;
 
 	SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy hh:mm:ss");
 
@@ -88,7 +90,7 @@ public class MainWindow extends JFrame {
 		spMessageDetailed.setBounds(10, 258, 702, 269);
 		contentPane.add(spMessageDetailed);
 
-		final JLabel lblError = new JLabel("");
+		lblError = new JLabel("");
 		lblError.setForeground(Color.RED);
 		lblError.setBounds(10, 527, 301, 14);
 		contentPane.add(lblError);
@@ -343,12 +345,11 @@ public class MainWindow extends JFrame {
 		for (SimpleFolder sf : folders) {
 			listModelFolders.add(folders.indexOf(sf), sf.getName());
 		}
-
+		
+		Thread thread = new Thread(new newMessageChecker());
+		thread.setDaemon(true);
+		thread.start();
 	}
-
-	// private void sendMessagesAfterSending(Object[] messages) {
-	//
-	// }
 
 	private void drawMessages() {
 		int index = lstFolders.getSelectedIndex();
@@ -656,12 +657,6 @@ public class MainWindow extends JFrame {
 			});
 			btnCreateFold.setBounds(127, 74, 120, 23);
 			contentPane.add(btnCreateFold);
-
-			// this.socket = socket;
-			// this.in = in;
-			// this.out = out;
-			// this.key = key;
-
 		}
 	}
 
@@ -754,5 +749,73 @@ public class MainWindow extends JFrame {
 			btnMove.setBounds(142, 151, 91, 23);
 			contentPane.add(btnMove);
 		}
+	}
+	
+	private class newMessageChecker implements Runnable {
+
+		public void run() {
+			SimpleFolder inputFolder = null;
+			for (SimpleFolder tmpFolder : folders) {
+				if (tmpFolder.getName().equals("Входящие")) {
+					inputFolder = tmpFolder;
+					break;
+				}
+			}
+			List<SimpleMessage> inputMessages = inputFolder.getMessages();
+			
+			while (true) {
+				try {
+					Thread.sleep(15000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				
+				try {
+					out.writeByte(10);
+					out.writeInt(key);
+					out.writeInt(inputMessages.size());
+					
+					byte answer = in.readByte();
+					if (answer == 0) {
+						int length = in.readInt();
+						byte[] answerBytes = new byte[length];
+						for (int i = 0; i < length; i++)
+							answerBytes[i] = in.readByte();
+						List<SimpleMessage> gotMessages = (List<SimpleMessage>) Serializer
+								.deserialize(answerBytes);
+						
+						for (SimpleMessage sMessage : gotMessages)
+							inputFolder.addMessage(sMessage);
+						
+						drawMessages();
+					} else if (answer == 1) {
+						
+					} else if (answer == 2) {
+						lblError.setText("Проблемы с сервером");
+					} else if (answer == 3) {
+						lblError.setText("Несанкционированный пользователь");
+					}
+				} catch (IOException ex) {
+					System.out.println("IO error");
+					ex.printStackTrace();
+					try {
+						in.close();
+						out.close();
+						socket.close();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+				} catch (ClassNotFoundException er) {
+					try {
+						in.close();
+						out.close();
+						socket.close();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+				}
+			}
+		}
+		
 	}
 }

@@ -3,7 +3,7 @@ package org.cc;
 import java.io.Serializable;
 import java.util.Date;
 
-public class SimpleMessage implements Serializable {
+public class SimpleMessage implements Serializable, Comparable<SimpleMessage> {
 	private String from;
 	private String to;
 	private Date date;
@@ -47,6 +47,16 @@ public class SimpleMessage implements Serializable {
 	public void setRead(boolean read) {
 		this.read = read;
 	}
+	public int compareTo(SimpleMessage o) {
+		if (this.getDate().compareTo(o.getDate()) < 0) {
+			return 1;
+		}
+		if (this.getDate().compareTo(o.getDate()) > 0) {
+			return -1;
+		}
+		return 0;
+	}
+
 	
 	
 }
