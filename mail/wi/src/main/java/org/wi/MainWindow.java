@@ -28,6 +28,8 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -41,6 +43,7 @@ public class MainWindow extends JFrame {
 	private JPanel contentPane;
 	private JLabel lblError;
 	
+	private Lock lock = new ReentrantLock();
 	private int key;
 
 	private SimpleDateFormat format = new SimpleDateFormat(
@@ -90,7 +93,6 @@ public class MainWindow extends JFrame {
 					System.out.println("stream error");
 					e2.printStackTrace();
 					try {
-						out.close();
 						socket.close();
 					} catch (IOException e1) {
 						e1.printStackTrace();
@@ -98,8 +100,10 @@ public class MainWindow extends JFrame {
 				}
 
 				try {
+					lock.lock();
 					out.writeByte(0);
 					out.writeInt(key);
+					lock.unlock();
 				} catch (IOException ex) {
 					System.out.println("IO error");
 					ex.printStackTrace();
@@ -189,6 +193,7 @@ public class MainWindow extends JFrame {
 							}
 							
 							try {
+								lock.lock();
 								byte[] requestBytes = Serializer
 										.serialize(message);
 								out.writeByte(5);
@@ -220,6 +225,7 @@ public class MainWindow extends JFrame {
 									lstMessages
 											.setSelectedIndex(selectedMessage);
 								}
+								lock.unlock();
 							} catch (IOException er) {
 								er.printStackTrace();
 							} finally {
@@ -288,6 +294,7 @@ public class MainWindow extends JFrame {
 				}
 				
 				try {
+					lock.lock();
 					byte[] requestBytes = Serializer.serialize(sFolder);
 					out.writeByte(8);
 					out.writeInt(key);
@@ -307,6 +314,7 @@ public class MainWindow extends JFrame {
 					} else {
 						lblError.setText("Несанкционированный пользователь");
 					}
+					lock.unlock();
 				} catch (IOException er) {
 					er.printStackTrace();
 				} finally {
@@ -373,6 +381,7 @@ public class MainWindow extends JFrame {
 				}
 				
 				try {
+					lock.lock();
 					if (folderName.equals("Корзина")) {
 						Object[] request = new Object[2];
 						request[0] = message;
@@ -420,6 +429,7 @@ public class MainWindow extends JFrame {
 							lblError.setText("Несанкционированный пользватель");
 						}
 					}
+					lock.unlock();
 				} catch (IOException er) {
 					er.printStackTrace();					
 				} finally {
@@ -486,6 +496,7 @@ public class MainWindow extends JFrame {
 		}
 		
 		try {
+			lock.lock();
 			out.writeByte(3);
 			out.writeInt(key);
 
@@ -502,6 +513,7 @@ public class MainWindow extends JFrame {
 				folders = (List<SimpleFolder>) Serializer
 						.deserialize(answerBytes);
 			}
+			lock.unlock();
 		} catch (IOException er) {
 			er.printStackTrace();
 		} catch (ClassNotFoundException er) {
@@ -638,6 +650,7 @@ public class MainWindow extends JFrame {
 					}
 					
 					try {
+						lock.lock();
 						String[] requestInfo = {
 								fldTo.getText().toLowerCase().trim(),
 								fldAbout.getText().trim(),
@@ -715,6 +728,7 @@ public class MainWindow extends JFrame {
 							lblErrorMess
 									.setText("Несанкционированный пользователь");
 						}
+						lock.unlock();
 					} catch (IOException ex) {
 						System.out.println("IO error");
 						ex.printStackTrace();
@@ -821,6 +835,7 @@ public class MainWindow extends JFrame {
 					}
 					
 					try {
+						lock.lock();
 						byte[] requestBytes = Serializer.serialize(requestInfo);
 						out.writeByte(7);
 						out.writeInt(key);
@@ -850,6 +865,7 @@ public class MainWindow extends JFrame {
 						} else {
 							lblError.setText("Папка с таким именем уже есть");
 						}
+						lock.unlock();
 					} catch (IOException ex) {
 						System.out.println("IO error");
 						ex.printStackTrace();
@@ -952,6 +968,7 @@ public class MainWindow extends JFrame {
 					}
 					
 					try {
+						lock.lock();
 						byte[] requestBytes = Serializer.serialize(requestInfo);
 						out.writeByte(9);
 						out.writeInt(key);
@@ -974,6 +991,7 @@ public class MainWindow extends JFrame {
 						} else if (answer == 3) {
 							lblError.setText("Несанкционированный пользватель");
 						}
+						lock.unlock();
 					} catch (IOException ex) {
 						System.out.println("IO error");
 						ex.printStackTrace();
@@ -1041,6 +1059,7 @@ public class MainWindow extends JFrame {
 				}
 
 				try {
+					lock.lock();
 					out.writeByte(10);
 					out.writeInt(key);
 					out.writeInt(inputMessages.size());
@@ -1065,6 +1084,7 @@ public class MainWindow extends JFrame {
 					} else if (answer == 3) {
 						lblError.setText("Несанкционированный пользователь");
 					}
+					lock.unlock();
 				} catch (IOException ex) {
 					System.out.println("IO error");
 					ex.printStackTrace();
