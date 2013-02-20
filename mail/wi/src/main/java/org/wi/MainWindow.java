@@ -342,7 +342,7 @@ public class MainWindow extends JFrame {
 				int selectedFolder = lstFolders.getSelectedIndex();
 				SimpleMessage message = folders.get(selectedFolder)
 						.getMessages().get(selectedMessage);
-				
+				String folderName = listModelFolders.elementAt(selectedFolder);
 				Socket socket = null;
 				DataOutputStream out = null;
 				DataInputStream in = null;
@@ -373,22 +373,52 @@ public class MainWindow extends JFrame {
 				}
 				
 				try {
-					byte[] requestBytes = Serializer.serialize(message);
-					out.writeByte(6);
-					out.writeInt(key);
-					out.writeInt(requestBytes.length);
-					out.write(requestBytes);
+					if (folderName.equals("Корзина")) {
+						Object[] request = new Object[2];
+						request[0] = message;
+						request[1] = folderName;
+						byte[] requestBytes = Serializer.serialize(request);
+						out.writeByte(6);
+						out.writeInt(key);
+						out.writeInt(requestBytes.length);
+						out.write(requestBytes);
 
-					byte answer = in.readByte();
-					if (answer == 0) {
-						folders.get(selectedFolder).getMessages()
-								.remove(selectedMessage);
-						listModelMessages.remove(selectedMessage);
-						taMessText.setText("");
-					} else if (answer == 3) {
+						byte answer = in.readByte();
+						if (answer == 0) {
+							folders.get(selectedFolder).getMessages()
+									.remove(selectedMessage);
+							listModelMessages.remove(selectedMessage);
+							taMessText.setText("");
+						} else if (answer == 3) {
 
+						} else {
+
+						}
 					} else {
+						Object[] request = new Object[3];
+						request[0] = message;
+						request[1] = folderName;
+						request[2] = "Корзина";
+						byte[] requestBytes = Serializer.serialize(request);
+						out.writeByte(9);
+						out.writeInt(key);
+						out.writeInt(requestBytes.length);
+						out.write(requestBytes);
 
+						byte answer = in.readByte();
+						if (answer == 0) {
+							int trash = listModelFolders.indexOf("Корзина");
+							listModelMessages.remove(selectedMessage);
+							folders.get(selectedFolder).getMessages()
+									.remove(selectedMessage);
+							folders.get(trash).addMessage(message);
+						} else if (answer == 1) {
+							lblError.setText("Невозможно удалить");
+						} else if (answer == 2) {
+							lblError.setText("Проблемы с сервером");
+						} else if (answer == 3) {
+							lblError.setText("Несанкционированный пользватель");
+						}
 					}
 				} catch (IOException er) {
 					er.printStackTrace();					
@@ -1051,6 +1081,6 @@ public class MainWindow extends JFrame {
 				}
 			}
 		}
-
 	}
+	
 }

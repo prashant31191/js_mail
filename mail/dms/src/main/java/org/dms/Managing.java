@@ -33,7 +33,7 @@ public class Managing {
 	 * @return String, containing the signed up user's email-address in case the
 	 *         user was created, otherwise empty String
 	 */
-	public static String creatUser(String[] data) {
+	public static String createUser(String[] data) {
 		EntityManagerFactory emf = Persistence
 				.createEntityManagerFactory("mail");
 		EntityManager em = emf.createEntityManager();
@@ -79,6 +79,12 @@ public class Managing {
 			output.setUndel(true);
 			output.setWhose(email);
 			em.persist(output);
+			
+			Folder trash = new Folder();
+			trash.setName("Корзина");
+			trash.setUndel(true);
+			trash.setWhose(email);
+			em.persist(trash);
 
 			Email noreply = em.find(Email.class, "noreply@mail.js");
 
@@ -501,7 +507,7 @@ public class Managing {
 	 *            User's email
 	 * @return true, in case the message has been deleted
 	 */
-	public static boolean deleteMess(SimpleMessage message, String whose) {
+	public static boolean deleteMess(SimpleMessage message, String folderName, String whose) {
 		EntityManagerFactory emf = Persistence
 				.createEntityManagerFactory("mail");
 		EntityManager em = emf.createEntityManager();
@@ -513,18 +519,23 @@ public class Managing {
 			Message foundMessage = null;
 
 			List<Folder> folders = email.getFolders();
-			label: for (Folder folder : folders) {
-				for (MessToFold messToFold : folder.getMessToFolds()) {
-					foundMessage = messToFold.getMessage();
-					if (foundMessage.getAbout().equals(message.getAbout())
-							&& foundMessage.getText().equals(message.getText())
-							&& format.format(foundMessage.getSentDate())
-									.equals(format.format(message.getDate()))) {
-						em.remove(messToFold);
-						trx.commit();
-						trx.begin();
-						break label;
-					}
+			Folder foundFolder = null;
+			for (Folder folder : folders)
+				if (folder.getName().equals(folderName)) {
+					foundFolder = folder;
+					break;
+				}
+
+			for (MessToFold messToFold : foundFolder.getMessToFolds()) {
+				foundMessage = messToFold.getMessage();
+				if (foundMessage.getAbout().equals(message.getAbout())
+						&& foundMessage.getText().equals(message.getText())
+						&& format.format(foundMessage.getSentDate()).equals(
+								format.format(message.getDate()))) {
+					em.remove(messToFold);
+					trx.commit();
+					trx.begin();
+					break;
 				}
 			}
 			List<MessToFold> messToFolds = foundMessage.getMessToFolds();

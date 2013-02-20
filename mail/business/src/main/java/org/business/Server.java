@@ -113,7 +113,7 @@ public class Server {
 						out.writeInt(answerBytes.length);
 						out.write(answerBytes);
 					} else {
-						String workWith = Managing.creatUser(requestInfo);
+						String workWith = Managing.createUser(requestInfo);
 						if (!workWith.equals("")) {
 							Random rand = new Random();
 							int key = rand.nextInt(1000000);
@@ -238,14 +238,15 @@ public class Server {
 
 					for (int i = 0; i < length; i++)
 						requestBytes[i] = in.readByte();
-					SimpleMessage requestInfo = (SimpleMessage) Serializer
+					Object[] requestInfo = (Object[]) Serializer
 							.deserialize(requestBytes);
-
+					
 					if (!users.containsKey(gotKey))
 						out.writeByte(3);
 					else {
-						boolean deleted = Managing.deleteMess(requestInfo,
-								users.get(gotKey));
+						boolean deleted = Managing.deleteMess(
+								(SimpleMessage) requestInfo[0],
+								(String) requestInfo[1], users.get(gotKey));
 						if (deleted) {
 							out.writeByte(0);
 						} else
