@@ -216,7 +216,7 @@ public class Registration extends JFrame {
 						int key = in.readInt();
 						MainWindow mw = new MainWindow(key);
 						mw.setVisible(true);
-						Registration.this.setVisible(false);
+						Registration.this.dispose();
 					} else if (answer == 2) {
 						taInfo.setText("- Неверная пара ел.адресс / пароль");
 					} else
@@ -288,7 +288,7 @@ public class Registration extends JFrame {
 						int key = in.readInt();
 						MainWindow mw = new MainWindow(key);
 						mw.setVisible(true);
-						Registration.this.setVisible(false);
+						Registration.this.dispose();
 					} else if (answer == 1) {
 						StringBuilder sb = new StringBuilder();
 						int length = in.readInt();

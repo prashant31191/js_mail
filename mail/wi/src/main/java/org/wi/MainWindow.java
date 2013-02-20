@@ -142,7 +142,7 @@ public class MainWindow extends JFrame {
 		JScrollPane spFolders = new JScrollPane(lstFolders);
 		spFolders
 				.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		spFolders.setBounds(10, 28, 224, 177);
+		spFolders.setBounds(10, 38, 224, 167);
 		contentPane.add(spFolders);
 
 		lstMessages = new JList<String>(listModelMessages);
@@ -246,15 +246,15 @@ public class MainWindow extends JFrame {
 		JScrollPane spMessages = new JScrollPane(lstMessages);
 		spMessages
 				.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		spMessages.setBounds(265, 28, 447, 177);
+		spMessages.setBounds(265, 38, 447, 167);
 		contentPane.add(spMessages);
 
 		JLabel label = new JLabel("Папки");
-		label.setBounds(10, 11, 46, 14);
+		label.setBounds(10, 22, 46, 14);
 		contentPane.add(label);
 
 		JLabel label_1 = new JLabel("Письма");
-		label_1.setBounds(265, 11, 46, 14);
+		label_1.setBounds(265, 22, 46, 14);
 		contentPane.add(label_1);
 
 		JButton btnDeleteFolder = new JButton("Удалить");
@@ -470,6 +470,57 @@ public class MainWindow extends JFrame {
 		});
 		btnMoveMess.setBounds(419, 216, 91, 23);
 		contentPane.add(btnMoveMess);
+		
+		JButton btnLogOut = new JButton("Выйти");
+		btnLogOut.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				lock.lock();
+				Socket socket = null;
+				DataOutputStream out = null;
+				try {
+					socket = new Socket("localhost", 6789);
+				} catch (UnknownHostException e2) {
+					System.out.println("Unknown host");
+					e2.printStackTrace();
+				} catch (IOException e2) {
+					System.out.println("IO");
+					e2.printStackTrace();
+				}
+
+				try {
+					out = new DataOutputStream(socket.getOutputStream());
+				} catch (IOException e2) {
+					System.out.println("stream error");
+					e2.printStackTrace();
+					try {
+						socket.close();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+				}
+
+				try {
+					out.writeByte(0);
+					out.writeInt(key);
+					Registration registration = new Registration();
+					registration.setVisible(true);
+					MainWindow.this.dispose();
+				} catch (IOException ex) {
+					System.out.println("IO error");
+					ex.printStackTrace();
+				} finally {
+					lock.unlock();
+					try {
+						out.close();
+						socket.close();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+				}
+			}
+		});
+		btnLogOut.setBounds(623, 7, 91, 23);
+		contentPane.add(btnLogOut);
 		
 		lock.lock();
 		try {
@@ -1102,5 +1153,4 @@ public class MainWindow extends JFrame {
 			}
 		}
 	}
-	
 }
