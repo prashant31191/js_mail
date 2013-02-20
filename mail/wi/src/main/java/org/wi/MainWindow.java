@@ -25,6 +25,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.awt.event.MouseAdapter;
@@ -39,10 +40,7 @@ import java.awt.event.MouseEvent;
 public class MainWindow extends JFrame {
 	private JPanel contentPane;
 	private JLabel lblError;
-
-	private Socket socket = null;
-	private DataInputStream in = null;
-	private DataOutputStream out = null;
+	
 	private int key;
 
 	private SimpleDateFormat format = new SimpleDateFormat(
@@ -57,8 +55,7 @@ public class MainWindow extends JFrame {
 	private DefaultListModel<String> listModelFolders = new DefaultListModel<String>();
 
 	@SuppressWarnings("unchecked")
-	public MainWindow(final Socket socket, final DataInputStream in,
-			final DataOutputStream out, final int key) {
+	public MainWindow(final int key) {
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 731, 590);
@@ -67,28 +64,56 @@ public class MainWindow extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
-		this.socket = socket;
-		this.in = in;
-		this.out = out;
 		this.key = key;
 
+		Socket socket = null;
+		DataOutputStream out = null;
+		DataInputStream in = null;
+		
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
+				Socket socket = null;
+				DataOutputStream out = null;
 				try {
-					out.writeByte(0);
-				} catch (IOException e1) {
-					e1.printStackTrace();
+					socket = new Socket("localhost", 6789);
+				} catch (UnknownHostException e2) {
+					System.out.println("Unknown host");
+					e2.printStackTrace();
+				} catch (IOException e2) {
+					System.out.println("IO");
+					e2.printStackTrace();
+				}
+
+				try {
+					out = new DataOutputStream(socket.getOutputStream());
+				} catch (IOException e2) {
+					System.out.println("stream error");
+					e2.printStackTrace();
 					try {
-						in.close();
 						out.close();
 						socket.close();
-					} catch (IOException e2) {
-						e2.printStackTrace();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+				}
+
+				try {
+					out.writeByte(0);
+					out.writeInt(key);
+				} catch (IOException ex) {
+					System.out.println("IO error");
+					ex.printStackTrace();
+				} finally {
+					try {
+						out.close();
+						socket.close();
+					} catch (IOException e1) {
+						e1.printStackTrace();
 					}
 				}
 			}
 		});
-
+		
 		final JTextArea taMessText = new JTextArea();
 		taMessText.setEditable(false);
 		JScrollPane spMessageDetailed = new JScrollPane(taMessText);
@@ -134,6 +159,35 @@ public class MainWindow extends JFrame {
 						taMessText.setText(sb.toString());
 
 						if (!message.isRead()) {
+							Socket socket = null;
+							DataOutputStream out = null;
+							DataInputStream in = null;
+							
+							try {
+								socket = new Socket("localhost", 6789);
+							} catch (UnknownHostException e2) {
+								System.out.println("Unknown host");
+								e2.printStackTrace();
+							} catch (IOException e2) {
+								System.out.println("IO");
+								e2.printStackTrace();
+							}
+
+							try {
+								out = new DataOutputStream(socket.getOutputStream());
+								in = new DataInputStream(socket.getInputStream());
+							} catch (IOException e2) {
+								System.out.println("stream error");
+								e2.printStackTrace();
+								try {
+									out.close();
+									in.close();
+									socket.close();
+								} catch (IOException e1) {
+									e1.printStackTrace();
+								}
+							}
+							
 							try {
 								byte[] requestBytes = Serializer
 										.serialize(message);
@@ -168,6 +222,7 @@ public class MainWindow extends JFrame {
 								}
 							} catch (IOException er) {
 								er.printStackTrace();
+							} finally {
 								try {
 									in.close();
 									out.close();
@@ -202,6 +257,36 @@ public class MainWindow extends JFrame {
 				if (selectedFolder < 0)
 					return;
 				SimpleFolder sFolder = folders.get(selectedFolder);
+				
+				Socket socket = null;
+				DataOutputStream out = null;
+				DataInputStream in = null;
+				
+				try {
+					socket = new Socket("localhost", 6789);
+				} catch (UnknownHostException e2) {
+					System.out.println("Unknown host");
+					e2.printStackTrace();
+				} catch (IOException e2) {
+					System.out.println("IO");
+					e2.printStackTrace();
+				}
+
+				try {
+					out = new DataOutputStream(socket.getOutputStream());
+					in = new DataInputStream(socket.getInputStream());
+				} catch (IOException e2) {
+					System.out.println("stream error");
+					e2.printStackTrace();
+					try {
+						out.close();
+						in.close();
+						socket.close();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+				}
+				
 				try {
 					byte[] requestBytes = Serializer.serialize(sFolder);
 					out.writeByte(8);
@@ -224,6 +309,7 @@ public class MainWindow extends JFrame {
 					}
 				} catch (IOException er) {
 					er.printStackTrace();
+				} finally {
 					try {
 						in.close();
 						out.close();
@@ -256,6 +342,36 @@ public class MainWindow extends JFrame {
 				int selectedFolder = lstFolders.getSelectedIndex();
 				SimpleMessage message = folders.get(selectedFolder)
 						.getMessages().get(selectedMessage);
+				
+				Socket socket = null;
+				DataOutputStream out = null;
+				DataInputStream in = null;
+				
+				try {
+					socket = new Socket("localhost", 6789);
+				} catch (UnknownHostException e2) {
+					System.out.println("Unknown host");
+					e2.printStackTrace();
+				} catch (IOException e2) {
+					System.out.println("IO");
+					e2.printStackTrace();
+				}
+
+				try {
+					out = new DataOutputStream(socket.getOutputStream());
+					in = new DataInputStream(socket.getInputStream());
+				} catch (IOException e2) {
+					System.out.println("stream error");
+					e2.printStackTrace();
+					try {
+						out.close();
+						in.close();
+						socket.close();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+				}
+				
 				try {
 					byte[] requestBytes = Serializer.serialize(message);
 					out.writeByte(6);
@@ -275,7 +391,8 @@ public class MainWindow extends JFrame {
 
 					}
 				} catch (IOException er) {
-					er.printStackTrace();
+					er.printStackTrace();					
+				} finally {
 					try {
 						in.close();
 						out.close();
@@ -292,7 +409,7 @@ public class MainWindow extends JFrame {
 		JButton btnCreatMess = new JButton("Написать");
 		btnCreatMess.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				SendMessage sm = new SendMessage(socket, in, out, key);
+				SendMessage sm = new SendMessage();
 				sm.setVisible(true);
 			}
 		});
@@ -312,7 +429,32 @@ public class MainWindow extends JFrame {
 		});
 		btnMoveMess.setBounds(419, 216, 91, 23);
 		contentPane.add(btnMoveMess);
+		
+		try {
+			socket = new Socket("localhost", 6789);
+		} catch (UnknownHostException e2) {
+			System.out.println("Unknown host");
+			e2.printStackTrace();
+		} catch (IOException e2) {
+			System.out.println("IO");
+			e2.printStackTrace();
+		}
 
+		try {
+			out = new DataOutputStream(socket.getOutputStream());
+			in = new DataInputStream(socket.getInputStream());
+		} catch (IOException e2) {
+			System.out.println("stream error");
+			e2.printStackTrace();
+			try {
+				out.close();
+				in.close();
+				socket.close();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
+		
 		try {
 			out.writeByte(3);
 			out.writeInt(key);
@@ -332,14 +474,9 @@ public class MainWindow extends JFrame {
 			}
 		} catch (IOException er) {
 			er.printStackTrace();
-			try {
-				in.close();
-				out.close();
-				socket.close();
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
 		} catch (ClassNotFoundException er) {
+			er.printStackTrace();
+		} finally {
 			try {
 				in.close();
 				out.close();
@@ -392,24 +529,13 @@ public class MainWindow extends JFrame {
 		private JTextField fldAbout;
 		private JTextField fldTo;
 
-		private Socket socket = null;
-		private DataInputStream in = null;
-		private DataOutputStream out = null;
-		private int key;
-
-		public SendMessage(final Socket socket, final DataInputStream in,
-				final DataOutputStream out, final int key) {
+		public SendMessage() {
 			setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 			setBounds(100, 100, 450, 358);
 			contentPane = new JPanel();
 			contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 			setContentPane(contentPane);
 			contentPane.setLayout(null);
-
-			this.socket = socket;
-			this.in = in;
-			this.out = out;
-			this.key = key;
 
 			JLabel label = new JLabel("От кого:");
 			label.setBounds(10, 11, 46, 14);
@@ -452,6 +578,35 @@ public class MainWindow extends JFrame {
 			JButton btnSend = new JButton("Отправить");
 			btnSend.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					Socket socket = null;
+					DataOutputStream out = null;
+					DataInputStream in = null;
+					
+					try {
+						socket = new Socket("localhost", 6789);
+					} catch (UnknownHostException e2) {
+						System.out.println("Unknown host");
+						e2.printStackTrace();
+					} catch (IOException e2) {
+						System.out.println("IO");
+						e2.printStackTrace();
+					}
+
+					try {
+						out = new DataOutputStream(socket.getOutputStream());
+						in = new DataInputStream(socket.getInputStream());
+					} catch (IOException e2) {
+						System.out.println("stream error");
+						e2.printStackTrace();
+						try {
+							out.close();
+							in.close();
+							socket.close();
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
+					}
+					
 					try {
 						String[] requestInfo = {
 								fldTo.getText().toLowerCase().trim(),
@@ -533,14 +688,9 @@ public class MainWindow extends JFrame {
 					} catch (IOException ex) {
 						System.out.println("IO error");
 						ex.printStackTrace();
-						try {
-							in.close();
-							out.close();
-							socket.close();
-						} catch (IOException e1) {
-							e1.printStackTrace();
-						}
 					} catch (ClassNotFoundException er) {
+						er.printStackTrace();
+					} finally {
 						try {
 							in.close();
 							out.close();
@@ -611,6 +761,35 @@ public class MainWindow extends JFrame {
 			btnCreateFold.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					String requestInfo = fldFoldName.getText().trim();
+					Socket socket = null;
+					DataOutputStream out = null;
+					DataInputStream in = null;
+					
+					try {
+						socket = new Socket("localhost", 6789);
+					} catch (UnknownHostException e2) {
+						System.out.println("Unknown host");
+						e2.printStackTrace();
+					} catch (IOException e2) {
+						System.out.println("IO");
+						e2.printStackTrace();
+					}
+
+					try {
+						out = new DataOutputStream(socket.getOutputStream());
+						in = new DataInputStream(socket.getInputStream());
+					} catch (IOException e2) {
+						System.out.println("stream error");
+						e2.printStackTrace();
+						try {
+							out.close();
+							in.close();
+							socket.close();
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
+					}
+					
 					try {
 						byte[] requestBytes = Serializer.serialize(requestInfo);
 						out.writeByte(7);
@@ -644,14 +823,9 @@ public class MainWindow extends JFrame {
 					} catch (IOException ex) {
 						System.out.println("IO error");
 						ex.printStackTrace();
-						try {
-							in.close();
-							out.close();
-							socket.close();
-						} catch (IOException e1) {
-							e1.printStackTrace();
-						}
 					} catch (ClassNotFoundException er) {
+						er.printStackTrace();
+					} finally {
 						try {
 							in.close();
 							out.close();
@@ -717,6 +891,36 @@ public class MainWindow extends JFrame {
 					requestInfo[0] = message;
 					requestInfo[1] = folder;
 					requestInfo[2] = moveFolder;
+					
+					Socket socket = null;
+					DataOutputStream out = null;
+					DataInputStream in = null;
+					
+					try {
+						socket = new Socket("localhost", 6789);
+					} catch (UnknownHostException e2) {
+						System.out.println("Unknown host");
+						e2.printStackTrace();
+					} catch (IOException e2) {
+						System.out.println("IO");
+						e2.printStackTrace();
+					}
+
+					try {
+						out = new DataOutputStream(socket.getOutputStream());
+						in = new DataInputStream(socket.getInputStream());
+					} catch (IOException e2) {
+						System.out.println("stream error");
+						e2.printStackTrace();
+						try {
+							out.close();
+							in.close();
+							socket.close();
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
+					}
+					
 					try {
 						byte[] requestBytes = Serializer.serialize(requestInfo);
 						out.writeByte(9);
@@ -743,6 +947,7 @@ public class MainWindow extends JFrame {
 					} catch (IOException ex) {
 						System.out.println("IO error");
 						ex.printStackTrace();
+					} finally {
 						try {
 							in.close();
 							out.close();
@@ -759,7 +964,10 @@ public class MainWindow extends JFrame {
 	}
 
 	private class newMessageChecker implements Runnable {
-
+		Socket socket = null;
+		DataOutputStream out = null;
+		DataInputStream in = null;
+		
 		public void run() {
 			SimpleFolder inputFolder = null;
 			for (SimpleFolder tmpFolder : folders) {
@@ -775,6 +983,31 @@ public class MainWindow extends JFrame {
 					Thread.sleep(15000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
+				}
+				
+				try {
+					socket = new Socket("localhost", 6789);
+				} catch (UnknownHostException e2) {
+					System.out.println("Unknown host");
+					e2.printStackTrace();
+				} catch (IOException e2) {
+					System.out.println("IO");
+					e2.printStackTrace();
+				}
+
+				try {
+					out = new DataOutputStream(socket.getOutputStream());
+					in = new DataInputStream(socket.getInputStream());
+				} catch (IOException e2) {
+					System.out.println("stream error");
+					e2.printStackTrace();
+					try {
+						out.close();
+						in.close();
+						socket.close();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
 				}
 
 				try {
@@ -805,14 +1038,9 @@ public class MainWindow extends JFrame {
 				} catch (IOException ex) {
 					System.out.println("IO error");
 					ex.printStackTrace();
-					try {
-						in.close();
-						out.close();
-						socket.close();
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					}
 				} catch (ClassNotFoundException er) {
+					er.printStackTrace();
+				} finally {
 					try {
 						in.close();
 						out.close();

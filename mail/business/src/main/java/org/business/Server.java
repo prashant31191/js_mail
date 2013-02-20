@@ -1,8 +1,12 @@
 package org.business;
 
 import java.net.*;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.io.*;
 import org.dms.Managing;
 import org.cc.*;
@@ -15,6 +19,7 @@ import org.cc.*;
  */
 public class Server {
 	private final static int portNumber = 6789;
+	Map<Integer, String> users = new HashMap<Integer, String>();
 
 	/**
 	 * Main method for starting server
@@ -33,7 +38,8 @@ public class Server {
 	private void startServer() throws Exception {
 		ServerSocket serverSocket = null;
 		boolean listening = true;
-
+		
+		ExecutorService executor = Executors.newFixedThreadPool(10);
 		try {
 			serverSocket = new ServerSocket(portNumber);
 		} catch (IOException e) {
@@ -43,7 +49,7 @@ public class Server {
 
 		while (listening) {
 			try {
-				new ConnectionRequestHandler(serverSocket.accept()).start();
+				executor.execute(new ConnectionRequestHandler(serverSocket.accept()));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -56,8 +62,6 @@ public class Server {
 		private Socket socket = null;
 		private DataOutputStream out = null;
 		private DataInputStream in = null;
-		private int key = 0;
-		private String workWith = null;
 
 		/**
 		 * Public constructor for request hendler
@@ -73,9 +77,6 @@ public class Server {
 			System.out.println("Client connected to socket: "
 					+ socket.toString());
 
-			Random rand = new Random();
-			key = rand.nextInt(1000000);
-
 			try {
 				in = new DataInputStream(socket.getInputStream());
 				out = new DataOutputStream(socket.getOutputStream());
@@ -89,23 +90,105 @@ public class Server {
 				}
 			}
 
-			byte requestNumber = 0;
+			byte requestNumber = -1;
 
 			try {
-				while ((requestNumber = in.readByte()) != 0) {
-					if (requestNumber == 1) {
+				requestNumber = in.readByte();
+				if (requestNumber == 1) {
 
-						int length = in.readInt();
-						byte[] requestBytes = new byte[length];
+					int length = in.readInt();
+					byte[] requestBytes = new byte[length];
 
-						for (int i = 0; i < length; i++)
-							requestBytes[i] = in.readByte();
-						String[] requestInfo = (String[]) Serializer
-								.deserialize(requestBytes);
+					for (int i = 0; i < length; i++)
+						requestBytes[i] = in.readByte();
+					String[] requestInfo = (String[]) Serializer
+							.deserialize(requestBytes);
 
-						boolean[] checkedData = new UserValidation()
-								.regDataCheck(requestInfo);
+					boolean[] checkedData = new UserValidation()
+							.regDataCheck(requestInfo);
 
+					if (!checkedData[0]) {
+						byte[] answerBytes = Serializer.serialize(checkedData);
+						out.writeByte(1);
+						out.writeInt(answerBytes.length);
+						out.write(answerBytes);
+					} else {
+						String workWith = Managing.creatUser(requestInfo);
+						if (!workWith.equals("")) {
+							Random rand = new Random();
+							int key = rand.nextInt(1000000);
+							users.put(key, workWith);
+							out.writeByte(0);
+							out.writeInt(key);
+						} else
+							out.writeByte(2);
+					}
+				}
+
+				if (requestNumber == 2) {
+					int length = in.readInt();
+					byte[] requestBytes = new byte[length];
+
+					for (int i = 0; i < length; i++)
+						requestBytes[i] = in.readByte();
+					String[] requestInfo = (String[]) Serializer
+							.deserialize(requestBytes);
+
+					boolean userChecked = new UserValidation()
+							.enterUserCheck(requestInfo);
+
+					if (!userChecked) {
+						out.writeByte(1);
+					} else {
+						boolean userExists = Managing.checkUser(requestInfo[0],
+								requestInfo[1]);
+
+						if (userExists) {
+							Random rand = new Random();
+							int key = rand.nextInt(1000000);
+							users.put(key, requestInfo[0]);
+							out.writeByte(0);
+							out.writeInt(key);
+						} else {
+							out.writeByte(2);
+						}
+					}
+				}
+
+				if (requestNumber == 3) {
+					int gotKey = in.readInt();
+					if (!users.containsKey(gotKey))
+						out.writeByte(3);
+					else {
+						List<SimpleFolder> answer = Managing
+								.getEverything(users.get(gotKey));
+						if (answer == null)
+							out.writeByte(2);
+						else {
+							byte[] answerBytes = Serializer.serialize(answer);
+							out.writeByte(0);
+							out.writeInt(answerBytes.length);
+							out.write(answerBytes);
+						}
+					}
+
+				}
+
+				if (requestNumber == 4) {
+					int gotKey = in.readInt();
+					int length = in.readInt();
+					byte[] requestBytes = new byte[length];
+
+					for (int i = 0; i < length; i++)
+						requestBytes[i] = in.readByte();
+					String[] requestInfo = (String[]) Serializer
+							.deserialize(requestBytes);
+
+					if (!users.containsKey(gotKey))
+						out.writeByte(3);
+					else {
+						boolean[] checkedData = new ActionValidation()
+								.checkMessage(requestInfo);
 						if (!checkedData[0]) {
 							byte[] answerBytes = Serializer
 									.serialize(checkedData);
@@ -113,54 +196,11 @@ public class Server {
 							out.writeInt(answerBytes.length);
 							out.write(answerBytes);
 						} else {
-							workWith = Managing.creatUser(requestInfo);
-							if (!workWith.equals("")) {
-								out.writeByte(0);
-								out.writeInt(key);
-
-							} else
+							Object[] answer = Managing.sendMessage(requestInfo,
+									users.get(gotKey));
+							if (answer == null) {
 								out.writeByte(2);
-						}
-					}
-
-					if (requestNumber == 2) {
-						int length = in.readInt();
-						byte[] requestBytes = new byte[length];
-
-						for (int i = 0; i < length; i++)
-							requestBytes[i] = in.readByte();
-						String[] requestInfo = (String[]) Serializer
-								.deserialize(requestBytes);
-
-						boolean userChecked = new UserValidation()
-								.enterUserCheck(requestInfo);
-
-						if (!userChecked) {
-							out.writeByte(1);
-						} else {
-							boolean userExists = Managing.checkUser(
-									requestInfo[0], requestInfo[1]);
-
-							if (userExists) {
-								out.writeByte(0);
-								out.writeInt(key);
-								workWith = requestInfo[0];
 							} else {
-								out.writeByte(2);
-							}
-						}
-					}
-
-					if (requestNumber == 3) {
-						int gotKey = in.readInt();
-						if (key != gotKey)
-							out.writeByte(3);
-						else {
-							List<SimpleFolder> answer = Managing
-									.getEverything(workWith);
-							if (answer == null)
-								out.writeByte(2);
-							else {
 								byte[] answerBytes = Serializer
 										.serialize(answer);
 								out.writeByte(0);
@@ -168,208 +208,176 @@ public class Server {
 								out.write(answerBytes);
 							}
 						}
-
 					}
+				}
 
-					if (requestNumber == 4) {
-						int gotKey = in.readInt();
-						int length = in.readInt();
-						byte[] requestBytes = new byte[length];
+				if (requestNumber == 5) {
+					int gotKey = in.readInt();
+					int length = in.readInt();
+					byte[] requestBytes = new byte[length];
 
-						for (int i = 0; i < length; i++)
-							requestBytes[i] = in.readByte();
-						String[] requestInfo = (String[]) Serializer
-								.deserialize(requestBytes);
+					for (int i = 0; i < length; i++)
+						requestBytes[i] = in.readByte();
+					SimpleMessage requestInfo = (SimpleMessage) Serializer
+							.deserialize(requestBytes);
 
-						if (key != gotKey)
-							out.writeByte(3);
+					if (!users.containsKey(gotKey))
+						out.writeByte(3);
+					else {
+						boolean set = Managing.setRead(requestInfo, users.get(gotKey));
+						if (set) {
+							out.writeByte(0);
+						} else
+							out.writeByte(2);
+					}
+				}
+				if (requestNumber == 6) {
+					int gotKey = in.readInt();
+					int length = in.readInt();
+					byte[] requestBytes = new byte[length];
+
+					for (int i = 0; i < length; i++)
+						requestBytes[i] = in.readByte();
+					SimpleMessage requestInfo = (SimpleMessage) Serializer
+							.deserialize(requestBytes);
+
+					if (!users.containsKey(gotKey))
+						out.writeByte(3);
+					else {
+						boolean deleted = Managing.deleteMess(requestInfo,
+								users.get(gotKey));
+						if (deleted) {
+							out.writeByte(0);
+						} else
+							out.writeByte(2);
+					}
+				}
+
+				if (requestNumber == 7) {
+					int gotKey = in.readInt();
+					int length = in.readInt();
+					byte[] requestBytes = new byte[length];
+
+					for (int i = 0; i < length; i++)
+						requestBytes[i] = in.readByte();
+					String requestInfo = (String) Serializer
+							.deserialize(requestBytes);
+
+					if (!users.containsKey(gotKey))
+						out.writeByte(3);
+					else {
+						boolean correctFolder = new ActionValidation()
+								.checkFolderName(requestInfo);
+						if (!correctFolder)
+							out.writeByte(1);
 						else {
-							boolean[] checkedData = new ActionValidation()
-									.checkMessage(requestInfo);
-							if (!checkedData[0]) {
+							SimpleFolder created = Managing.createFolder(
+									requestInfo, users.get(gotKey));
+							if (created != null) {
 								byte[] answerBytes = Serializer
-										.serialize(checkedData);
-								out.writeByte(1);
+										.serialize(created);
+								out.writeByte(0);
 								out.writeInt(answerBytes.length);
 								out.write(answerBytes);
-							} else {
-								Object[] answer = Managing.sendMessage(
-										requestInfo, workWith);
-								if (answer == null) {
-									out.writeByte(2);
-								} else {
-									byte[] answerBytes = Serializer
-											.serialize(answer);
-									out.writeByte(0);
-									out.writeInt(answerBytes.length);
-									out.write(answerBytes);
-								}
-							}
-						}
-					}
-
-					if (requestNumber == 5) {
-						int gotKey = in.readInt();
-						int length = in.readInt();
-						byte[] requestBytes = new byte[length];
-
-						for (int i = 0; i < length; i++)
-							requestBytes[i] = in.readByte();
-						SimpleMessage requestInfo = (SimpleMessage) Serializer
-								.deserialize(requestBytes);
-
-						if (key != gotKey)
-							out.writeByte(3);
-						else {
-							boolean set = Managing.setRead(requestInfo,
-									workWith);
-							if (set) {
-								out.writeByte(0);
 							} else
-								out.writeByte(2);
+								out.writeByte(4);
 						}
 					}
-					if (requestNumber == 6) {
-						int gotKey = in.readInt();
-						int length = in.readInt();
-						byte[] requestBytes = new byte[length];
+				}
 
-						for (int i = 0; i < length; i++)
-							requestBytes[i] = in.readByte();
-						SimpleMessage requestInfo = (SimpleMessage) Serializer
-								.deserialize(requestBytes);
+				if (requestNumber == 8) {
+					int gotKey = in.readInt();
+					int length = in.readInt();
+					byte[] requestBytes = new byte[length];
 
-						if (key != gotKey)
-							out.writeByte(3);
+					for (int i = 0; i < length; i++)
+						requestBytes[i] = in.readByte();
+					SimpleFolder requestInfo = (SimpleFolder) Serializer
+							.deserialize(requestBytes);
+
+					if (!users.containsKey(gotKey))
+						out.writeByte(3);
+					else {
+						byte deleted = Managing.deleteFolder(requestInfo,
+								users.get(gotKey));
+						if (deleted == 1)
+							out.writeByte(1);
+						else if (deleted == 2) {
+							out.writeByte(2);
+						} else if (deleted == 0) {
+							out.writeByte(0);
+						}
+					}
+				}
+
+				if (requestNumber == 9) {
+					int gotKey = in.readInt();
+					int length = in.readInt();
+					byte[] requestBytes = new byte[length];
+
+					for (int i = 0; i < length; i++)
+						requestBytes[i] = in.readByte();
+					Object[] requestInfo = (Object[]) Serializer
+							.deserialize(requestBytes);
+
+					if (!users.containsKey(gotKey))
+						out.writeByte(3);
+					else {
+						SimpleMessage message = (SimpleMessage) requestInfo[0];
+						String folder = (String) requestInfo[1];
+						String moveFolder = (String) requestInfo[2];
+
+						if (folder.equals(moveFolder))
+							out.writeByte(1);
 						else {
-							boolean deleted = Managing.deleteMess(requestInfo,
-									workWith);
-							if (deleted) {
+							boolean moved = Managing.moveMessage(message,
+									folder, moveFolder, users.get(gotKey));
+							if (moved)
 								out.writeByte(0);
-							} else
+							else
 								out.writeByte(2);
 						}
 					}
+				}
 
-					if (requestNumber == 7) {
-						int gotKey = in.readInt();
-						int length = in.readInt();
-						byte[] requestBytes = new byte[length];
+				if (requestNumber == 10) {
+					int gotKey = in.readInt();
+					int amount = in.readInt();
 
-						for (int i = 0; i < length; i++)
-							requestBytes[i] = in.readByte();
-						String requestInfo = (String) Serializer
-								.deserialize(requestBytes);
-
-						if (key != gotKey)
-							out.writeByte(3);
+					if (!users.containsKey(gotKey))
+						out.writeByte(3);
+					else {
+						int amountOfNew = Managing.hasNewMessages(amount,
+								users.get(gotKey));
+						if (amountOfNew == -1)
+							out.writeByte(2);
 						else {
-							boolean correctFolder = new ActionValidation()
-									.checkFolderName(requestInfo);
-							if (!correctFolder)
+							if (amountOfNew == 0)
 								out.writeByte(1);
 							else {
-								SimpleFolder created = Managing.createFolder(
-										requestInfo, workWith);
-								if (created != null) {
-									byte[] answerBytes = Serializer
-											.serialize(created);
-									out.writeByte(0);
-									out.writeInt(answerBytes.length);
-									out.write(answerBytes);
-								} else
-									out.writeByte(4);
-							}
-						}
-					}
-
-					if (requestNumber == 8) {
-						int gotKey = in.readInt();
-						int length = in.readInt();
-						byte[] requestBytes = new byte[length];
-
-						for (int i = 0; i < length; i++)
-							requestBytes[i] = in.readByte();
-						SimpleFolder requestInfo = (SimpleFolder) Serializer
-								.deserialize(requestBytes);
-
-						if (key != gotKey)
-							out.writeByte(3);
-						else {
-							byte deleted = Managing.deleteFolder(requestInfo,
-									workWith);
-							if (deleted == 1)
-								out.writeByte(1);
-							else if (deleted == 2) {
-								out.writeByte(2);
-							} else if (deleted == 0) {
-								out.writeByte(0);
-							}
-						}
-					}
-
-					if (requestNumber == 9) {
-						int gotKey = in.readInt();
-						int length = in.readInt();
-						byte[] requestBytes = new byte[length];
-
-						for (int i = 0; i < length; i++)
-							requestBytes[i] = in.readByte();
-						Object[] requestInfo = (Object[]) Serializer
-								.deserialize(requestBytes);
-
-						if (key != gotKey)
-							out.writeByte(3);
-						else {
-							SimpleMessage message = (SimpleMessage) requestInfo[0];
-							String folder = (String) requestInfo[1];
-							String moveFolder = (String) requestInfo[2];
-
-							if (folder.equals(moveFolder))
-								out.writeByte(1);
-							else {
-								boolean moved = Managing.moveMessage(message,
-										folder, moveFolder, workWith);
-								if (moved)
-									out.writeByte(0);
-								else
+								List<SimpleMessage> newMessages = Managing
+										.getNewMessages(amountOfNew, users.get(gotKey));
+								if (newMessages == null)
 									out.writeByte(2);
-							}
-						}
-					}
-
-					if (requestNumber == 10) {
-						int gotKey = in.readInt();
-						int amount = in.readInt();
-
-						if (key != gotKey)
-							out.writeByte(3);
-						else {
-							int amountOfNew = Managing.hasNewMessages(amount,
-									workWith);
-							if (amountOfNew == -1)
-								out.writeByte(2);
-							else {
-								if (amountOfNew == 0)
-									out.writeByte(1);
 								else {
-									List<SimpleMessage> newMessages = Managing
-											.getNewMessages(amountOfNew,
-													workWith);
-									if (newMessages == null)
-										out.writeByte(2);
-									else {
-										for (SimpleMessage mess : newMessages)
-											System.out.println(mess.getText());
-										byte[] answerBytes = Serializer
-												.serialize(newMessages);
-										out.writeByte(0);
-										out.writeInt(answerBytes.length);
-										out.write(answerBytes);
-									}
+									for (SimpleMessage mess : newMessages)
+										System.out.println(mess.getText());
+									byte[] answerBytes = Serializer
+											.serialize(newMessages);
+									out.writeByte(0);
+									out.writeInt(answerBytes.length);
+									out.write(answerBytes);
 								}
 							}
 						}
+					}
+				}
+				
+				if (requestNumber == 0) {
+					int gotKey = in.readInt();
+					if (users.containsKey(gotKey)) {
+						users.remove(gotKey);
+						System.out.println("User removed");
 					}
 				}
 			} catch (IOException io) {

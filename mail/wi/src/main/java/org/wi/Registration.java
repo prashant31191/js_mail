@@ -48,10 +48,6 @@ public class Registration extends JFrame {
 	private JTextField fldBirthDate;
 	private JTextField fldPhone;
 
-	private Socket socket = null;
-	private DataInputStream in = null;
-	private DataOutputStream out = null;
-
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -72,49 +68,7 @@ public class Registration extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
-
-		try {
-			socket = new Socket("localhost", 6789);
-		} catch (UnknownHostException e2) {
-			System.out.println("Unknown host");
-			e2.printStackTrace();
-		} catch (IOException e2) {
-			System.out.println("IO");
-			e2.printStackTrace();
-		}
-
-		try {
-			out = new DataOutputStream(socket.getOutputStream());
-			in = new DataInputStream(socket.getInputStream());
-		} catch (IOException e2) {
-			System.out.println("stream error");
-			e2.printStackTrace();
-			try {
-				out.close();
-				in.close();
-				socket.close();
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
-		}
-
-		addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-				try {
-					out.writeByte(0);
-				} catch (IOException e1) {
-					e1.printStackTrace();
-					try {
-						in.close();
-						out.close();
-						socket.close();
-					} catch (IOException e2) {
-						e2.printStackTrace();
-					}
-				}
-			}
-		});
-
+		
 		JLabel lblGfhjkm = new JLabel("Пароль:");
 		lblGfhjkm.setBounds(163, 14, 53, 14);
 		lblGfhjkm.setHorizontalAlignment(SwingConstants.LEFT);
@@ -218,6 +172,35 @@ public class Registration extends JFrame {
 		JButton btnLogIn = new JButton("Войти");
 		btnLogIn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				Socket socket = null;
+				DataOutputStream out = null;
+				DataInputStream in = null;
+				
+				try {
+					socket = new Socket("localhost", 6789);
+				} catch (UnknownHostException e2) {
+					System.out.println("Unknown host");
+					e2.printStackTrace();
+				} catch (IOException e2) {
+					System.out.println("IO");
+					e2.printStackTrace();
+				}
+
+				try {
+					out = new DataOutputStream(socket.getOutputStream());
+					in = new DataInputStream(socket.getInputStream());
+				} catch (IOException e2) {
+					System.out.println("stream error");
+					e2.printStackTrace();
+					try {
+						out.close();
+						in.close();
+						socket.close();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+				}
+				
 				try {
 					String[] requestInfo = {
 							fldEnterMail.getText().toLowerCase().trim(),
@@ -231,7 +214,7 @@ public class Registration extends JFrame {
 					byte answer = in.readByte();
 					if (answer == 0) {
 						int key = in.readInt();
-						MainWindow mw = new MainWindow(socket, in, out, key);
+						MainWindow mw = new MainWindow(key);
 						mw.setVisible(true);
 						Registration.this.setVisible(false);
 					} else if (answer == 2) {
@@ -241,6 +224,7 @@ public class Registration extends JFrame {
 				} catch (IOException ex) {
 					System.out.println("IO error");
 					ex.printStackTrace();
+				} finally {
 					try {
 						in.close();
 						out.close();
@@ -257,6 +241,35 @@ public class Registration extends JFrame {
 		JButton btnSignUp = new JButton("Зарег-я");
 		btnSignUp.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				Socket socket = null;
+				DataOutputStream out = null;
+				DataInputStream in = null;
+				
+				try {
+					socket = new Socket("localhost", 6789);
+				} catch (UnknownHostException e2) {
+					System.out.println("Unknown host");
+					e2.printStackTrace();
+				} catch (IOException e2) {
+					System.out.println("IO");
+					e2.printStackTrace();
+				}
+
+				try {
+					out = new DataOutputStream(socket.getOutputStream());
+					in = new DataInputStream(socket.getInputStream());
+				} catch (IOException e2) {
+					System.out.println("stream error");
+					e2.printStackTrace();
+					try {
+						out.close();
+						in.close();
+						socket.close();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+				}
+				
 				try {
 					String[] requestInfo = { fldLogin.getText().toLowerCase(),
 							fldFirstPass.getText(), fldSecPass.getText(),
@@ -273,7 +286,7 @@ public class Registration extends JFrame {
 					byte answer = in.readByte();
 					if (answer == 0) {
 						int key = in.readInt();
-						MainWindow mw = new MainWindow(socket, in, out, key);
+						MainWindow mw = new MainWindow(key);
 						mw.setVisible(true);
 						Registration.this.setVisible(false);
 					} else if (answer == 1) {
@@ -312,14 +325,9 @@ public class Registration extends JFrame {
 						taInfo.setText("Ошибка при создании учетной записи");
 				} catch (IOException er) {
 					er.printStackTrace();
-					try {
-						in.close();
-						out.close();
-						socket.close();
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					}
 				} catch (ClassNotFoundException er) {
+					er.printStackTrace();
+				} finally {
 					try {
 						in.close();
 						out.close();
