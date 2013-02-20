@@ -75,6 +75,7 @@ public class MainWindow extends JFrame {
 		
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
+				lock.lock();
 				Socket socket = null;
 				DataOutputStream out = null;
 				try {
@@ -100,14 +101,14 @@ public class MainWindow extends JFrame {
 				}
 
 				try {
-					lock.lock();
 					out.writeByte(0);
 					out.writeInt(key);
-					lock.unlock();
+					
 				} catch (IOException ex) {
 					System.out.println("IO error");
 					ex.printStackTrace();
 				} finally {
+					lock.unlock();
 					try {
 						out.close();
 						socket.close();
@@ -148,6 +149,7 @@ public class MainWindow extends JFrame {
 		lstMessages.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				lock.lock();
 				int selectedFolder = lstFolders.getSelectedIndex();
 				if (selectedFolder > -1) {
 					int selectedMessage = lstMessages.getSelectedIndex();
@@ -193,7 +195,6 @@ public class MainWindow extends JFrame {
 							}
 							
 							try {
-								lock.lock();
 								byte[] requestBytes = Serializer
 										.serialize(message);
 								out.writeByte(5);
@@ -225,7 +226,6 @@ public class MainWindow extends JFrame {
 									lstMessages
 											.setSelectedIndex(selectedMessage);
 								}
-								lock.unlock();
 							} catch (IOException er) {
 								er.printStackTrace();
 							} finally {
@@ -238,6 +238,7 @@ public class MainWindow extends JFrame {
 								}
 							}
 						}
+						lock.unlock();
 					}
 				}
 			}
@@ -259,6 +260,7 @@ public class MainWindow extends JFrame {
 		JButton btnDeleteFolder = new JButton("Удалить");
 		btnDeleteFolder.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				lock.lock();
 				int selectedFolder = lstFolders.getSelectedIndex();
 				if (selectedFolder < 0)
 					return;
@@ -294,7 +296,6 @@ public class MainWindow extends JFrame {
 				}
 				
 				try {
-					lock.lock();
 					byte[] requestBytes = Serializer.serialize(sFolder);
 					out.writeByte(8);
 					out.writeInt(key);
@@ -314,10 +315,10 @@ public class MainWindow extends JFrame {
 					} else {
 						lblError.setText("Несанкционированный пользователь");
 					}
-					lock.unlock();
 				} catch (IOException er) {
 					er.printStackTrace();
 				} finally {
+					lock.unlock();
 					try {
 						in.close();
 						out.close();
@@ -344,6 +345,7 @@ public class MainWindow extends JFrame {
 		JButton btnDelMess = new JButton("Удалить");
 		btnDelMess.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				lock.lock();
 				int selectedMessage = lstMessages.getSelectedIndex();
 				if (selectedMessage < 0)
 					return;
@@ -381,7 +383,6 @@ public class MainWindow extends JFrame {
 				}
 				
 				try {
-					lock.lock();
 					if (folderName.equals("Корзина")) {
 						Object[] request = new Object[2];
 						request[0] = message;
@@ -429,10 +430,10 @@ public class MainWindow extends JFrame {
 							lblError.setText("Несанкционированный пользватель");
 						}
 					}
-					lock.unlock();
 				} catch (IOException er) {
 					er.printStackTrace();					
 				} finally {
+					lock.unlock();
 					try {
 						in.close();
 						out.close();
@@ -470,6 +471,7 @@ public class MainWindow extends JFrame {
 		btnMoveMess.setBounds(419, 216, 91, 23);
 		contentPane.add(btnMoveMess);
 		
+		lock.lock();
 		try {
 			socket = new Socket("localhost", 6789);
 		} catch (UnknownHostException e2) {
@@ -496,7 +498,6 @@ public class MainWindow extends JFrame {
 		}
 		
 		try {
-			lock.lock();
 			out.writeByte(3);
 			out.writeInt(key);
 
@@ -513,12 +514,12 @@ public class MainWindow extends JFrame {
 				folders = (List<SimpleFolder>) Serializer
 						.deserialize(answerBytes);
 			}
-			lock.unlock();
 		} catch (IOException er) {
 			er.printStackTrace();
 		} catch (ClassNotFoundException er) {
 			er.printStackTrace();
 		} finally {
+			lock.unlock();
 			try {
 				in.close();
 				out.close();
@@ -620,6 +621,7 @@ public class MainWindow extends JFrame {
 			JButton btnSend = new JButton("Отправить");
 			btnSend.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					lock.lock();
 					Socket socket = null;
 					DataOutputStream out = null;
 					DataInputStream in = null;
@@ -650,7 +652,6 @@ public class MainWindow extends JFrame {
 					}
 					
 					try {
-						lock.lock();
 						String[] requestInfo = {
 								fldTo.getText().toLowerCase().trim(),
 								fldAbout.getText().trim(),
@@ -728,13 +729,13 @@ public class MainWindow extends JFrame {
 							lblErrorMess
 									.setText("Несанкционированный пользователь");
 						}
-						lock.unlock();
 					} catch (IOException ex) {
 						System.out.println("IO error");
 						ex.printStackTrace();
 					} catch (ClassNotFoundException er) {
 						er.printStackTrace();
 					} finally {
+						lock.unlock();
 						try {
 							in.close();
 							out.close();
@@ -804,6 +805,7 @@ public class MainWindow extends JFrame {
 			JButton btnCreateFold = new JButton("Создать папку");
 			btnCreateFold.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					lock.lock();
 					String requestInfo = fldFoldName.getText().trim();
 					Socket socket = null;
 					DataOutputStream out = null;
@@ -835,7 +837,6 @@ public class MainWindow extends JFrame {
 					}
 					
 					try {
-						lock.lock();
 						byte[] requestBytes = Serializer.serialize(requestInfo);
 						out.writeByte(7);
 						out.writeInt(key);
@@ -865,13 +866,13 @@ public class MainWindow extends JFrame {
 						} else {
 							lblError.setText("Папка с таким именем уже есть");
 						}
-						lock.unlock();
 					} catch (IOException ex) {
 						System.out.println("IO error");
 						ex.printStackTrace();
 					} catch (ClassNotFoundException er) {
 						er.printStackTrace();
 					} finally {
+						lock.unlock();
 						try {
 							in.close();
 							out.close();
@@ -925,6 +926,7 @@ public class MainWindow extends JFrame {
 			JButton btnMove = new JButton("Переместить");
 			btnMove.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					lock.lock();
 					int selectedMoveFolder = lstMoveFolders.getSelectedIndex();
 					if (selectedMoveFolder < 0)
 						return;
@@ -968,7 +970,6 @@ public class MainWindow extends JFrame {
 					}
 					
 					try {
-						lock.lock();
 						byte[] requestBytes = Serializer.serialize(requestInfo);
 						out.writeByte(9);
 						out.writeInt(key);
@@ -991,11 +992,11 @@ public class MainWindow extends JFrame {
 						} else if (answer == 3) {
 							lblError.setText("Несанкционированный пользватель");
 						}
-						lock.unlock();
 					} catch (IOException ex) {
 						System.out.println("IO error");
 						ex.printStackTrace();
 					} finally {
+						lock.unlock();
 						try {
 							in.close();
 							out.close();
@@ -1028,11 +1029,11 @@ public class MainWindow extends JFrame {
 
 			while (true) {
 				try {
-					Thread.sleep(15000);
+					Thread.sleep(5000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				
+				lock.lock();
 				try {
 					socket = new Socket("localhost", 6789);
 				} catch (UnknownHostException e2) {
@@ -1059,7 +1060,6 @@ public class MainWindow extends JFrame {
 				}
 
 				try {
-					lock.lock();
 					out.writeByte(10);
 					out.writeInt(key);
 					out.writeInt(inputMessages.size());
@@ -1084,13 +1084,13 @@ public class MainWindow extends JFrame {
 					} else if (answer == 3) {
 						lblError.setText("Несанкционированный пользователь");
 					}
-					lock.unlock();
 				} catch (IOException ex) {
 					System.out.println("IO error");
 					ex.printStackTrace();
 				} catch (ClassNotFoundException er) {
 					er.printStackTrace();
 				} finally {
+					lock.unlock();
 					try {
 						in.close();
 						out.close();
