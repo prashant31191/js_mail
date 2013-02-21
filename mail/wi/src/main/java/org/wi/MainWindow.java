@@ -235,6 +235,7 @@ public class MainWindow extends JFrame {
 									lstMessages
 											.setSelectedIndex(selectedMessage);
 								} else if (answer == 3) {
+									/*Выходим из основного окна*/
 									messageChecker.setWorking(false);
 									Registration registration = new Registration();
 									registration.setVisible(true);
@@ -331,6 +332,7 @@ public class MainWindow extends JFrame {
 					} else if (answer == 2) {
 						lblError.setText("Проблемы с сервером");
 					} else if (answer == 3) {
+						/*Выходим из основного окна*/
 						messageChecker.setWorking(false);
 						Registration registration = new Registration();
 						registration.setVisible(true);
@@ -428,6 +430,7 @@ public class MainWindow extends JFrame {
 							listModelMessages.remove(selectedMessage);
 							taMessText.setText("");
 						} else if (answer == 3) {
+							/*Выходим из основного окна*/
 							messageChecker.setWorking(false);
 							Registration registration = new Registration();
 							registration.setVisible(true);
@@ -460,6 +463,7 @@ public class MainWindow extends JFrame {
 						} else if (answer == 2) {
 							lblError.setText("Проблемы с сервером");
 						} else if (answer == 3) {
+							/*Выходим из основного окна*/
 							messageChecker.setWorking(false);
 							Registration registration = new Registration();
 							registration.setVisible(true);
@@ -545,6 +549,7 @@ public class MainWindow extends JFrame {
 					messageChecker.setWorking(false);
 					out.writeByte(0);
 					out.writeInt(key);
+					/*Выходим из основного окна*/
 					Registration registration = new Registration();
 					registration.setVisible(true);
 					MainWindow.this.dispose();
@@ -598,6 +603,7 @@ public class MainWindow extends JFrame {
 			/*Ждем ответ*/
 			byte answer = in.readByte();
 			if (answer == 3) {
+				/*Выходим из основного окна*/
 				messageChecker.setWorking(false);
 				Registration registration = new Registration();
 				registration.setVisible(true);
@@ -828,6 +834,7 @@ public class MainWindow extends JFrame {
 
 							lblErrorMess.setText("Проблемы с сервером");
 						} else {
+							/*Выходим из основного окна*/
 							messageChecker.setWorking(false);
 							Registration registration = new Registration();
 							registration.setVisible(true);
@@ -970,6 +977,7 @@ public class MainWindow extends JFrame {
 						} else if (answer == 2) {
 							lblError.setText("Проблемы с сервером");
 						} else if (answer == 3) {
+							/*Выходим из основного окна*/
 							messageChecker.setWorking(false);
 							Registration registration = new Registration();
 							registration.setVisible(true);
@@ -1107,6 +1115,7 @@ public class MainWindow extends JFrame {
 						} else if (answer == 2) {
 							lblError.setText("Проблемы с сервером");
 						} else if (answer == 3) {
+							/*Выходим из основного окна*/
 							messageChecker.setWorking(false);
 							Registration registration = new Registration();
 							registration.setVisible(true);
@@ -1210,6 +1219,7 @@ public class MainWindow extends JFrame {
 					} else if (answer == 2) {
 						lblError.setText("Проблемы с сервером");
 					} else if (answer == 3) {
+						/*Выходим из основного окна*/
 						working = false;
 						Registration registration = new Registration();
 						registration.setVisible(true);

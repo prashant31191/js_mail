@@ -444,18 +444,22 @@ public class Server {
 		public void run() {
 			List<Session> sessions = null;
 			while (true) {
+				/*Ждем*/
 				try {
 					Thread.sleep(60000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
+				/*Берем все сессии*/
 				sessions = Managing.getSessions();
 				if (sessions != null) {
-				long currentDate = System.currentTimeMillis();
-				long sessionDate = 0;
+					long currentDate = System.currentTimeMillis();
+					long sessionDate = 0;
+					/*Просматриваем все сессии*/
 					for (Session session : sessions) {
 						sessionDate = session.getTime().getTime();
-						if (currentDate - sessionDate > 1000*60*5) {
+						if (currentDate - sessionDate > 1000 * 60 * 5) {
+							/*Удаляем неактивного пользователя*/
 							Managing.deleteSession(session.getId());
 						}
 					}
