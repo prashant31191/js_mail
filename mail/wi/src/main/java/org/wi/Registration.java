@@ -15,8 +15,6 @@ import javax.swing.JButton;
 import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -200,7 +198,7 @@ public class Registration extends JFrame {
 						e1.printStackTrace();
 					}
 				}
-				
+				/*Отправляем запрос на вход в систему*/
 				try {
 					String[] requestInfo = {
 							fldEnterMail.getText().toLowerCase().trim(),
@@ -210,9 +208,10 @@ public class Registration extends JFrame {
 					out.writeByte(2);
 					out.writeInt(requestBytes.length);
 					out.write(requestBytes);
-
+					/*Ждем ответ*/
 					byte answer = in.readByte();
 					if (answer == 0) {
+						/*Если успешно, создаем окно с почтой*/
 						int key = in.readInt();
 						MainWindow mw = new MainWindow(key);
 						mw.setVisible(true);
@@ -271,6 +270,7 @@ public class Registration extends JFrame {
 				}
 				
 				try {
+					/*Отправляем запрос на регистрацию*/
 					String[] requestInfo = { fldLogin.getText().toLowerCase(),
 							fldFirstPass.getText(), fldSecPass.getText(),
 							fldFirstName.getText().trim(),
@@ -285,11 +285,13 @@ public class Registration extends JFrame {
 
 					byte answer = in.readByte();
 					if (answer == 0) {
+						/*Если успешно, создаем окно с почной*/
 						int key = in.readInt();
 						MainWindow mw = new MainWindow(key);
 						mw.setVisible(true);
 						Registration.this.dispose();
 					} else if (answer == 1) {
+						/*Если неуспешно, считываем маску*/
 						StringBuilder sb = new StringBuilder();
 						int length = in.readInt();
 						byte[] answerBytes = new byte[length];
@@ -297,7 +299,7 @@ public class Registration extends JFrame {
 							answerBytes[i] = in.readByte();
 						boolean[] answers = (boolean[]) Serializer
 								.deserialize(answerBytes);
-
+						/*Показываем пользователю причины*/
 						if (!answers[1])
 							sb.append("- Некоректный логин\n"
 									+ "(Минимальная длина 4 символа. Латинские буквы,"
@@ -344,6 +346,7 @@ public class Registration extends JFrame {
 		JButton btnClear = new JButton("Очистить");
 		btnClear.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				/*Очищаем поля для регистрации*/
 				fldLogin.setText("");
 				fldFirstPass.setText("");
 				fldSecPass.setText("");

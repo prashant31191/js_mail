@@ -19,6 +19,7 @@ import org.cc.*;
  */
 public class Server {
 	private final static int portNumber = 6789;
+	/*Map для хранения пары клуч - почта*/
 	Map<Integer, String> users = new HashMap<Integer, String>();
 
 	/**
@@ -49,6 +50,7 @@ public class Server {
 
 		while (listening) {
 			try {
+				/*Ждем accept, затем отправляем Runnable в пул потоков*/
 				executor.execute(new ConnectionRequestHandler(serverSocket.accept()));
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -94,11 +96,11 @@ public class Server {
 
 			try {
 				requestNumber = in.readByte();
+				/*Если это запрос на регистрацию*/
 				if (requestNumber == 1) {
-
+					/*Получаем регистрационные данные*/
 					int length = in.readInt();
 					byte[] requestBytes = new byte[length];
-
 					for (int i = 0; i < length; i++)
 						requestBytes[i] = in.readByte();
 					String[] requestInfo = (String[]) Serializer
@@ -106,15 +108,19 @@ public class Server {
 
 					boolean[] checkedData = new UserValidation()
 							.regDataCheck(requestInfo);
-
+					
 					if (!checkedData[0]) {
+						/*Если данные некорректны, возвращаем маску*/
 						byte[] answerBytes = Serializer.serialize(checkedData);
 						out.writeByte(1);
 						out.writeInt(answerBytes.length);
 						out.write(answerBytes);
 					} else {
+						/*Пробуем создать пользователя*/
 						String workWith = Managing.createUser(requestInfo);
+						
 						if (!workWith.equals("")) {
+							/*Если пользователь успешно создан, отправляем ключ*/
 							Random rand = new Random();
 							int key = rand.nextInt(1000000);
 							users.put(key, workWith);
@@ -124,11 +130,11 @@ public class Server {
 							out.writeByte(2);
 					}
 				}
-
+				/*Если запрос на вход в систему*/
 				if (requestNumber == 2) {
+					/*Получаем логин и пароль*/
 					int length = in.readInt();
 					byte[] requestBytes = new byte[length];
-
 					for (int i = 0; i < length; i++)
 						requestBytes[i] = in.readByte();
 					String[] requestInfo = (String[]) Serializer
@@ -136,14 +142,16 @@ public class Server {
 
 					boolean userChecked = new UserValidation()
 							.enterUserCheck(requestInfo);
-
+					
 					if (!userChecked) {
 						out.writeByte(1);
 					} else {
+						/*Если данные верны*/
 						boolean userExists = Managing.checkUser(requestInfo[0],
 								requestInfo[1]);
 
 						if (userExists) {
+							/*Если пользователь существует, отправляем ключ*/
 							Random rand = new Random();
 							int key = rand.nextInt(1000000);
 							users.put(key, requestInfo[0]);
@@ -154,17 +162,20 @@ public class Server {
 						}
 					}
 				}
-
+				/*Запрос на все папки и письма, которые есть у пользователя*/
 				if (requestNumber == 3) {
+					/*Проверяем, есть ли такое ключ в сессиях*/
 					int gotKey = in.readInt();
 					if (!users.containsKey(gotKey))
 						out.writeByte(3);
 					else {
+						/*Если есть, пытаемся получить из БД данные*/
 						List<SimpleFolder> answer = Managing
 								.getEverything(users.get(gotKey));
 						if (answer == null)
 							out.writeByte(2);
 						else {
+							/*Если успешно, отправляем данные пользователю*/
 							byte[] answerBytes = Serializer.serialize(answer);
 							out.writeByte(0);
 							out.writeInt(answerBytes.length);
@@ -173,34 +184,38 @@ public class Server {
 					}
 
 				}
-
+				/*Запрос на отправку письма*/
 				if (requestNumber == 4) {
 					int gotKey = in.readInt();
 					int length = in.readInt();
+					/*Получаем данные о письме*/
 					byte[] requestBytes = new byte[length];
-
 					for (int i = 0; i < length; i++)
 						requestBytes[i] = in.readByte();
 					String[] requestInfo = (String[]) Serializer
 							.deserialize(requestBytes);
-
+					/*Проверяем, есть ли такой ключ в сессиях*/
 					if (!users.containsKey(gotKey))
 						out.writeByte(3);
 					else {
+						/*Если есть, проверяем данные*/
 						boolean[] checkedData = new ActionValidation()
 								.checkMessage(requestInfo);
 						if (!checkedData[0]) {
+							/*Если данные некорректны, отправляем маску*/
 							byte[] answerBytes = Serializer
 									.serialize(checkedData);
 							out.writeByte(1);
 							out.writeInt(answerBytes.length);
 							out.write(answerBytes);
 						} else {
+							/*Пытаемся отправить письмо*/
 							Object[] answer = Managing.sendMessage(requestInfo,
 									users.get(gotKey));
 							if (answer == null) {
 								out.writeByte(2);
 							} else {
+								/*Если письмо отправлено, отправляем пользователю новые письма*/
 								byte[] answerBytes = Serializer
 										.serialize(answer);
 								out.writeByte(0);
@@ -210,12 +225,12 @@ public class Server {
 						}
 					}
 				}
-
+				/*Запрос на отметку письма как прочитанное*/
 				if (requestNumber == 5) {
 					int gotKey = in.readInt();
 					int length = in.readInt();
+					/*Получаем письмо*/
 					byte[] requestBytes = new byte[length];
-
 					for (int i = 0; i < length; i++)
 						requestBytes[i] = in.readByte();
 					SimpleMessage requestInfo = (SimpleMessage) Serializer
@@ -224,6 +239,7 @@ public class Server {
 					if (!users.containsKey(gotKey))
 						out.writeByte(3);
 					else {
+						/*Если ключ есть в сессиях, пытаемся отметить как прочитанное*/
 						boolean set = Managing.setRead(requestInfo, users.get(gotKey));
 						if (set) {
 							out.writeByte(0);
@@ -231,11 +247,12 @@ public class Server {
 							out.writeByte(2);
 					}
 				}
+				/*Запрос на удаление письма*/
 				if (requestNumber == 6) {
 					int gotKey = in.readInt();
 					int length = in.readInt();
+					/*Получаем данные о письме*/
 					byte[] requestBytes = new byte[length];
-
 					for (int i = 0; i < length; i++)
 						requestBytes[i] = in.readByte();
 					Object[] requestInfo = (Object[]) Serializer
@@ -244,6 +261,7 @@ public class Server {
 					if (!users.containsKey(gotKey))
 						out.writeByte(3);
 					else {
+						/*Если ключ есть в сессиях, пытаемся удалить письмо*/
 						boolean deleted = Managing.deleteMess(
 								(SimpleMessage) requestInfo[0],
 								(String) requestInfo[1], users.get(gotKey));
@@ -253,12 +271,12 @@ public class Server {
 							out.writeByte(2);
 					}
 				}
-
+				/*Запрос на создание новой папки*/
 				if (requestNumber == 7) {
 					int gotKey = in.readInt();
 					int length = in.readInt();
+					/*Получаем название папки*/
 					byte[] requestBytes = new byte[length];
-
 					for (int i = 0; i < length; i++)
 						requestBytes[i] = in.readByte();
 					String requestInfo = (String) Serializer
@@ -267,14 +285,17 @@ public class Server {
 					if (!users.containsKey(gotKey))
 						out.writeByte(3);
 					else {
+						/*Если ключ есть в сессиях, проверяем корректность названия*/
 						boolean correctFolder = new ActionValidation()
 								.checkFolderName(requestInfo);
 						if (!correctFolder)
 							out.writeByte(1);
 						else {
+							/*Если название корректно, пытаемся создать папку*/
 							SimpleFolder created = Managing.createFolder(
 									requestInfo, users.get(gotKey));
 							if (created != null) {
+								/*Если папка создана, отправляем ее*/
 								byte[] answerBytes = Serializer
 										.serialize(created);
 								out.writeByte(0);
@@ -285,12 +306,12 @@ public class Server {
 						}
 					}
 				}
-
+				/*Запрос на удаление папки*/
 				if (requestNumber == 8) {
 					int gotKey = in.readInt();
 					int length = in.readInt();
+					/*Получаем папку*/
 					byte[] requestBytes = new byte[length];
-
 					for (int i = 0; i < length; i++)
 						requestBytes[i] = in.readByte();
 					SimpleFolder requestInfo = (SimpleFolder) Serializer
@@ -299,6 +320,7 @@ public class Server {
 					if (!users.containsKey(gotKey))
 						out.writeByte(3);
 					else {
+						/*Если ключ есть в сессиях, пробуем удалить папку*/
 						byte deleted = Managing.deleteFolder(requestInfo,
 								users.get(gotKey));
 						if (deleted == 1)
@@ -310,12 +332,12 @@ public class Server {
 						}
 					}
 				}
-
+				/*Запрос на перемещение письма*/
 				if (requestNumber == 9) {
 					int gotKey = in.readInt();
 					int length = in.readInt();
+					/*Получаем данные о письме*/
 					byte[] requestBytes = new byte[length];
-
 					for (int i = 0; i < length; i++)
 						requestBytes[i] = in.readByte();
 					Object[] requestInfo = (Object[]) Serializer
@@ -324,6 +346,7 @@ public class Server {
 					if (!users.containsKey(gotKey))
 						out.writeByte(3);
 					else {
+						/*Если ключ есть в сессиях, пробуем переместить письмо*/
 						SimpleMessage message = (SimpleMessage) requestInfo[0];
 						String folder = (String) requestInfo[1];
 						String moveFolder = (String) requestInfo[2];
@@ -340,19 +363,22 @@ public class Server {
 						}
 					}
 				}
-
+				/*Запрос на проверку новых сообещений*/
 				if (requestNumber == 10) {
 					int gotKey = in.readInt();
+					/*Получаем количество сообщений у пользователя*/
 					int amount = in.readInt();
-
+					
 					if (!users.containsKey(gotKey))
 						out.writeByte(3);
 					else {
+						/*Если ключ есть в сессиях, проверяем есть ли новые сообщения*/
 						int amountOfNew = Managing.hasNewMessages(amount,
 								users.get(gotKey));
 						if (amountOfNew == -1)
 							out.writeByte(2);
 						else {
+							/*Если есть новые, получаем их и отправляем пользователю*/
 							if (amountOfNew == 0)
 								out.writeByte(1);
 							else {
@@ -373,7 +399,7 @@ public class Server {
 						}
 					}
 				}
-				
+				/*Запрос на выход из системы*/
 				if (requestNumber == 0) {
 					int gotKey = in.readInt();
 					if (users.containsKey(gotKey)) {
@@ -398,5 +424,9 @@ public class Server {
 
 			}
 		}
+	}
+	/*Поток для работы с сессиями*/
+	private class SessionChecker extends Thread {
+		
 	}
 }

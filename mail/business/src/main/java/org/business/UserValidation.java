@@ -18,7 +18,7 @@ public class UserValidation {
 	public boolean[] regDataCheck(String[] data) {
 		boolean[] checkedData = new boolean[9];
 		Validation valid = new Validation();
-
+		/*Заполняем маску корректности данных*/
 		checkedData[0] = true;
 		checkedData[1] = valid.correctMailBegin(data[0]);
 		checkedData[2] = valid.correctPassword(data[1]);
@@ -28,7 +28,7 @@ public class UserValidation {
 		checkedData[6] = valid.correctName(data[4]);
 		checkedData[7] = valid.correctDate(data[5]);
 		checkedData[8] = valid.correctPhone(data[6]);
-
+		/*Если данные не корректны, взводим первый "бит" в false*/
 		for (int i = 1; i < 9; i++) {
 			if (checkedData[i] == false) {
 				checkedData[0] = false;

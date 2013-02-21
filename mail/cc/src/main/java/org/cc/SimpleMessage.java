@@ -66,6 +66,9 @@ public class SimpleMessage implements Serializable, Comparable<SimpleMessage> {
 		this.read = read;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
 	public int compareTo(SimpleMessage o) {
 		if (this.getDate().compareTo(o.getDate()) < 0) {
 			return 1;

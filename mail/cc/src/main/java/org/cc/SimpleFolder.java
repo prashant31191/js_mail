@@ -33,6 +33,7 @@ public class SimpleFolder implements Serializable {
 
 	public synchronized void addMessage(SimpleMessage message) {
 		int index = 0;
+		/*Ищем место для сообщения в папке, исходя из его даты*/
 		for (SimpleMessage tmpMess : messages) {
 			if (message.getDate().compareTo(tmpMess.getDate()) >= 0) {
 				break;

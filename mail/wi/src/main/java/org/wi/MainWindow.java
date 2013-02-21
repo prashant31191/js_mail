@@ -42,6 +42,7 @@ import java.awt.event.MouseEvent;
 public class MainWindow extends JFrame {
 	private JPanel contentPane;
 	private JLabel lblError;
+	private JTextArea taMessText;
 	
 	private Lock lock = new ReentrantLock();
 	private int key;
@@ -75,6 +76,7 @@ public class MainWindow extends JFrame {
 		
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
+				/*Нажатие на закрытые окна*/
 				lock.lock();
 				Socket socket = null;
 				DataOutputStream out = null;
@@ -101,6 +103,7 @@ public class MainWindow extends JFrame {
 				}
 
 				try {
+					/*Отпраляем запрос на выход из системы*/
 					out.writeByte(0);
 					out.writeInt(key);
 					
@@ -119,7 +122,7 @@ public class MainWindow extends JFrame {
 			}
 		});
 		
-		final JTextArea taMessText = new JTextArea();
+		taMessText = new JTextArea();
 		taMessText.setEditable(false);
 		JScrollPane spMessageDetailed = new JScrollPane(taMessText);
 		spMessageDetailed
@@ -149,6 +152,7 @@ public class MainWindow extends JFrame {
 		lstMessages.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				/*Клик по сообщению*/
 				lock.lock();
 				int selectedFolder = lstFolders.getSelectedIndex();
 				if (selectedFolder > -1) {
@@ -156,6 +160,7 @@ public class MainWindow extends JFrame {
 					if (selectedMessage > -1) {
 						SimpleMessage message = folders.get(selectedFolder)
 								.getMessages().get(selectedMessage);
+						/*Формируем сообщение для отображения пользователю*/
 						StringBuilder sb = new StringBuilder();
 						sb.append(format.format(message.getDate()) + "\n");
 						sb.append("От: " + message.getFrom() + "\n");
@@ -165,6 +170,7 @@ public class MainWindow extends JFrame {
 						taMessText.setText(sb.toString());
 
 						if (!message.isRead()) {
+							/*Если письмо не прочитаено, отправляем запрос на отметку как прочитанное*/
 							Socket socket = null;
 							DataOutputStream out = null;
 							DataInputStream in = null;
@@ -201,9 +207,10 @@ public class MainWindow extends JFrame {
 								out.writeInt(key);
 								out.writeInt(requestBytes.length);
 								out.write(requestBytes);
-
+								/*Ждем ответ*/
 								byte answer = in.readByte();
 								if (answer == 0) {
+									/*Если отметилось, устанавливаем как прочитанное локально*/
 									message.setRead(true);
 									String read = "   ";
 									String direction = null;
@@ -260,8 +267,10 @@ public class MainWindow extends JFrame {
 		JButton btnDeleteFolder = new JButton("Удалить");
 		btnDeleteFolder.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				/*Удаление папки*/
 				lock.lock();
 				int selectedFolder = lstFolders.getSelectedIndex();
+				/*Смотрим, выделена ли папка*/
 				if (selectedFolder < 0)
 					return;
 				SimpleFolder sFolder = folders.get(selectedFolder);
@@ -296,6 +305,7 @@ public class MainWindow extends JFrame {
 				}
 				
 				try {
+					/*Отправляем запрос на удаление*/
 					byte[] requestBytes = Serializer.serialize(sFolder);
 					out.writeByte(8);
 					out.writeInt(key);
@@ -304,6 +314,7 @@ public class MainWindow extends JFrame {
 
 					byte answer = in.readByte();
 					if (answer == 0) {
+						/*Если папка удалена, удаляем ее локально*/
 						folders.remove(selectedFolder);
 						listModelFolders.remove(selectedFolder);
 						listModelMessages.removeAllElements();
@@ -335,6 +346,7 @@ public class MainWindow extends JFrame {
 		JButton btnCreateFolder = new JButton("Создать");
 		btnCreateFolder.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				/*Вызываем окно для создания папки*/
 				CreateFold sm = new CreateFold();
 				sm.setVisible(true);
 			}
@@ -345,14 +357,18 @@ public class MainWindow extends JFrame {
 		JButton btnDelMess = new JButton("Удалить");
 		btnDelMess.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				/*Удаление сообщения*/
 				lock.lock();
 				int selectedMessage = lstMessages.getSelectedIndex();
+				/*Смотрим, выделено ли сообщение*/
 				if (selectedMessage < 0)
 					return;
+				
 				int selectedFolder = lstFolders.getSelectedIndex();
 				SimpleMessage message = folders.get(selectedFolder)
 						.getMessages().get(selectedMessage);
 				String folderName = listModelFolders.elementAt(selectedFolder);
+				
 				Socket socket = null;
 				DataOutputStream out = null;
 				DataInputStream in = null;
@@ -384,6 +400,7 @@ public class MainWindow extends JFrame {
 				
 				try {
 					if (folderName.equals("Корзина")) {
+						/*Если выделенная папка - Корзина, отправляем запрос на удаление*/
 						Object[] request = new Object[2];
 						request[0] = message;
 						request[1] = folderName;
@@ -392,9 +409,10 @@ public class MainWindow extends JFrame {
 						out.writeInt(key);
 						out.writeInt(requestBytes.length);
 						out.write(requestBytes);
-
+						/*Ждем ответ*/
 						byte answer = in.readByte();
 						if (answer == 0) {
+							/*Если успешно, удаляем письмо локально*/
 							folders.get(selectedFolder).getMessages()
 									.remove(selectedMessage);
 							listModelMessages.remove(selectedMessage);
@@ -405,6 +423,7 @@ public class MainWindow extends JFrame {
 
 						}
 					} else {
+						/*Если выделенная папка не Корзина, отправляем запрос на перемещение в Корзину*/
 						Object[] request = new Object[3];
 						request[0] = message;
 						request[1] = folderName;
@@ -414,9 +433,10 @@ public class MainWindow extends JFrame {
 						out.writeInt(key);
 						out.writeInt(requestBytes.length);
 						out.write(requestBytes);
-
+						/*Ждем ответ*/
 						byte answer = in.readByte();
 						if (answer == 0) {
+							/*Если успешно, перемещяем письмо в корзину локально*/
 							int trash = listModelFolders.indexOf("Корзина");
 							listModelMessages.remove(selectedMessage);
 							folders.get(selectedFolder).getMessages()
@@ -450,6 +470,7 @@ public class MainWindow extends JFrame {
 		JButton btnCreatMess = new JButton("Написать");
 		btnCreatMess.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				/*Вызываем окно для отправки сообщения*/
 				SendMessage sm = new SendMessage();
 				sm.setVisible(true);
 			}
@@ -460,9 +481,12 @@ public class MainWindow extends JFrame {
 		JButton btnMoveMess = new JButton("Переместить");
 		btnMoveMess.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				/*Перемещение сообщения из папки в папку*/
 				int selectedMessage = lstMessages.getSelectedIndex();
+				/*Проверяем выделено ли сообщение*/
 				if (selectedMessage < 0)
 					return;
+				/*Вызываем окно для перемещения сообщения*/
 				MoveFold move = new MoveFold(lstFolders.getSelectedIndex(),
 						selectedMessage);
 				move.setVisible(true);
@@ -474,6 +498,7 @@ public class MainWindow extends JFrame {
 		JButton btnLogOut = new JButton("Выйти");
 		btnLogOut.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				/*Выход из системы*/
 				lock.lock();
 				Socket socket = null;
 				DataOutputStream out = null;
@@ -500,6 +525,7 @@ public class MainWindow extends JFrame {
 				}
 
 				try {
+					/*Отправляем запрос на выход*/
 					out.writeByte(0);
 					out.writeInt(key);
 					Registration registration = new Registration();
@@ -549,15 +575,17 @@ public class MainWindow extends JFrame {
 		}
 		
 		try {
+			/*Отправляем запрос на получение всех папок и писем*/
 			out.writeByte(3);
 			out.writeInt(key);
-
+			/*Ждем ответ*/
 			byte answer = in.readByte();
 			if (answer == 3) {
 				taMessText.setText("Несанкционированный пользователь");
 			} else if (answer == 2) {
 				taMessText.setText("Проблемы с сервером");
 			} else {
+				/*Если успешно, получаем папки с сообщениями*/
 				int length = in.readInt();
 				byte[] answerBytes = new byte[length];
 				for (int i = 0; i < length; i++)
@@ -579,23 +607,25 @@ public class MainWindow extends JFrame {
 				e1.printStackTrace();
 			}
 		}
-
+		/*Выводим папки пользователю*/
 		for (SimpleFolder sf : folders) {
 			listModelFolders.add(folders.indexOf(sf), sf.getName());
 		}
-
+		/*Запускаем поток для проверки новых сообщений*/
 		Thread thread = new Thread(new newMessageChecker());
 		thread.setDaemon(true);
 		thread.start();
 	}
 
 	private void drawMessages() {
+		/*Прописовка сообщений при нажатии на папку*/
 		int index = lstFolders.getSelectedIndex();
 		if (index > -1) {
+			/*Удаляем с экрана текущие сообщения*/
 			listModelMessages.removeAllElements();
 			SimpleFolder folder = folders.get(index);
 			List<SimpleMessage> messages = folder.getMessages();
-
+			/*Формируем и прорысовывем новые*/
 			for (SimpleMessage message : messages) {
 				String read = message.isRead() ? "   " : " \u00B7 ";
 				String direction = null;
@@ -672,6 +702,7 @@ public class MainWindow extends JFrame {
 			JButton btnSend = new JButton("Отправить");
 			btnSend.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					/*Отправляем сообщение*/
 					lock.lock();
 					Socket socket = null;
 					DataOutputStream out = null;
@@ -703,6 +734,7 @@ public class MainWindow extends JFrame {
 					}
 					
 					try {
+						/*Отправляем запрос на отправлку сообщения*/
 						String[] requestInfo = {
 								fldTo.getText().toLowerCase().trim(),
 								fldAbout.getText().trim(),
@@ -715,6 +747,7 @@ public class MainWindow extends JFrame {
 
 						byte answer = in.readByte();
 						if (answer == 0) {
+							/*Если успешно*/
 							int length = in.readInt();
 							byte[] answerBytes = new byte[length];
 							for (int i = 0; i < length; i++)
@@ -728,24 +761,26 @@ public class MainWindow extends JFrame {
 
 							SimpleFolder outFolder = null;
 							SimpleFolder inFolder = null;
-
+							/*Получаем локальные папки входящие и исходящие*/
 							for (SimpleFolder sf : folders) {
 								if (sf.getName().equals("Исходящие"))
 									outFolder = sf;
 								if (sf.getName().equals("Входящие"))
 									inFolder = sf;
 							}
+							/*Добавляем сообщения в локальные папки*/
 							if (messages[0] != null)
 								outFolder
 										.addMessage((SimpleMessage) messages[0]);
 							List<SimpleMessage> incomeMessages = (List<SimpleMessage>) messages[1];
 							for (SimpleMessage sm : incomeMessages)
 								inFolder.addMessage(sm);
-
+							/*Прописовываем сообщения*/
 							drawMessages();
-
+							/*Закрываем окно*/
 							SendMessage.this.dispose();
 						} else if (answer == 1) {
+							/*Если неудачно, выводим информацию пользователю*/
 							int length = in.readInt();
 							byte[] answerBytes = new byte[length];
 							for (int i = 0; i < length; i++)
@@ -856,6 +891,7 @@ public class MainWindow extends JFrame {
 			JButton btnCreateFold = new JButton("Создать папку");
 			btnCreateFold.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					/*Создание папки*/
 					lock.lock();
 					String requestInfo = fldFoldName.getText().trim();
 					Socket socket = null;
@@ -888,25 +924,27 @@ public class MainWindow extends JFrame {
 					}
 					
 					try {
+						/*Отправляем запрос на создание папки*/
 						byte[] requestBytes = Serializer.serialize(requestInfo);
 						out.writeByte(7);
 						out.writeInt(key);
 						out.writeInt(requestBytes.length);
 						out.write(requestBytes);
-
+						/*Ждем ответ*/
 						byte answer = in.readByte();
 						if (answer == 0) {
+							/*Если удачно, получаем папку*/
 							int length = in.readInt();
 							byte[] answerBytes = new byte[length];
 							for (int i = 0; i < length; i++)
 								answerBytes[i] = in.readByte();
 							SimpleFolder folder = (SimpleFolder) Serializer
 									.deserialize(answerBytes);
-
+							/*Добавляем ее локально*/
 							folders.add(folder);
 							listModelFolders.add(listModelFolders.size(),
 									folder.getName());
-
+							/*Закрываем окно*/
 							CreateFold.this.dispose();
 						} else if (answer == 1) {
 							lblError.setText("Неверное название папки");
@@ -977,8 +1015,10 @@ public class MainWindow extends JFrame {
 			JButton btnMove = new JButton("Переместить");
 			btnMove.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					/*Перемещение письма*/
 					lock.lock();
 					int selectedMoveFolder = lstMoveFolders.getSelectedIndex();
+					/*Проверяем, выделена ли папка назначения*/
 					if (selectedMoveFolder < 0)
 						return;
 					Object[] requestInfo = new Object[3];
@@ -987,6 +1027,7 @@ public class MainWindow extends JFrame {
 					String folder = folders.get(selectedFolder).getName();
 					String moveFolder = folders.get(selectedMoveFolder)
 							.getName();
+					/*Формируем запрос*/
 					requestInfo[0] = message;
 					requestInfo[1] = folder;
 					requestInfo[2] = moveFolder;
@@ -1020,15 +1061,16 @@ public class MainWindow extends JFrame {
 						}
 					}
 					
-					try {
+					try {/*Отправляем запрос на перемещение*/
 						byte[] requestBytes = Serializer.serialize(requestInfo);
 						out.writeByte(9);
 						out.writeInt(key);
 						out.writeInt(requestBytes.length);
 						out.write(requestBytes);
-
+						/*Ждем ответ*/
 						byte answer = in.readByte();
 						if (answer == 0) {
+							/*Если успешно, перемещаем письмо локально*/
 							String messageAppearance = listModelMessages
 									.get(selectedMessage);
 							listModelMessages.remove(selectedMessage);
@@ -1036,6 +1078,7 @@ public class MainWindow extends JFrame {
 									.remove(selectedMessage);
 							folders.get(selectedMoveFolder).addMessage(message);
 							dispose();
+							taMessText.setText("");
 						} else if (answer == 1) {
 							lblError.setText("Невозможно переместить");
 						} else if (answer == 2) {
@@ -1069,6 +1112,7 @@ public class MainWindow extends JFrame {
 		DataInputStream in = null;
 		
 		public void run() {
+			/*Находим папку Входящие*/
 			SimpleFolder inputFolder = null;
 			for (SimpleFolder tmpFolder : folders) {
 				if (tmpFolder.getName().equals("Входящие")) {
@@ -1076,7 +1120,6 @@ public class MainWindow extends JFrame {
 					break;
 				}
 			}
-			List<SimpleMessage> inputMessages = inputFolder.getMessages();
 
 			while (true) {
 				try {
@@ -1111,12 +1154,14 @@ public class MainWindow extends JFrame {
 				}
 
 				try {
+					/*Отправляем запрос с количеством сообщений*/
 					out.writeByte(10);
 					out.writeInt(key);
-					out.writeInt(inputMessages.size());
-
+					out.writeInt(inputFolder.getMessages().size());
+					/*Ждем ответ*/
 					byte answer = in.readByte();
 					if (answer == 0) {
+						/*Если удачно, получаем сообщения и добавляем локально*/
 						int length = in.readInt();
 						byte[] answerBytes = new byte[length];
 						for (int i = 0; i < length; i++)
@@ -1126,7 +1171,7 @@ public class MainWindow extends JFrame {
 
 						for (SimpleMessage sMessage : gotMessages)
 							inputFolder.addMessage(sMessage);
-
+						/*Выводим сообщения в выделенной папке*/
 						drawMessages();
 					} else if (answer == 1) {
 

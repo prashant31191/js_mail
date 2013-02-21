@@ -40,12 +40,14 @@ public class Managing {
 		EntityTransaction trx = em.getTransaction();
 		String newAddress = null;
 		try {
+			/*Ищем почтовый адрес*/
 			Email checkEmail = em.find(Email.class, data[0] + "@mail.js");
+			/*Проверяем, существует ли такой почтовый адрес*/
 			if (checkEmail != null)
 				return "";
 
 			trx.begin();
-
+			/*Создаем пользователя*/
 			User user = new User();
 			user.setFirstName(data[3]);
 			user.setLastName(data[4]);
@@ -58,7 +60,7 @@ public class Managing {
 			}
 			user.setPhone(data[6]);
 			em.persist(user);
-
+			/*Создаем почтовый ящик*/
 			Email email = new Email();
 			newAddress = data[0] + "@mail.js";
 			email.setEaddress(newAddress);
@@ -67,7 +69,7 @@ public class Managing {
 			email.setUser(user);
 			email.setCreationDate(new Date(System.currentTimeMillis()));
 			em.persist(email);
-
+			/*Создаем неудаляемые папки Входящие, Исходящие и Корзина*/
 			Folder input = new Folder();
 			input.setName("Входящие");
 			input.setUndel(true);
@@ -85,9 +87,9 @@ public class Managing {
 			trash.setUndel(true);
 			trash.setWhose(email);
 			em.persist(trash);
-
+			/*Находим почтовый адрес сервера*/
 			Email noreply = em.find(Email.class, "noreply@mail.js");
-
+			/*Создаем сообщение*/
 			Message message = new Message();
 			message.setAbout("Добрый день");
 			message.setEmail(noreply);
@@ -133,12 +135,12 @@ public class Managing {
 		EntityManager em = emf.createEntityManager();
 
 		try {
-
+			/*Находим почтовый адрес*/
 			Email mail = em.find(Email.class, mailAddress);
 
 			if (mail == null)
 				return false;
-
+			/*Если адрес существует, проверяем пароль*/
 			if (BCrypt.checkpw(pass, mail.getPassword()))
 				return true;
 			else
@@ -167,8 +169,10 @@ public class Managing {
 				.createEntityManagerFactory("mail");
 		EntityManager em = emf.createEntityManager();
 		try {
+			/*Находим почтовый адрес и его папки*/
 			Email mail = em.find(Email.class, whose);
 			List<Folder> folders = mail.getFolders();
+			/*Находим папку входящие*/
 			Folder inputFolder = null;
 			for (Folder folder : folders)
 				if (folder.getName().equals("Входящие")) {
@@ -201,16 +205,20 @@ public class Managing {
 				.createEntityManagerFactory("mail");
 		EntityManager em = emf.createEntityManager();
 		try {
+			/*Находим почтовый адрес и его папки*/
 			Email mail = em.find(Email.class, whose);
 			List<Folder> folders = mail.getFolders();
+			/*Находим папку Входящие*/
 			Folder inputFolder = null;
 			for (Folder folder : folders)
 				if (folder.getName().equals("Входящие")) {
 					inputFolder = folder;
 					break;
 				}
+			
 			List<MessToFold> messToFold = inputFolder.getMessToFolds();
 			List<SimpleMessage> simpleMessages = new ArrayList<SimpleMessage>();
+			/*Достаем все сообщения в папке входящие*/
 			for (MessToFold mf : messToFold) {
 				Message message = mf.getMessage();
 				SimpleMessage sm = new SimpleMessage();
@@ -219,6 +227,7 @@ public class Managing {
 				sm.setAbout(message.getAbout());
 				sm.setText(message.getText());
 				if (message.getEmail().getEaddress().equals(mail)) {
+					/*Формирование сообщение, если оно от пользователя*/
 					sm.setFrom("Меня");
 					List<MessToMail> messToMail = message.getMessToMails();
 					StringBuilder sb = new StringBuilder();
@@ -227,6 +236,7 @@ public class Managing {
 					sm.setTo(sb.toString());
 					sm.setRead(true);
 				} else {
+					/*Формирование сообщения если оно пользователю*/
 					sm.setFrom(message.getEmail().getEaddress());
 					sm.setTo("Мне");
 					List<MessToMail> messToMail = message.getMessToMails();
@@ -236,6 +246,7 @@ public class Managing {
 				}
 				simpleMessages.add(0, sm);
 			}
+			/*Сортируем сообщения и берем новые*/
 			Collections.sort(simpleMessages);
 			newMessages = new ArrayList<SimpleMessage>(simpleMessages.subList(
 					0, amountOfNew));
@@ -262,15 +273,18 @@ public class Managing {
 		EntityManager em = emf.createEntityManager();
 
 		try {
+			/*Находим адрес и папки*/
 			Email mail = em.find(Email.class, email);
-
 			List<Folder> dbFolders = mail.getFolders();
+			
 			List<SimpleFolder> sFolders = new ArrayList<SimpleFolder>();
+			/*Проходим по всем папким*/
 			for (Folder folder : dbFolders) {
 				SimpleFolder sFolder = new SimpleFolder();
 				sFolder.setName(folder.getName());
 				List<MessToFold> messToFold = folder.getMessToFolds();
 				List<SimpleMessage> simpleMessages = new ArrayList<SimpleMessage>();
+				/*Проходим по всем сообщениям в папке*/
 				for (MessToFold mf : messToFold) {
 					Message message = mf.getMessage();
 					SimpleMessage sm = new SimpleMessage();
@@ -279,6 +293,7 @@ public class Managing {
 					sm.setAbout(message.getAbout());
 					sm.setText(message.getText());
 					if (message.getEmail().getEaddress().equals(email)) {
+						/*Формирование сообщения, если оно исходящее*/
 						sm.setFrom("Меня");
 						List<MessToMail> messToMail = message.getMessToMails();
 						StringBuilder sb = new StringBuilder();
@@ -287,6 +302,7 @@ public class Managing {
 						sm.setTo(sb.toString());
 						sm.setRead(true);
 					} else {
+						/*Формирование сообщения, если оно входящее*/
 						sm.setFrom(message.getEmail().getEaddress());
 						sm.setTo("Мне");
 						List<MessToMail> messToMail = message.getMessToMails();
@@ -296,6 +312,7 @@ public class Managing {
 					}
 					simpleMessages.add(0, sm);
 				}
+				/*Сортируем сообщения по дате и ложим в папку*/
 				Collections.sort(simpleMessages);
 				sFolder.setMessages(simpleMessages);
 				sFolders.add(sFolder);
@@ -329,19 +346,21 @@ public class Managing {
 			String[] emails = data[0].trim().split(";");
 
 			trx.begin();
-
+			/*Находим почту пользователя и сервера*/
 			Email noreply = em.find(Email.class, "noreply@mail.js");
 			Email senderEmail = em.find(Email.class, sender);
+			/*Находим папки пользователя*/
 			List<Folder> senderFolders = senderEmail.getFolders();
 			Folder senderInput = null;
 			Folder senderOutput = null;
+			/*Назодим папки входящие и исходящие*/
 			for (Folder folder : senderFolders) {
 				if (folder.getName().equals("Входящие"))
 					senderInput = folder;
 				if (folder.getName().equals("Исходящие"))
 					senderOutput = folder;
 			}
-
+			/*Создаем сообщение*/
 			Message newMessage = new Message();
 			newMessage.setEmail(senderEmail);
 			newMessage.setAbout(data[1]);
@@ -352,13 +371,13 @@ public class Managing {
 			StringBuilder getters = new StringBuilder();
 			SimpleMessage outcomeMess = new SimpleMessage();
 			List<SimpleMessage> incomeMessages = new ArrayList<SimpleMessage>();
-
+			/*Проверяем лист получателей*/
 			for (String tmp : emails) {
 				Email emailTo = em.find(Email.class, tmp.trim());
 
 				if (emailTo == null || tmp.trim().equals("noreply@mail.js")
 						|| tmp.trim().equals(sender)) {
-
+					/*Если некорректный адрес получателя, формируем входящее сообщение*/
 					Message message = new Message();
 					message.setAbout("Ошибка отправки");
 					message.setEmail(noreply);
@@ -393,6 +412,7 @@ public class Managing {
 					mm.setRead(false);
 					em.persist(mm);
 				} else {
+					/*Если адрес корректен, формируем исходящее сообщение*/
 					getters.append(tmp.trim() + "; ");
 
 					if (!thereIsGoodGetter) {
@@ -430,7 +450,7 @@ public class Managing {
 				}
 			}
 			trx.commit();
-
+			/*Формируем ответ из входящий и исходящий сообщений на передачу пользователю*/
 			Object[] serverMessages = new Object[2];
 			if (thereIsGoodGetter) {
 				outcomeMess.setTo(getters.toString());
@@ -468,13 +488,11 @@ public class Managing {
 		EntityTransaction trx = em.getTransaction();
 		try {
 			trx.begin();
-
+			/*Находим почтовый адрес пользователя*/
 			Email email = em.find(Email.class, whose);
 			Message foundMessage = null;
-
-			List<MessToMail> messToMails = email.getMessToMails();
-
-			for (MessToMail messToMail : messToMails) {
+			/*НАходим необходимае сообщение и отмечаем как прочитанное*/
+			for (MessToMail messToMail : email.getMessToMails()) {
 				foundMessage = messToMail.getMessage();
 				if (foundMessage.getAbout().equals(message.getAbout())
 						&& foundMessage.getText().equals(message.getText())
@@ -514,18 +532,17 @@ public class Managing {
 		EntityTransaction trx = em.getTransaction();
 		try {
 			trx.begin();
-
+			/*Находим почтовый адрес*/
 			Email email = em.find(Email.class, whose);
 			Message foundMessage = null;
-
-			List<Folder> folders = email.getFolders();
+			/*Ищем папку с письмом*/
 			Folder foundFolder = null;
-			for (Folder folder : folders)
+			for (Folder folder : email.getFolders())
 				if (folder.getName().equals(folderName)) {
 					foundFolder = folder;
 					break;
 				}
-
+			/*Ищем письмо и удаляем связку в БД*/
 			for (MessToFold messToFold : foundFolder.getMessToFolds()) {
 				foundMessage = messToFold.getMessage();
 				if (foundMessage.getAbout().equals(message.getAbout())
@@ -538,8 +555,10 @@ public class Managing {
 					break;
 				}
 			}
+			/*Проверяем, есть ли это сообщение у кого-нибудь другого*/
 			List<MessToFold> messToFolds = foundMessage.getMessToFolds();
 			if (messToFolds.size() == 0) {
+				/*Если нет, удаляем сообщение из БД*/
 				List<MessToMail> messToMails = foundMessage.getMessToMails();
 				for (MessToMail messToMail : messToMails)
 					em.remove(messToMail);
@@ -573,10 +592,11 @@ public class Managing {
 		EntityTransaction trx = em.getTransaction();
 		try {
 			trx.begin();
+			/*Находим почтовый адрес*/
 			Email email = em.find(Email.class, whose);
 			boolean thereIsSuchFolder = false;
-			List<Folder> folders = email.getFolders();
-			for (Folder folder : folders) {
+			/*Проверяем, если ли уже такая папка*/
+			for (Folder folder : email.getFolders()) {
 				if (folder.getName().equalsIgnoreCase(folderName)) {
 					thereIsSuchFolder = true;
 					break;
@@ -584,6 +604,7 @@ public class Managing {
 			}
 			if (thereIsSuchFolder)
 				return null;
+			/*Если такой папки нет, создаем*/
 			Folder folder = new Folder();
 			folder.setName(folderName);
 			folder.setUndel(false);
@@ -621,19 +642,20 @@ public class Managing {
 		EntityTransaction trx = em.getTransaction();
 		try {
 			trx.begin();
+			/*Находим почтовый адрес*/
 			Email email = em.find(Email.class, whose);
-			List<Folder> folders = email.getFolders();
 			Folder foundFolder = null;
-			for (Folder folder : folders)
+			/*Ищем папку*/
+			for (Folder folder : email.getFolders())
 				if (folder.getName().equals(sFolder.getName())) {
 					foundFolder = folder;
 					break;
 				}
-
+			/*Проверяем, можно ли ее удалить*/
 			if (foundFolder.getUndel()) {
 				return 1;
 			}
-
+			/*Удаляем папку и сообщения в ней*/
 			List<MessToFold> messToFolds = foundFolder.getMessToFolds();
 			if (messToFolds.size() == 0) {
 				em.remove(foundFolder);
@@ -687,24 +709,27 @@ public class Managing {
 		EntityTransaction trx = em.getTransaction();
 		try {
 			trx.begin();
+			/*Ищем почтовый адрес*/
 			Email email = em.find(Email.class, whose);
 			List<Folder> folders = email.getFolders();
 			Message foundMessage = null;
 			Folder fFolder = null;
 			Folder tFolder = null;
+			/*Находим папку с письмом*/
 			for (Folder folder : folders) {
 				if (folder.getName().equals(fromFolder)) {
 					fFolder = folder;
 					break;
 				}
 			}
+			/*Находим папку, в которую надо переместить письмо*/
 			for (Folder folder : folders) {
 				if (folder.getName().equals(toFolder)) {
 					tFolder = folder;
 					break;
 				}
 			}
-
+			/*Находим письмо и перемещием его*/
 			List<MessToFold> messToFolds = fFolder.getMessToFolds();
 			for (MessToFold messToFold : messToFolds) {
 				foundMessage = messToFold.getMessage();
