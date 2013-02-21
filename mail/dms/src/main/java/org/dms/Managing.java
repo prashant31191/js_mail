@@ -752,4 +752,128 @@ public class Managing {
 			emf.close();
 		}
 	}
+	
+	public static boolean createSession(int key, String whose) {
+		EntityManagerFactory emf = Persistence
+				.createEntityManagerFactory("mail");
+		EntityManager em = emf.createEntityManager();
+		EntityTransaction trx = em.getTransaction();
+		try {
+			trx.begin();
+			
+			Session session = new Session();
+			session.setId(key);
+			session.setMail(whose);
+			session.setTime(new Date(System.currentTimeMillis()));
+			em.persist(session);
+			
+			trx.commit();
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			if (trx.isActive())
+				trx.rollback();
+			return false;
+		} finally {
+			emf.close();
+		}
+	}
+	
+	public static String getSessionUser(int key) {
+		EntityManagerFactory emf = Persistence
+				.createEntityManagerFactory("mail");
+		EntityManager em = emf.createEntityManager();
+		Session session = null;
+		try {	
+			session = em.find(Session.class, key);
+			if (session == null)
+				return "";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		} finally {
+			emf.close();
+		}
+		return session.getMail();
+	}
+	
+	public static boolean deleteSession(int key) {
+		EntityManagerFactory emf = Persistence
+				.createEntityManagerFactory("mail");
+		EntityManager em = emf.createEntityManager();
+		EntityTransaction trx = em.getTransaction();
+		try {
+			trx.begin();
+			
+			Session session = em.find(Session.class, key);
+			em.remove(session);
+			
+			trx.commit();
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			if (trx.isActive())
+				trx.rollback();
+			return false;
+		} finally {
+			emf.close();
+		}
+	}
+	
+	public static boolean sessionExists(int key) {
+		EntityManagerFactory emf = Persistence
+				.createEntityManagerFactory("mail");
+		EntityManager em = emf.createEntityManager();
+		try {	
+			Session session = em.find(Session.class, key);
+			if (session == null)
+				return false;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		} finally {
+			emf.close();
+		}
+		return true;
+	}
+	
+	public static List<Session> getSessions() {
+		EntityManagerFactory emf = Persistence
+				.createEntityManagerFactory("mail");
+		EntityManager em = emf.createEntityManager();
+		List<Session> sessions;
+		try {	
+			sessions = em.createQuery("SELECT s FROM Session s").getResultList();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+			emf.close();
+		}
+		return sessions;
+	}
+	
+	public static boolean undateSessionLastRequest(int key) {
+		EntityManagerFactory emf = Persistence
+				.createEntityManagerFactory("mail");
+		EntityManager em = emf.createEntityManager();
+		EntityTransaction trx = em.getTransaction();
+		try {
+			trx.begin();
+			
+			Session session = em.find(Session.class, key);
+			session.setTime(new Date(System.currentTimeMillis()));
+			em.merge(session);
+			
+			trx.commit();
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			if (trx.isActive())
+				trx.rollback();
+			return false;
+		} finally {
+			emf.close();
+		}
+	}
 }

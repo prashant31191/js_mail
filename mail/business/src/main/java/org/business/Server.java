@@ -1,6 +1,7 @@
 package org.business;
 
 import java.net.*;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +10,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.io.*;
 import org.dms.Managing;
+import org.dms.Session;
 import org.cc.*;
 
 /**
@@ -20,7 +22,6 @@ import org.cc.*;
 public class Server {
 	private final static int portNumber = 6789;
 	/*Map для хранения пары клуч - почта*/
-	Map<Integer, String> users = new HashMap<Integer, String>();
 
 	/**
 	 * Main method for starting server
@@ -39,6 +40,8 @@ public class Server {
 	private void startServer() throws Exception {
 		ServerSocket serverSocket = null;
 		boolean listening = true;
+		
+		new SessionChecker().start();
 		
 		ExecutorService executor = Executors.newFixedThreadPool(10);
 		try {
@@ -123,7 +126,7 @@ public class Server {
 							/*Если пользователь успешно создан, отправляем ключ*/
 							Random rand = new Random();
 							int key = rand.nextInt(1000000);
-							users.put(key, workWith);
+							Managing.createSession(key, workWith);
 							out.writeByte(0);
 							out.writeInt(key);
 						} else
@@ -154,7 +157,7 @@ public class Server {
 							/*Если пользователь существует, отправляем ключ*/
 							Random rand = new Random();
 							int key = rand.nextInt(1000000);
-							users.put(key, requestInfo[0]);
+							Managing.createSession(key, requestInfo[0]);
 							out.writeByte(0);
 							out.writeInt(key);
 						} else {
@@ -166,12 +169,12 @@ public class Server {
 				if (requestNumber == 3) {
 					/*Проверяем, есть ли такое ключ в сессиях*/
 					int gotKey = in.readInt();
-					if (!users.containsKey(gotKey))
+					if (!Managing.sessionExists(gotKey))
 						out.writeByte(3);
 					else {
 						/*Если есть, пытаемся получить из БД данные*/
 						List<SimpleFolder> answer = Managing
-								.getEverything(users.get(gotKey));
+								.getEverything(Managing.getSessionUser(gotKey));
 						if (answer == null)
 							out.writeByte(2);
 						else {
@@ -195,9 +198,10 @@ public class Server {
 					String[] requestInfo = (String[]) Serializer
 							.deserialize(requestBytes);
 					/*Проверяем, есть ли такой ключ в сессиях*/
-					if (!users.containsKey(gotKey))
+					if (!Managing.sessionExists(gotKey))
 						out.writeByte(3);
 					else {
+						Managing.undateSessionLastRequest(gotKey);
 						/*Если есть, проверяем данные*/
 						boolean[] checkedData = new ActionValidation()
 								.checkMessage(requestInfo);
@@ -211,7 +215,7 @@ public class Server {
 						} else {
 							/*Пытаемся отправить письмо*/
 							Object[] answer = Managing.sendMessage(requestInfo,
-									users.get(gotKey));
+									Managing.getSessionUser(gotKey));
 							if (answer == null) {
 								out.writeByte(2);
 							} else {
@@ -236,11 +240,12 @@ public class Server {
 					SimpleMessage requestInfo = (SimpleMessage) Serializer
 							.deserialize(requestBytes);
 
-					if (!users.containsKey(gotKey))
+					if (!Managing.sessionExists(gotKey))
 						out.writeByte(3);
 					else {
+						Managing.undateSessionLastRequest(gotKey);
 						/*Если ключ есть в сессиях, пытаемся отметить как прочитанное*/
-						boolean set = Managing.setRead(requestInfo, users.get(gotKey));
+						boolean set = Managing.setRead(requestInfo, Managing.getSessionUser(gotKey));
 						if (set) {
 							out.writeByte(0);
 						} else
@@ -258,13 +263,14 @@ public class Server {
 					Object[] requestInfo = (Object[]) Serializer
 							.deserialize(requestBytes);
 					
-					if (!users.containsKey(gotKey))
+					if (!Managing.sessionExists(gotKey))
 						out.writeByte(3);
 					else {
+						Managing.undateSessionLastRequest(gotKey);
 						/*Если ключ есть в сессиях, пытаемся удалить письмо*/
 						boolean deleted = Managing.deleteMess(
 								(SimpleMessage) requestInfo[0],
-								(String) requestInfo[1], users.get(gotKey));
+								(String) requestInfo[1], Managing.getSessionUser(gotKey));
 						if (deleted) {
 							out.writeByte(0);
 						} else
@@ -282,9 +288,10 @@ public class Server {
 					String requestInfo = (String) Serializer
 							.deserialize(requestBytes);
 
-					if (!users.containsKey(gotKey))
+					if (!Managing.sessionExists(gotKey))
 						out.writeByte(3);
 					else {
+						Managing.undateSessionLastRequest(gotKey);
 						/*Если ключ есть в сессиях, проверяем корректность названия*/
 						boolean correctFolder = new ActionValidation()
 								.checkFolderName(requestInfo);
@@ -293,7 +300,7 @@ public class Server {
 						else {
 							/*Если название корректно, пытаемся создать папку*/
 							SimpleFolder created = Managing.createFolder(
-									requestInfo, users.get(gotKey));
+									requestInfo, Managing.getSessionUser(gotKey));
 							if (created != null) {
 								/*Если папка создана, отправляем ее*/
 								byte[] answerBytes = Serializer
@@ -317,12 +324,13 @@ public class Server {
 					SimpleFolder requestInfo = (SimpleFolder) Serializer
 							.deserialize(requestBytes);
 
-					if (!users.containsKey(gotKey))
+					if (!Managing.sessionExists(gotKey))
 						out.writeByte(3);
 					else {
+						Managing.undateSessionLastRequest(gotKey);
 						/*Если ключ есть в сессиях, пробуем удалить папку*/
 						byte deleted = Managing.deleteFolder(requestInfo,
-								users.get(gotKey));
+								Managing.getSessionUser(gotKey));
 						if (deleted == 1)
 							out.writeByte(1);
 						else if (deleted == 2) {
@@ -343,9 +351,10 @@ public class Server {
 					Object[] requestInfo = (Object[]) Serializer
 							.deserialize(requestBytes);
 
-					if (!users.containsKey(gotKey))
+					if (!Managing.sessionExists(gotKey))
 						out.writeByte(3);
 					else {
+						Managing.undateSessionLastRequest(gotKey);
 						/*Если ключ есть в сессиях, пробуем переместить письмо*/
 						SimpleMessage message = (SimpleMessage) requestInfo[0];
 						String folder = (String) requestInfo[1];
@@ -355,7 +364,7 @@ public class Server {
 							out.writeByte(1);
 						else {
 							boolean moved = Managing.moveMessage(message,
-									folder, moveFolder, users.get(gotKey));
+									folder, moveFolder, Managing.getSessionUser(gotKey));
 							if (moved)
 								out.writeByte(0);
 							else
@@ -369,12 +378,12 @@ public class Server {
 					/*Получаем количество сообщений у пользователя*/
 					int amount = in.readInt();
 					
-					if (!users.containsKey(gotKey))
+					if (!Managing.sessionExists(gotKey))
 						out.writeByte(3);
 					else {
 						/*Если ключ есть в сессиях, проверяем есть ли новые сообщения*/
 						int amountOfNew = Managing.hasNewMessages(amount,
-								users.get(gotKey));
+								Managing.getSessionUser(gotKey));
 						if (amountOfNew == -1)
 							out.writeByte(2);
 						else {
@@ -383,7 +392,7 @@ public class Server {
 								out.writeByte(1);
 							else {
 								List<SimpleMessage> newMessages = Managing
-										.getNewMessages(amountOfNew, users.get(gotKey));
+										.getNewMessages(amountOfNew, Managing.getSessionUser(gotKey));
 								if (newMessages == null)
 									out.writeByte(2);
 								else {
@@ -402,8 +411,8 @@ public class Server {
 				/*Запрос на выход из системы*/
 				if (requestNumber == 0) {
 					int gotKey = in.readInt();
-					if (users.containsKey(gotKey)) {
-						users.remove(gotKey);
+					if (Managing.sessionExists(gotKey)) {
+						Managing.deleteSession(gotKey);
 						System.out.println("User removed");
 					}
 				}
@@ -427,6 +436,31 @@ public class Server {
 	}
 	/*Поток для работы с сессиями*/
 	private class SessionChecker extends Thread {
+		SessionChecker() {
+			super();
+			setDaemon(true);
+		}
 		
+		public void run() {
+			List<Session> sessions = null;
+			while (true) {
+				try {
+					Thread.sleep(60000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				sessions = Managing.getSessions();
+				if (sessions != null) {
+				long currentDate = System.currentTimeMillis();
+				long sessionDate = 0;
+					for (Session session : sessions) {
+						sessionDate = session.getTime().getTime();
+						if (currentDate - sessionDate > 1000*60*5) {
+							Managing.deleteSession(session.getId());
+						}
+					}
+				}
+			}
+		}
 	}
 }

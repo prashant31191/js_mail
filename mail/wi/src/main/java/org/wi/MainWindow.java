@@ -44,6 +44,7 @@ public class MainWindow extends JFrame {
 	private JLabel lblError;
 	private JTextArea taMessText;
 	
+	private NewMessageChecker messageChecker;
 	private Lock lock = new ReentrantLock();
 	private int key;
 
@@ -104,6 +105,7 @@ public class MainWindow extends JFrame {
 
 				try {
 					/*Отпраляем запрос на выход из системы*/
+					messageChecker.setWorking(false);
 					out.writeByte(0);
 					out.writeInt(key);
 					
@@ -232,6 +234,11 @@ public class MainWindow extends JFrame {
 											messAppearance);
 									lstMessages
 											.setSelectedIndex(selectedMessage);
+								} else if (answer == 3) {
+									messageChecker.setWorking(false);
+									Registration registration = new Registration();
+									registration.setVisible(true);
+									MainWindow.this.dispose();
 								}
 							} catch (IOException er) {
 								er.printStackTrace();
@@ -323,8 +330,11 @@ public class MainWindow extends JFrame {
 						lblError.setText("Эту папку нельзя удалить");
 					} else if (answer == 2) {
 						lblError.setText("Проблемы с сервером");
-					} else {
-						lblError.setText("Несанкционированный пользователь");
+					} else if (answer == 3) {
+						messageChecker.setWorking(false);
+						Registration registration = new Registration();
+						registration.setVisible(true);
+						MainWindow.this.dispose();
 					}
 				} catch (IOException er) {
 					er.printStackTrace();
@@ -418,7 +428,10 @@ public class MainWindow extends JFrame {
 							listModelMessages.remove(selectedMessage);
 							taMessText.setText("");
 						} else if (answer == 3) {
-
+							messageChecker.setWorking(false);
+							Registration registration = new Registration();
+							registration.setVisible(true);
+							MainWindow.this.dispose();
 						} else {
 
 						}
@@ -447,7 +460,10 @@ public class MainWindow extends JFrame {
 						} else if (answer == 2) {
 							lblError.setText("Проблемы с сервером");
 						} else if (answer == 3) {
-							lblError.setText("Несанкционированный пользватель");
+							messageChecker.setWorking(false);
+							Registration registration = new Registration();
+							registration.setVisible(true);
+							MainWindow.this.dispose();
 						}
 					}
 				} catch (IOException er) {
@@ -526,6 +542,7 @@ public class MainWindow extends JFrame {
 
 				try {
 					/*Отправляем запрос на выход*/
+					messageChecker.setWorking(false);
 					out.writeByte(0);
 					out.writeInt(key);
 					Registration registration = new Registration();
@@ -581,7 +598,10 @@ public class MainWindow extends JFrame {
 			/*Ждем ответ*/
 			byte answer = in.readByte();
 			if (answer == 3) {
-				taMessText.setText("Несанкционированный пользователь");
+				messageChecker.setWorking(false);
+				Registration registration = new Registration();
+				registration.setVisible(true);
+				MainWindow.this.dispose();
 			} else if (answer == 2) {
 				taMessText.setText("Проблемы с сервером");
 			} else {
@@ -612,9 +632,9 @@ public class MainWindow extends JFrame {
 			listModelFolders.add(folders.indexOf(sf), sf.getName());
 		}
 		/*Запускаем поток для проверки новых сообщений*/
-		Thread thread = new Thread(new newMessageChecker());
-		thread.setDaemon(true);
-		thread.start();
+		messageChecker = new NewMessageChecker();
+		messageChecker.setDaemon(true);
+		messageChecker.start();
 	}
 
 	private void drawMessages() {
@@ -808,12 +828,11 @@ public class MainWindow extends JFrame {
 
 							lblErrorMess.setText("Проблемы с сервером");
 						} else {
-							lblErrorAbout.setText("");
-							lblErrorTo.setText("");
-							lblErrorMess.setText("");
-
-							lblErrorMess
-									.setText("Несанкционированный пользователь");
+							messageChecker.setWorking(false);
+							Registration registration = new Registration();
+							registration.setVisible(true);
+							SendMessage.this.dispose();
+							MainWindow.this.dispose();
 						}
 					} catch (IOException ex) {
 						System.out.println("IO error");
@@ -951,7 +970,11 @@ public class MainWindow extends JFrame {
 						} else if (answer == 2) {
 							lblError.setText("Проблемы с сервером");
 						} else if (answer == 3) {
-							lblError.setText("Несанкционированный пользователь");
+							messageChecker.setWorking(false);
+							Registration registration = new Registration();
+							registration.setVisible(true);
+							CreateFold.this.dispose();
+							MainWindow.this.dispose();
 						} else {
 							lblError.setText("Папка с таким именем уже есть");
 						}
@@ -1084,7 +1107,11 @@ public class MainWindow extends JFrame {
 						} else if (answer == 2) {
 							lblError.setText("Проблемы с сервером");
 						} else if (answer == 3) {
-							lblError.setText("Несанкционированный пользватель");
+							messageChecker.setWorking(false);
+							Registration registration = new Registration();
+							registration.setVisible(true);
+							MoveFold.this.dispose();
+							MainWindow.this.dispose();
 						}
 					} catch (IOException ex) {
 						System.out.println("IO error");
@@ -1106,11 +1133,16 @@ public class MainWindow extends JFrame {
 		}
 	}
 
-	private class newMessageChecker implements Runnable {
+	private class NewMessageChecker extends Thread {
 		Socket socket = null;
 		DataOutputStream out = null;
 		DataInputStream in = null;
+		private boolean working = true;
 		
+		public void setWorking(boolean working) {
+			this.working = working;
+		}
+
 		public void run() {
 			/*Находим папку Входящие*/
 			SimpleFolder inputFolder = null;
@@ -1121,9 +1153,9 @@ public class MainWindow extends JFrame {
 				}
 			}
 
-			while (true) {
+			while (working) {
 				try {
-					Thread.sleep(5000);
+					Thread.sleep(10000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -1178,7 +1210,10 @@ public class MainWindow extends JFrame {
 					} else if (answer == 2) {
 						lblError.setText("Проблемы с сервером");
 					} else if (answer == 3) {
-						lblError.setText("Несанкционированный пользователь");
+						working = false;
+						Registration registration = new Registration();
+						registration.setVisible(true);
+						MainWindow.this.dispose();
 					}
 				} catch (IOException ex) {
 					System.out.println("IO error");
