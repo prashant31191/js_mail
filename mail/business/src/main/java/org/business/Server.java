@@ -1,16 +1,15 @@
 package org.business;
 
 import java.net.*;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.io.*;
 import org.dms.Managing;
 import org.dms.Session;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.cc.*;
 
 /**
@@ -20,8 +19,8 @@ import org.cc.*;
  * @version 1.0
  */
 public class Server {
+	private static final Logger logger = Logger.getLogger("Server");
 	private final static int portNumber = 6789;
-	/*Map для хранения пары клуч - почта*/
 
 	/**
 	 * Main method for starting server
@@ -29,10 +28,12 @@ public class Server {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		logger.setLevel(Level.INFO);
 		try {
 			new Server().startServer();
+			logger.info("Server started");
 		} catch (Exception e) {
-			System.out.println("I/O failure: " + e.getMessage());
+			logger.error("I/O failure: ", e);
 			e.printStackTrace();
 		}
 	}
@@ -40,23 +41,28 @@ public class Server {
 	private void startServer() throws Exception {
 		ServerSocket serverSocket = null;
 		boolean listening = true;
-		
+
+		logger.info("Starting session checker");
 		new SessionChecker().start();
-		
+		logger.info("Session checker is started");
+
 		ExecutorService executor = Executors.newFixedThreadPool(10);
 		try {
 			serverSocket = new ServerSocket(portNumber);
+			logger.info("Socket created: " + portNumber);
 		} catch (IOException e) {
-			System.err.println("Could not listen on port: " + portNumber);
+			logger.error("Could not listen on port: " + portNumber);
 			System.exit(-1);
 		}
 
 		while (listening) {
 			try {
-				/*Ждем accept, затем отправляем Runnable в пул потоков*/
-				executor.execute(new ConnectionRequestHandler(serverSocket.accept()));
+				/* Ждем accept, затем отправляем Runnable в пул потоков */
+				executor.execute(new ConnectionRequestHandler(serverSocket
+						.accept()));
+				logger.info("Accepted");
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error("Could not accept", e);
 			}
 		}
 
@@ -79,14 +85,13 @@ public class Server {
 		}
 
 		public void run() {
-			System.out.println("Client connected to socket: "
-					+ socket.toString());
+			logger.info("Client connected to socket: " + socket.toString());
 
 			try {
 				in = new DataInputStream(socket.getInputStream());
 				out = new DataOutputStream(socket.getOutputStream());
 			} catch (IOException e) {
-				System.out.println("Socket stream error");
+				logger.error("Socket stream error", e);
 				e.printStackTrace();
 				try {
 					socket.close();
@@ -99,386 +104,587 @@ public class Server {
 
 			try {
 				requestNumber = in.readByte();
-				/*Если это запрос на регистрацию*/
+				/* Если это запрос на регистрацию */
 				if (requestNumber == 1) {
-					/*Получаем регистрационные данные*/
+					logger.info("Got request for registration ["
+							+ socket.getPort() + "]");
+					logger.info("Trying to get reg data [" + socket.getPort()
+							+ "]");
+					/* Получаем регистрационные данные */
 					int length = in.readInt();
 					byte[] requestBytes = new byte[length];
 					for (int i = 0; i < length; i++)
 						requestBytes[i] = in.readByte();
 					String[] requestInfo = (String[]) Serializer
 							.deserialize(requestBytes);
+					logger.info("Got reg data [" + socket.getPort() + "]");
 
 					boolean[] checkedData = new UserValidation()
 							.regDataCheck(requestInfo);
-					
+
 					if (!checkedData[0]) {
-						/*Если данные некорректны, возвращаем маску*/
+						logger.info("Sending mask of reg data ["
+								+ socket.getPort() + "]");
+						/* Если данные некорректны, возвращаем маску */
 						byte[] answerBytes = Serializer.serialize(checkedData);
 						out.writeByte(1);
 						out.writeInt(answerBytes.length);
 						out.write(answerBytes);
+						logger.info("Sent mask of reg data ["
+								+ socket.getPort() + "]");
 					} else {
-						/*Пробуем создать пользователя*/
+						logger.info("Trying to create user ["
+								+ socket.getPort() + "]");
+						/* Пробуем создать пользователя */
 						String workWith = Managing.createUser(requestInfo);
-						
+
 						if (!workWith.equals("")) {
-							/*Если пользователь успешно создан, отправляем ключ*/
+							logger.info("Trying to send new session key ["
+									+ socket.getPort() + "]");
+							/* Если пользователь успешно создан, отправляем ключ */
 							Random rand = new Random();
 							int key = rand.nextInt(1000000);
 							Managing.createSession(key, workWith);
 							out.writeByte(0);
 							out.writeInt(key);
-						} else
+							logger.info("Sent key [" + socket.getPort() + "]");
+						} else {
+							logger.info("Could not create new user ["
+									+ socket.getPort() + "]");
 							out.writeByte(2);
+						}
 					}
 				}
-				/*Если запрос на вход в систему*/
+				/* Если запрос на вход в систему */
 				if (requestNumber == 2) {
-					/*Получаем логин и пароль*/
+					logger.info("Got request to log in [" + socket.getPort()
+							+ "]");
+					logger.info("Trying to get data [" + socket.getPort() + "]");
+					/* Получаем логин и пароль */
 					int length = in.readInt();
 					byte[] requestBytes = new byte[length];
 					for (int i = 0; i < length; i++)
 						requestBytes[i] = in.readByte();
 					String[] requestInfo = (String[]) Serializer
 							.deserialize(requestBytes);
-
+					logger.info("Got data " + socket.getPort());
+					logger.info("Checking data correctness ["
+							+ socket.getPort() + "]");
 					boolean userChecked = new UserValidation()
 							.enterUserCheck(requestInfo);
-					
+
 					if (!userChecked) {
+						logger.info("Data is incorrect [" + socket.getPort()
+								+ "]");
 						out.writeByte(1);
 					} else {
-						/*Если данные верны*/
+						/* Если данные верны */
+						logger.info("Trying to check user in DB ["
+								+ socket.getPort() + "]");
 						boolean userExists = Managing.checkUser(requestInfo[0],
 								requestInfo[1]);
 
 						if (userExists) {
-							/*Если пользователь существует, отправляем ключ*/
+							logger.info("Trying to send session key ["
+									+ socket.getPort() + "]");
+							/* Если пользователь существует, отправляем ключ */
 							Random rand = new Random();
 							int key = rand.nextInt(1000000);
 							Managing.createSession(key, requestInfo[0]);
 							out.writeByte(0);
 							out.writeInt(key);
+							logger.info("Sent session key [" + socket.getPort()
+									+ "]");
 						} else {
+							logger.info("Wrong user data [" + socket.getPort()
+									+ "]");
 							out.writeByte(2);
 						}
 					}
 				}
-				/*Запрос на все папки и письма, которые есть у пользователя*/
+				/* Запрос на все папки и письма, которые есть у пользователя */
 				if (requestNumber == 3) {
-					/*Проверяем, есть ли такое ключ в сессиях*/
+					logger.info("Request to get everything ["
+							+ socket.getPort() + "]");
+					logger.info("Trying to get key [" + socket.getPort() + "]");
+					/* Проверяем, есть ли такое ключ в сессиях */
 					int gotKey = in.readInt();
-					if (!Managing.sessionExists(gotKey))
+					logger.info("Got key [" + socket.getPort() + "]");
+					if (!Managing.sessionExists(gotKey)) {
+						logger.info("The key does not exist ["
+								+ socket.getPort() + "]");
 						out.writeByte(3);
-					else {
-						/*Если есть, пытаемся получить из БД данные*/
+					} else {
+						logger.info("Trying to get folders and messages from DB ["
+								+ socket.getPort() + "]");
+						/* Если есть, пытаемся получить из БД данные */
 						List<SimpleFolder> answer = Managing
 								.getEverything(Managing.getSessionUser(gotKey));
-						if (answer == null)
+						if (answer == null) {
+							logger.info("Could not got folders and messages ["
+									+ socket.getPort() + "]");
 							out.writeByte(2);
-						else {
-							/*Если успешно, отправляем данные пользователю*/
+						} else {
+							logger.info("Got folders and messages ["
+									+ socket.getPort() + "]");
+							logger.info("Trying to send folders and messages ["
+									+ socket.getPort() + "]");
+							/* Если успешно, отправляем данные пользователю */
 							byte[] answerBytes = Serializer.serialize(answer);
 							out.writeByte(0);
 							out.writeInt(answerBytes.length);
 							out.write(answerBytes);
+							logger.info("Sent folders and messages ["
+									+ socket.getPort() + "]");
 						}
 					}
 				}
-				/*Запрос на отправку письма*/
+				/* Запрос на отправку письма */
 				if (requestNumber == 4) {
+					logger.info("Request to send message [" + socket.getPort()
+							+ "]");
+					logger.info("Trying to got key and message data ["
+							+ socket.getPort() + "]");
 					int gotKey = in.readInt();
 					int length = in.readInt();
-					/*Получаем данные о письме*/
+					/* Получаем данные о письме */
 					byte[] requestBytes = new byte[length];
 					for (int i = 0; i < length; i++)
 						requestBytes[i] = in.readByte();
 					String[] requestInfo = (String[]) Serializer
 							.deserialize(requestBytes);
-					/*Проверяем, есть ли такой ключ в сессиях*/
-					if (!Managing.sessionExists(gotKey))
+					logger.info("Got key and message data [" + socket.getPort()
+							+ "]");
+					/* Проверяем, есть ли такой ключ в сессиях */
+					if (!Managing.sessionExists(gotKey)) {
+						logger.info("Key does not exist [" + socket.getPort()
+								+ "]");
 						out.writeByte(3);
-					else {
+					} else {
+						logger.info("Updating session time  ["
+								+ socket.getPort() + "]");
 						Managing.undateSessionLastRequest(gotKey);
-						/*Если есть, проверяем данные*/
+						logger.info("Checking correctness of data ["
+								+ socket.getPort() + "]");
+						/* Если есть, проверяем данные */
 						boolean[] checkedData = new ActionValidation()
 								.checkMessage(requestInfo);
 						if (!checkedData[0]) {
-							/*Если данные некорректны, отправляем маску*/
+							logger.info("Data is incorrect ["
+									+ socket.getPort() + "]");
+							logger.info("Trying to send mask ["
+									+ socket.getPort() + "]");
+							/* Если данные некорректны, отправляем маску */
 							byte[] answerBytes = Serializer
 									.serialize(checkedData);
 							out.writeByte(1);
 							out.writeInt(answerBytes.length);
 							out.write(answerBytes);
+							logger.info("Sent mask [" + socket.getPort() + "]");
 						} else {
-							/*Пытаемся отправить письмо*/
+							logger.info("Trying to send message ["
+									+ socket.getPort() + "]");
+							/* Пытаемся отправить письмо */
 							Object[] answer = Managing.sendMessage(requestInfo,
 									Managing.getSessionUser(gotKey));
 							if (answer == null) {
+								logger.info("Message is not sent ["
+										+ socket.getPort() + "]");
 								out.writeByte(2);
 							} else {
-								/*Если письмо отправлено, отправляем пользователю новые письма*/
+								logger.info("Trying to send new messages to user ["
+										+ socket.getPort() + "]");
+								/*
+								 * Если письмо отправлено, отправляем
+								 * пользователю новые письма
+								 */
 								byte[] answerBytes = Serializer
 										.serialize(answer);
 								out.writeByte(0);
 								out.writeInt(answerBytes.length);
 								out.write(answerBytes);
+								logger.info("Sent messages ["
+										+ socket.getPort() + "]");
 							}
 						}
 					}
 				}
-				/*Запрос на отметку письма как прочитанное*/
+				/* Запрос на отметку письма как прочитанное */
 				if (requestNumber == 5) {
+					logger.info("Request to set message as read ["
+							+ socket.getPort() + "]");
+					logger.info("Trying to get key and message ["
+							+ socket.getPort() + "]");
 					int gotKey = in.readInt();
 					int length = in.readInt();
-					/*Получаем письмо*/
+					/* Получаем письмо */
 					byte[] requestBytes = new byte[length];
 					for (int i = 0; i < length; i++)
 						requestBytes[i] = in.readByte();
 					SimpleMessage requestInfo = (SimpleMessage) Serializer
 							.deserialize(requestBytes);
-
-					if (!Managing.sessionExists(gotKey))
+					logger.info("Got message and key [" + socket.getPort()
+							+ "]");
+					if (!Managing.sessionExists(gotKey)) {
+						logger.info("Key does not exist [" + socket.getPort()
+								+ "]");
 						out.writeByte(3);
-					else {
+					} else {
+						logger.info("Updating session time ["
+								+ socket.getPort() + "]");
 						Managing.undateSessionLastRequest(gotKey);
-						/*Если ключ есть в сессиях, пытаемся отметить как прочитанное*/
-						boolean set = Managing.setRead(requestInfo, Managing.getSessionUser(gotKey));
+						/*
+						 * Если ключ есть в сессиях, пытаемся отметить как
+						 * прочитанное
+						 */
+						logger.info("Trying to set message as read ["
+								+ socket.getPort() + "]");
+						boolean set = Managing.setRead(requestInfo,
+								Managing.getSessionUser(gotKey));
 						if (set) {
+							logger.info("Message is set [" + socket.getPort()
+									+ "]");
 							out.writeByte(0);
-						} else
+						} else {
+							logger.info("Message is not set ["
+									+ socket.getPort() + "]");
 							out.writeByte(2);
+						}
 					}
 				}
-				/*Запрос на удаление писем*/
+				/* Запрос на удаление письма */
 				if (requestNumber == 6) {
+					logger.info("Request to delete message ["
+							+ socket.getPort() + "]");
+					logger.info("Trying to get message and key ["
+							+ socket.getPort() + "]");
 					int gotKey = in.readInt();
 					int length = in.readInt();
-					/*Получаем данные о письме*/
+					/* Получаем данные о письме */
 					byte[] requestBytes = new byte[length];
 					for (int i = 0; i < length; i++)
 						requestBytes[i] = in.readByte();
 					Object[] requestInfo = (Object[]) Serializer
 							.deserialize(requestBytes);
-					
-					if (!Managing.sessionExists(gotKey))
+					logger.info("Got message and key [" + socket.getPort()
+							+ "]");
+					if (!Managing.sessionExists(gotKey)) {
+						logger.info("Key does not exist [" + socket.getPort()
+								+ "]");
 						out.writeByte(3);
-					else {
+					} else {
+						logger.info("Updating session time ["
+								+ socket.getPort() + "]");
 						Managing.undateSessionLastRequest(gotKey);
-						/*Если ключ есть в сессиях, пытаемся удалить письмо*/
+						/* Если ключ есть в сессиях, пытаемся удалить письмо */
+						logger.info("Trying to delete message ["
+								+ socket.getPort() + "]");
 						boolean deleted = Managing.deleteMess(
 								(SimpleMessage) requestInfo[0],
-								(String) requestInfo[1], Managing.getSessionUser(gotKey));
+								(String) requestInfo[1],
+								Managing.getSessionUser(gotKey));
 						if (deleted) {
+							logger.info("Message is deleted ["
+									+ socket.getPort() + "]");
 							out.writeByte(0);
-						} else
+						} else {
+							logger.info("Message is not deleted ["
+									+ socket.getPort() + "]");
 							out.writeByte(2);
+						}
 					}
 				}
-				/*Запрос на создание новой папки*/
+				/* Запрос на создание новой папки */
 				if (requestNumber == 7) {
+					logger.info("Request to create new folder ["
+							+ socket.getPort() + "]");
+					logger.info("Trying to get key and name of folder ["
+							+ socket.getPort() + "]");
 					int gotKey = in.readInt();
 					int length = in.readInt();
-					/*Получаем название папки*/
+					/* Получаем название папки */
 					byte[] requestBytes = new byte[length];
 					for (int i = 0; i < length; i++)
 						requestBytes[i] = in.readByte();
 					String requestInfo = (String) Serializer
 							.deserialize(requestBytes);
-
-					if (!Managing.sessionExists(gotKey))
+					logger.info("Got key and folder name [" + socket.getPort()
+							+ "]");
+					if (!Managing.sessionExists(gotKey)) {
+						logger.info("Key does not exist [" + socket.getPort()
+								+ "]");
 						out.writeByte(3);
-					else {
+					} else {
+						logger.info("Updating session time ["
+								+ socket.getPort() + "]");
 						Managing.undateSessionLastRequest(gotKey);
-						/*Если ключ есть в сессиях, проверяем корректность названия*/
+						/*
+						 * Если ключ есть в сессиях, проверяем корректность
+						 * названия
+						 */
+						logger.info("Checking folder name [" + socket.getPort()
+								+ "]");
 						boolean correctFolder = new ActionValidation()
 								.checkFolderName(requestInfo);
-						if (!correctFolder)
+						if (!correctFolder) {
+							logger.info("Name of folder is not correct ["
+									+ socket.getPort() + "]");
 							out.writeByte(1);
-						else {
-							/*Если название корректно, пытаемся создать папку*/
+						} else {
+							logger.info("Trying to create folder ["
+									+ socket.getPort() + "]");
+							/* Если название корректно, пытаемся создать папку */
 							SimpleFolder created = Managing.createFolder(
-									requestInfo, Managing.getSessionUser(gotKey));
+									requestInfo,
+									Managing.getSessionUser(gotKey));
 							if (created != null) {
-								/*Если папка создана, отправляем ее*/
+								logger.info("Trying to send folder to user ["
+										+ socket.getPort() + "]");
+								/* Если папка создана, отправляем ее */
 								byte[] answerBytes = Serializer
 										.serialize(created);
 								out.writeByte(0);
 								out.writeInt(answerBytes.length);
 								out.write(answerBytes);
-							} else
+							} else {
+								logger.info("Folder is not created ["
+										+ socket.getPort() + "]");
 								out.writeByte(4);
+							}
 						}
 					}
 				}
-				/*Запрос на удаление папки*/
+				/* Запрос на удаление папки */
 				if (requestNumber == 8) {
+					logger.info("Request to delete folder [" + socket.getPort()
+							+ "]");
+					logger.info("Trying to get key and folder ["
+							+ socket.getPort() + "]");
 					int gotKey = in.readInt();
 					int length = in.readInt();
-					/*Получаем папку*/
+					/* Получаем папку */
 					byte[] requestBytes = new byte[length];
 					for (int i = 0; i < length; i++)
 						requestBytes[i] = in.readByte();
 					SimpleFolder requestInfo = (SimpleFolder) Serializer
 							.deserialize(requestBytes);
-
-					if (!Managing.sessionExists(gotKey))
+					logger.info("Got folder and key [" + socket.getPort() + "]");
+					if (!Managing.sessionExists(gotKey)) {
+						logger.info("Key does not exist [" + socket.getPort()
+								+ "]");
 						out.writeByte(3);
-					else {
+					} else {
+						logger.info("Updating session time ["
+								+ socket.getPort() + "]");
 						Managing.undateSessionLastRequest(gotKey);
-						/*Если ключ есть в сессиях, пробуем удалить папку*/
+						/* Если ключ есть в сессиях, пробуем удалить папку */
+						logger.info("Trying to delete folder ["
+								+ socket.getPort() + "]");
 						byte deleted = Managing.deleteFolder(requestInfo,
 								Managing.getSessionUser(gotKey));
-						if (deleted == 1)
+						if (deleted == 1) {
+							logger.info("Could not delete this folder ["
+									+ socket.getPort() + "]");
 							out.writeByte(1);
-						else if (deleted == 2) {
+						} else if (deleted == 2) {
+							logger.info("Could not delete folder ["
+									+ socket.getPort() + "]");
 							out.writeByte(2);
 						} else if (deleted == 0) {
+							logger.info("Folder is deleted ["
+									+ socket.getPort() + "]");
 							out.writeByte(0);
 						}
 					}
 				}
-				/*Запрос на перемещение письма*/
+				/* Запрос на перемещение письма */
 				if (requestNumber == 9) {
+					logger.info("Request to move message [" + socket.getPort()
+							+ "]");
+					logger.info("Trying to get key and data ["
+							+ socket.getPort() + "]");
 					int gotKey = in.readInt();
 					int length = in.readInt();
-					/*Получаем данные о письме*/
+					/* Получаем данные о письме */
 					byte[] requestBytes = new byte[length];
 					for (int i = 0; i < length; i++)
 						requestBytes[i] = in.readByte();
 					Object[] requestInfo = (Object[]) Serializer
 							.deserialize(requestBytes);
-
-					if (!Managing.sessionExists(gotKey))
+					logger.info("Got key and data [" + socket.getPort() + "]");
+					if (!Managing.sessionExists(gotKey)) {
+						logger.info("Key does not exist [" + socket.getPort()
+								+ "]");
 						out.writeByte(3);
-					else {
+					} else {
+						logger.info("Updating session time ["
+								+ socket.getPort() + "]");
 						Managing.undateSessionLastRequest(gotKey);
-						/*Если ключ есть в сессиях, пробуем переместить письмо*/
+						/* Если ключ есть в сессиях, пробуем переместить письмо */
 						SimpleMessage message = (SimpleMessage) requestInfo[0];
 						String folder = (String) requestInfo[1];
 						String moveFolder = (String) requestInfo[2];
 
-						if (folder.equals(moveFolder))
+						if (folder.equals(moveFolder)) {
+							logger.info("Out folder equals target folder ["
+									+ socket.getPort() + "]");
 							out.writeByte(1);
-						else {
+						} else {
+							logger.info("Trying to move message ["
+									+ socket.getPort() + "]");
 							boolean moved = Managing.moveMessage(message,
-									folder, moveFolder, Managing.getSessionUser(gotKey));
-							if (moved)
+									folder, moveFolder,
+									Managing.getSessionUser(gotKey));
+							if (moved) {
+								logger.info("Message is moved ["
+										+ socket.getPort() + "]");
 								out.writeByte(0);
-							else
+							} else {
+								logger.info("Message is not moved ["
+										+ socket.getPort() + "]");
 								out.writeByte(2);
+							}
 						}
 					}
 				}
-				/*Запрос на проверку новых сообещений*/
+				/* Запрос на проверку новых сообещений */
 				if (requestNumber == 10) {
+					logger.info("Request to check new messages ["
+							+ socket.getPort() + "]");
+					logger.info("Trying to get key and amount of messages ["
+							+ socket.getPort() + "]");
 					int gotKey = in.readInt();
-					/*Получаем количество сообщений у пользователя*/
+					/* Получаем количество сообщений у пользователя */
 					int amount = in.readInt();
-					
-					if (!Managing.sessionExists(gotKey))
+					logger.info("Got key and amount of messages [" + socket.getPort() + "]");
+					if (!Managing.sessionExists(gotKey)) {
+						logger.info("Key does not exist [" + socket.getPort() + "]");
 						out.writeByte(3);
-					else {
-						/*Если ключ есть в сессиях, проверяем есть ли новые сообщения*/
+					} else {
+						logger.info("Checking if there are new messages [" + socket.getPort() + "]");
+						/*
+						 * Если ключ есть в сессиях, проверяем есть ли новые
+						 * сообщения
+						 */
 						int amountOfNew = Managing.hasNewMessages(amount,
 								Managing.getSessionUser(gotKey));
-						if (amountOfNew == -1)
+						if (amountOfNew == -1) {
+							logger.info("Could not check [" + socket.getPort() + "]");
 							out.writeByte(2);
-						else {
-							/*Если есть новые, получаем их и отправляем пользователю*/
-							if (amountOfNew == 0)
+						} else {
+							/*
+							 * Если есть новые, получаем их и отправляем
+							 * пользователю
+							 */
+							if (amountOfNew == 0) {
+								logger.info("There are not new messages [" + socket.getPort() + "]");
 								out.writeByte(1);
-							else {
+							} else {
+								logger.info("Trying to get messages [" + socket.getPort() + "]");
 								List<SimpleMessage> newMessages = Managing
-										.getNewMessages(amountOfNew, Managing.getSessionUser(gotKey));
-								if (newMessages == null)
+										.getNewMessages(amountOfNew,
+												Managing.getSessionUser(gotKey));
+								if (newMessages == null) {
+									logger.info("Could not get messages [" + socket.getPort() + "]");
 									out.writeByte(2);
-								else {
-									for (SimpleMessage mess : newMessages)
-										System.out.println(mess.getText());
+								} else {
+									logger.info("Trying to send new messages to user [" + socket.getPort() + "]");
 									byte[] answerBytes = Serializer
 											.serialize(newMessages);
 									out.writeByte(0);
 									out.writeInt(answerBytes.length);
 									out.write(answerBytes);
+									logger.info("Sent messages [" + socket.getPort() + "]");
 								}
 							}
 						}
 					}
 				}
-				
-				/*Запрос на очистку корзины*/
+
+				/* Запрос на очистку корзины */
 				if (requestNumber == 11) {
-					/*Проверяем, есть ли такое ключ в сессиях*/
+					logger.info("Request to clear trach basket [" + socket.getPort() + "]");
+					logger.info("Trying to get key [" + socket.getPort() + "]");
+					/* Проверяем, есть ли такое ключ в сессиях */
 					int gotKey = in.readInt();
-					if (!Managing.sessionExists(gotKey))
+					if (!Managing.sessionExists(gotKey)) {
+						logger.info("Key does not exist [" + socket.getPort() + "]");
 						out.writeByte(3);
-					else {
+					} else {
+						logger.info("Updating session time [" + socket.getPort() + "]");
 						Managing.undateSessionLastRequest(gotKey);
-						/*Если есть, пытаемся получить из БД данные*/
-						boolean answer = Managing
-								.clearTrash(Managing.getSessionUser(gotKey));
-						if (!answer)
+						logger.info("Trying to clear trach basket [" + socket.getPort() + "]");
+						/* Если есть, пытаемся получить из БД данные */
+						boolean answer = Managing.clearTrash(Managing
+								.getSessionUser(gotKey));
+						if (!answer) {
+							logger.info("Could not clear trash basket [" + socket.getPort() + "]");
 							out.writeByte(2);
-						else {
+						}else {
+							logger.info("Trash basket is cleared [" + socket.getPort() + "]");
 							out.writeByte(0);
 						}
 					}
 
 				}
-				/*Запрос на выход из системы*/
+				/* Запрос на выход из системы */
 				if (requestNumber == 0) {
+					logger.info("Request to log out [" + socket.getPort() + "]");
 					int gotKey = in.readInt();
 					if (Managing.sessionExists(gotKey)) {
 						Managing.deleteSession(gotKey);
-						System.out.println("User removed");
+						logger.info("Key removed [" + socket.getPort() + "]");
 					}
 				}
 			} catch (IOException io) {
+				logger.error("IO", io);
 				io.printStackTrace();
 			} catch (ClassNotFoundException cnf) {
+				logger.error("ClassNotFound", cnf);
 				cnf.printStackTrace();
 			} finally {
 				try {
 					in.close();
 					out.close();
 					socket.close();
-					System.out.println(socket.getPort() + " - closed");
+					logger.info(socket.getPort() + " - closed");
 				} catch (IOException e) {
-					System.out.println("Closing error");
 					e.printStackTrace();
 				}
 
 			}
 		}
 	}
-	/*Поток для работы с сессиями*/
+
+	/* Поток для работы с сессиями */
 	private class SessionChecker extends Thread {
 		SessionChecker() {
 			super();
 			setDaemon(true);
 		}
-		
+
 		public void run() {
 			List<Session> sessions = null;
 			while (true) {
-				/*Ждем*/
+				/* Ждем */
 				try {
 					Thread.sleep(60000);
 				} catch (InterruptedException e) {
+					logger.error("Interrapted session checker", e);
 					e.printStackTrace();
 				}
-				/*Берем все сессии*/
+				/* Берем все сессии */
 				sessions = Managing.getSessions();
 				if (sessions != null) {
 					long currentDate = System.currentTimeMillis();
 					long sessionDate = 0;
-					/*Просматриваем все сессии*/
+					logger.info("Trying to get sessions");
+					/* Просматриваем все сессии */
 					for (Session session : sessions) {
 						sessionDate = session.getTime().getTime();
 						if (currentDate - sessionDate > 1000 * 60 * 5) {
-							/*Удаляем неактивного пользователя*/
+							/* Удаляем неактивного пользователя */
+							logger.info("Session for [" + session.getMail() + "] is deleted");
 							Managing.deleteSession(session.getId());
 						}
 					}

@@ -23,6 +23,8 @@ import java.net.UnknownHostException;
 
 import javax.swing.JTextArea;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.cc.Serializer;
 
 import java.awt.Color;
@@ -34,7 +36,8 @@ import java.awt.Color;
  * @version 1.0
  */
 public class Registration extends JFrame {
-
+	private static final Logger logger = Logger.getLogger("Registration");
+	
 	private JPanel contentPane;
 	private JTextField fldEnterMail;
 	private JPasswordField fldEnterPass;
@@ -49,17 +52,15 @@ public class Registration extends JFrame {
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				try {
 					Registration frame = new Registration();
 					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
 			}
 		});
 	}
 
 	public Registration() {
+		logger.setLevel(Level.INFO);
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 343);
 		contentPane = new JPanel();
@@ -177,10 +178,10 @@ public class Registration extends JFrame {
 				try {
 					socket = new Socket("localhost", 6789);
 				} catch (UnknownHostException e2) {
-					System.out.println("Unknown host");
+					logger.error("Unknown host", e2);
 					e2.printStackTrace();
 				} catch (IOException e2) {
-					System.out.println("IO");
+					logger.error("IO", e2);
 					e2.printStackTrace();
 				}
 
@@ -188,7 +189,7 @@ public class Registration extends JFrame {
 					out = new DataOutputStream(socket.getOutputStream());
 					in = new DataInputStream(socket.getInputStream());
 				} catch (IOException e2) {
-					System.out.println("stream error");
+					logger.error("Stream error", e2);
 					e2.printStackTrace();
 					try {
 						out.close();
@@ -221,7 +222,7 @@ public class Registration extends JFrame {
 					} else
 						taInfo.setText("- Некорректные входные данные");
 				} catch (IOException ex) {
-					System.out.println("IO error");
+					logger.error("IO error", ex);
 					ex.printStackTrace();
 				} finally {
 					try {
@@ -247,10 +248,10 @@ public class Registration extends JFrame {
 				try {
 					socket = new Socket("localhost", 6789);
 				} catch (UnknownHostException e2) {
-					System.out.println("Unknown host");
+					logger.error("Unknown host", e2);
 					e2.printStackTrace();
 				} catch (IOException e2) {
-					System.out.println("IO");
+					logger.error("IO", e2);
 					e2.printStackTrace();
 				}
 
@@ -258,7 +259,7 @@ public class Registration extends JFrame {
 					out = new DataOutputStream(socket.getOutputStream());
 					in = new DataInputStream(socket.getInputStream());
 				} catch (IOException e2) {
-					System.out.println("stream error");
+					logger.error("Stream error", e2);
 					e2.printStackTrace();
 					try {
 						out.close();
@@ -326,8 +327,10 @@ public class Registration extends JFrame {
 					} else
 						taInfo.setText("Ошибка при создании учетной записи");
 				} catch (IOException er) {
+					logger.error("IO", er);
 					er.printStackTrace();
 				} catch (ClassNotFoundException er) {
+					logger.error("ClassNotFound", er);
 					er.printStackTrace();
 				} finally {
 					try {
