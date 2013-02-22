@@ -37,7 +37,7 @@ import java.awt.Color;
  */
 public class Registration extends JFrame {
 	private static final Logger logger = Logger.getLogger("Registration");
-	
+
 	private JPanel contentPane;
 	private JTextField fldEnterMail;
 	private JPasswordField fldEnterPass;
@@ -52,22 +52,22 @@ public class Registration extends JFrame {
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
-					Registration frame = new Registration();
-					frame.setVisible(true);
+				Registration frame = new Registration();
+				frame.setVisible(true);
 			}
 		});
 	}
 
 	public Registration() {
 		logger.setLevel(Level.INFO);
-		
+
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 343);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
-		
+
 		JLabel lblGfhjkm = new JLabel("Пароль:");
 		lblGfhjkm.setBounds(163, 14, 53, 14);
 		lblGfhjkm.setHorizontalAlignment(SwingConstants.LEFT);
@@ -171,10 +171,11 @@ public class Registration extends JFrame {
 		JButton btnLogIn = new JButton("Войти");
 		btnLogIn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				logger.info("Requeat to log in");
 				Socket socket = null;
 				DataOutputStream out = null;
 				DataInputStream in = null;
-				
+
 				try {
 					socket = new Socket("localhost", 6789);
 				} catch (UnknownHostException e2) {
@@ -199,8 +200,9 @@ public class Registration extends JFrame {
 						e1.printStackTrace();
 					}
 				}
-				/*Отправляем запрос на вход в систему*/
+				/* Отправляем запрос на вход в систему */
 				try {
+					logger.info("Sending data to log in");
 					String[] requestInfo = {
 							fldEnterMail.getText().toLowerCase().trim(),
 							fldEnterPass.getText() };
@@ -209,18 +211,24 @@ public class Registration extends JFrame {
 					out.writeByte(2);
 					out.writeInt(requestBytes.length);
 					out.write(requestBytes);
-					/*Ждем ответ*/
+					logger.info("Sent data");
+					/* Ждем ответ */
 					byte answer = in.readByte();
+					logger.info("Got answer");
 					if (answer == 0) {
-						/*Если успешно, создаем окно с почтой*/
+						logger.info("Creating Maing window");
+						/* Если успешно, создаем окно с почтой */
 						int key = in.readInt();
 						MainWindow mw = new MainWindow(key, requestInfo[0]);
 						mw.setVisible(true);
 						Registration.this.dispose();
 					} else if (answer == 2) {
+						logger.info("Wrong pair");
 						taInfo.setText("- Неверная пара ел.адресс / пароль");
-					} else
+					} else {
+						logger.info("Incorrect data");
 						taInfo.setText("- Некорректные входные данные");
+					}
 				} catch (IOException ex) {
 					logger.error("IO error", ex);
 					ex.printStackTrace();
@@ -241,10 +249,11 @@ public class Registration extends JFrame {
 		JButton btnSignUp = new JButton("Зарег-я");
 		btnSignUp.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				logger.info("Request for registration");
 				Socket socket = null;
 				DataOutputStream out = null;
 				DataInputStream in = null;
-				
+
 				try {
 					socket = new Socket("localhost", 6789);
 				} catch (UnknownHostException e2) {
@@ -269,9 +278,10 @@ public class Registration extends JFrame {
 						e1.printStackTrace();
 					}
 				}
-				
+
 				try {
-					/*Отправляем запрос на регистрацию*/
+					logger.info("Sending request for registration");
+					/* Отправляем запрос на регистрацию */
 					String[] requestInfo = { fldLogin.getText().toLowerCase(),
 							fldFirstPass.getText(), fldSecPass.getText(),
 							fldFirstName.getText().trim(),
@@ -283,16 +293,20 @@ public class Registration extends JFrame {
 					out.writeByte(1);
 					out.writeInt(requestBytes.length);
 					out.write(requestBytes);
-
+					logger.info("Sent data");
 					byte answer = in.readByte();
+					logger.info("Got answer");
 					if (answer == 0) {
-						/*Если успешно, создаем окно с почной*/
+						logger.info("Creating Main Window");
+						/* Если успешно, создаем окно с почной */
 						int key = in.readInt();
-						MainWindow mw = new MainWindow(key, requestInfo[0] + "@mail.js");
+						MainWindow mw = new MainWindow(key, requestInfo[0]
+								+ "@mail.js");
 						mw.setVisible(true);
 						Registration.this.dispose();
 					} else if (answer == 1) {
-						/*Если неуспешно, считываем маску*/
+						logger.info("Reading mask");
+						/* Если неуспешно, считываем маску */
 						StringBuilder sb = new StringBuilder();
 						int length = in.readInt();
 						byte[] answerBytes = new byte[length];
@@ -300,7 +314,8 @@ public class Registration extends JFrame {
 							answerBytes[i] = in.readByte();
 						boolean[] answers = (boolean[]) Serializer
 								.deserialize(answerBytes);
-						/*Показываем пользователю причины*/
+						logger.info("Printing errors");
+						/* Показываем пользователю причины */
 						if (!answers[1])
 							sb.append("- Некоректный логин\n"
 									+ "(Минимальная длина 4 символа. Латинские буквы,"
@@ -324,8 +339,10 @@ public class Registration extends JFrame {
 							sb.append("- Некоректный телефон\n"
 									+ "(Минимальная длина 6 символов. Только цифры и знак + вначале)\n\n");
 						taInfo.setText(sb.toString());
-					} else
+					} else {
+						logger.info("Creation error");
 						taInfo.setText("Ошибка при создании учетной записи");
+					}
 				} catch (IOException er) {
 					logger.error("IO", er);
 					er.printStackTrace();
@@ -349,7 +366,8 @@ public class Registration extends JFrame {
 		JButton btnClear = new JButton("Очистить");
 		btnClear.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				/*Очищаем поля для регистрации*/
+				logger.info("Clearing registration fields");
+				/* Очищаем поля для регистрации */
 				fldLogin.setText("");
 				fldFirstPass.setText("");
 				fldSecPass.setText("");

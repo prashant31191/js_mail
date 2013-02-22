@@ -12,10 +12,11 @@ import javax.swing.JLabel;
 import javax.swing.JButton;
 import javax.swing.JList;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.cc.Serializer;
 import org.cc.SimpleFolder;
 import org.cc.SimpleMessage;
-
 import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -41,6 +42,8 @@ import java.awt.event.MouseEvent;
  * @version 1.0
  */
 public class MainWindow extends JFrame {
+	private static final Logger logger = Logger.getLogger("MainWindow");
+
 	private JPanel contentPane;
 	private JLabel lblError;
 	private JTextArea taMessText;
@@ -62,6 +65,7 @@ public class MainWindow extends JFrame {
 
 	@SuppressWarnings("unchecked")
 	public MainWindow(final int key, String addressForField) {
+		logger.setLevel(Level.INFO);
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 731, 590);
@@ -80,22 +84,23 @@ public class MainWindow extends JFrame {
 			public void windowClosing(WindowEvent e) {
 				/* Нажатие на закрытые окна */
 				lock.lock();
+				logger.info("Close window");
 				Socket socket = null;
 				DataOutputStream out = null;
 				try {
 					socket = new Socket("localhost", 6789);
 				} catch (UnknownHostException e2) {
-					System.out.println("Unknown host");
+					logger.error("Unknown host", e2);
 					e2.printStackTrace();
 				} catch (IOException e2) {
-					System.out.println("IO");
+					logger.error("IO", e2);
 					e2.printStackTrace();
 				}
 
 				try {
 					out = new DataOutputStream(socket.getOutputStream());
 				} catch (IOException e2) {
-					System.out.println("stream error");
+					logger.error("Stream error", e2);
 					e2.printStackTrace();
 					try {
 						socket.close();
@@ -105,13 +110,14 @@ public class MainWindow extends JFrame {
 				}
 
 				try {
+					logger.info("Sending key");
 					/* Отпраляем запрос на выход из системы */
 					messageChecker.setWorking(false);
 					out.writeByte(0);
 					out.writeInt(key);
-
+					logger.info("Sent key");
 				} catch (IOException ex) {
-					System.out.println("IO error");
+					logger.error("IO error", ex);
 					ex.printStackTrace();
 				} finally {
 					lock.unlock();
@@ -157,6 +163,7 @@ public class MainWindow extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				/* Клик по сообщению */
+				logger.info("Click on message");
 				lock.lock();
 				int selectedFolder = lstFolders.getSelectedIndex();
 				if (selectedFolder > -1) {
@@ -174,6 +181,7 @@ public class MainWindow extends JFrame {
 						taMessText.setText(sb.toString());
 
 						if (!message.isRead()) {
+							logger.info("Trying to send message");
 							/*
 							 * Если письмо не прочитаено, отправляем запрос на
 							 * отметку как прочитанное
@@ -185,10 +193,10 @@ public class MainWindow extends JFrame {
 							try {
 								socket = new Socket("localhost", 6789);
 							} catch (UnknownHostException e2) {
-								System.out.println("Unknown host");
+								logger.error("Unknown host", e2);
 								e2.printStackTrace();
 							} catch (IOException e2) {
-								System.out.println("IO");
+								logger.error("IO", e2);
 								e2.printStackTrace();
 							}
 
@@ -198,7 +206,7 @@ public class MainWindow extends JFrame {
 								in = new DataInputStream(socket
 										.getInputStream());
 							} catch (IOException e2) {
-								System.out.println("stream error");
+								logger.error("Stream error", e2);
 								e2.printStackTrace();
 								try {
 									out.close();
@@ -216,9 +224,12 @@ public class MainWindow extends JFrame {
 								out.writeInt(key);
 								out.writeInt(requestBytes.length);
 								out.write(requestBytes);
+								logger.info("Sent message");
 								/* Ждем ответ */
 								byte answer = in.readByte();
+								logger.info("Got answer");
 								if (answer == 0) {
+									logger.info("Setting message as read");
 									/*
 									 * Если отметилось, устанавливаем как
 									 * прочитанное локально
@@ -245,6 +256,7 @@ public class MainWindow extends JFrame {
 									lstMessages
 											.setSelectedIndex(selectedMessage);
 								} else if (answer == 3) {
+									logger.info("Wrong key. Closing window");
 									/* Выходим из основного окна */
 									messageChecker.setWorking(false);
 									Registration registration = new Registration();
@@ -252,6 +264,7 @@ public class MainWindow extends JFrame {
 									MainWindow.this.dispose();
 								}
 							} catch (IOException er) {
+								logger.error("IO", er);
 								er.printStackTrace();
 							} finally {
 								try {
@@ -286,6 +299,7 @@ public class MainWindow extends JFrame {
 		btnDeleteFolder.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				/* Удаление папки */
+				logger.info("Deleting folder");
 				lock.lock();
 				int selectedFolder = lstFolders.getSelectedIndex();
 				/* Смотрим, выделена ли папка */
@@ -300,10 +314,10 @@ public class MainWindow extends JFrame {
 				try {
 					socket = new Socket("localhost", 6789);
 				} catch (UnknownHostException e2) {
-					System.out.println("Unknown host");
+					logger.error("Unknown host", e2);
 					e2.printStackTrace();
 				} catch (IOException e2) {
-					System.out.println("IO");
+					logger.error("IO", e2);
 					e2.printStackTrace();
 				}
 
@@ -311,7 +325,7 @@ public class MainWindow extends JFrame {
 					out = new DataOutputStream(socket.getOutputStream());
 					in = new DataInputStream(socket.getInputStream());
 				} catch (IOException e2) {
-					System.out.println("stream error");
+					logger.error("Stream error", e2);
 					e2.printStackTrace();
 					try {
 						out.close();
@@ -323,25 +337,32 @@ public class MainWindow extends JFrame {
 				}
 
 				try {
+					logger.info("Trying to send request for deleting folder");
 					/* Отправляем запрос на удаление */
 					byte[] requestBytes = Serializer.serialize(sFolder);
 					out.writeByte(8);
 					out.writeInt(key);
 					out.writeInt(requestBytes.length);
 					out.write(requestBytes);
-
+					logger.info("Sent request");
 					byte answer = in.readByte();
+					logger.info("Got answer");
 					if (answer == 0) {
+						logger.info("Trying to delete folder");
 						/* Если папка удалена, удаляем ее локально */
 						folders.remove(selectedFolder);
 						listModelFolders.remove(selectedFolder);
 						listModelMessages.removeAllElements();
 						lblError.setText("");
+						logger.info("Folder is deleted");
 					} else if (answer == 1) {
+						logger.info("Folder is not deleted");
 						lblError.setText("Эту папку нельзя удалить");
 					} else if (answer == 2) {
+						logger.info("Server problems");
 						lblError.setText("Проблемы с сервером");
 					} else if (answer == 3) {
+						logger.info("Wrong key. Closing window");
 						/* Выходим из основного окна */
 						messageChecker.setWorking(false);
 						Registration registration = new Registration();
@@ -349,6 +370,7 @@ public class MainWindow extends JFrame {
 						MainWindow.this.dispose();
 					}
 				} catch (IOException er) {
+					logger.error("IO", er);
 					er.printStackTrace();
 				} finally {
 					lock.unlock();
@@ -368,6 +390,7 @@ public class MainWindow extends JFrame {
 		JButton btnCreateFolder = new JButton("Создать");
 		btnCreateFolder.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				logger.info("Opening window Create folder");
 				/* Вызываем окно для создания папки */
 				CreateFold sm = new CreateFold();
 				sm.setVisible(true);
@@ -379,6 +402,7 @@ public class MainWindow extends JFrame {
 		JButton btnDelMess = new JButton("Удалить");
 		btnDelMess.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				logger.info("Prepearing delete message");
 				/* Удаление сообщения */
 				lock.lock();
 				int selectedMessage = lstMessages.getSelectedIndex();
@@ -398,10 +422,10 @@ public class MainWindow extends JFrame {
 				try {
 					socket = new Socket("localhost", 6789);
 				} catch (UnknownHostException e2) {
-					System.out.println("Unknown host");
+					logger.error("Unknown host", e2);
 					e2.printStackTrace();
 				} catch (IOException e2) {
-					System.out.println("IO");
+					logger.error("IO", e2);
 					e2.printStackTrace();
 				}
 
@@ -409,7 +433,7 @@ public class MainWindow extends JFrame {
 					out = new DataOutputStream(socket.getOutputStream());
 					in = new DataInputStream(socket.getInputStream());
 				} catch (IOException e2) {
-					System.out.println("stream error");
+					logger.error("Stream error", e2);
 					e2.printStackTrace();
 					try {
 						out.close();
@@ -422,6 +446,7 @@ public class MainWindow extends JFrame {
 
 				try {
 					if (folderName.equals("Корзина")) {
+						logger.info("Sending request to delete message");
 						/*
 						 * Если выделенная папка - Корзина, отправляем запрос на
 						 * удаление
@@ -434,24 +459,30 @@ public class MainWindow extends JFrame {
 						out.writeInt(key);
 						out.writeInt(requestBytes.length);
 						out.write(requestBytes);
+						logger.info("Sent data");
 						/* Ждем ответ */
 						byte answer = in.readByte();
+						logger.info("Got answer");
 						if (answer == 0) {
+							logger.info("Trying to delete message");
 							/* Если успешно, удаляем письмо локально */
 							folders.get(selectedFolder).getMessages()
 									.remove(selectedMessage);
 							listModelMessages.remove(selectedMessage);
 							taMessText.setText("");
+							logger.info("Message is deleted");
 						} else if (answer == 3) {
+							logger.info("Wrong key. Closing window");
 							/* Выходим из основного окна */
 							messageChecker.setWorking(false);
 							Registration registration = new Registration();
 							registration.setVisible(true);
 							MainWindow.this.dispose();
 						} else {
-
+							logger.info("Server problems");
 						}
 					} else {
+						logger.info("Trying to move message to trash basket");
 						/*
 						 * Если выделенная папка не Корзина, отправляем запрос
 						 * на перемещение в Корзину
@@ -465,9 +496,12 @@ public class MainWindow extends JFrame {
 						out.writeInt(key);
 						out.writeInt(requestBytes.length);
 						out.write(requestBytes);
+						logger.info("Sent data");
 						/* Ждем ответ */
 						byte answer = in.readByte();
+						logger.info("Got answer");
 						if (answer == 0) {
+							logger.info("Trying to move message to trash basket");
 							/*
 							 * Если успешно, перемещяем письмо в корзину
 							 * локально
@@ -477,11 +511,15 @@ public class MainWindow extends JFrame {
 							folders.get(selectedFolder).getMessages()
 									.remove(selectedMessage);
 							folders.get(trash).addMessage(message);
+							logger.info("Message is moved");
 						} else if (answer == 1) {
+							logger.info("Couldn't delete message");
 							lblError.setText("Невозможно удалить");
 						} else if (answer == 2) {
+							logger.info("Server problems");
 							lblError.setText("Проблемы с сервером");
 						} else if (answer == 3) {
+							logger.info("Wrong key. Closing window");
 							/* Выходим из основного окна */
 							messageChecker.setWorking(false);
 							Registration registration = new Registration();
@@ -490,6 +528,7 @@ public class MainWindow extends JFrame {
 						}
 					}
 				} catch (IOException er) {
+					logger.error("IO", er);
 					er.printStackTrace();
 				} finally {
 					lock.unlock();
@@ -509,6 +548,7 @@ public class MainWindow extends JFrame {
 		JButton btnCreatMess = new JButton("Написать");
 		btnCreatMess.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				logger.info("Opening window to send message");
 				/* Вызываем окно для отправки сообщения */
 				SendMessage sm = new SendMessage();
 				sm.setVisible(true);
@@ -525,6 +565,7 @@ public class MainWindow extends JFrame {
 				/* Проверяем выделено ли сообщение */
 				if (selectedMessage < 0)
 					return;
+				logger.info("Opening window Move message");
 				/* Вызываем окно для перемещения сообщения */
 				MoveFold move = new MoveFold(lstFolders.getSelectedIndex(),
 						selectedMessage);
@@ -537,6 +578,7 @@ public class MainWindow extends JFrame {
 		JButton btnLogOut = new JButton("Выйти");
 		btnLogOut.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				logger.info("Logging out");
 				/* Выход из системы */
 				lock.lock();
 				Socket socket = null;
@@ -544,17 +586,17 @@ public class MainWindow extends JFrame {
 				try {
 					socket = new Socket("localhost", 6789);
 				} catch (UnknownHostException e2) {
-					System.out.println("Unknown host");
+					logger.error("Unknown host", e2);
 					e2.printStackTrace();
 				} catch (IOException e2) {
-					System.out.println("IO");
+					logger.error("IO", e2);
 					e2.printStackTrace();
 				}
 
 				try {
 					out = new DataOutputStream(socket.getOutputStream());
 				} catch (IOException e2) {
-					System.out.println("stream error");
+					logger.error("Stream error", e2);
 					e2.printStackTrace();
 					try {
 						socket.close();
@@ -564,16 +606,20 @@ public class MainWindow extends JFrame {
 				}
 
 				try {
+					logger.info("Sending request to log out");
 					/* Отправляем запрос на выход */
+					logger.info("Stopping New message checker");
 					messageChecker.setWorking(false);
 					out.writeByte(0);
 					out.writeInt(key);
+
+					logger.info("Closing window");
 					/* Выходим из основного окна */
 					Registration registration = new Registration();
 					registration.setVisible(true);
 					MainWindow.this.dispose();
 				} catch (IOException ex) {
-					System.out.println("IO error");
+					logger.error("IO error", ex);
 					ex.printStackTrace();
 				} finally {
 					lock.unlock();
@@ -597,6 +643,7 @@ public class MainWindow extends JFrame {
 		JButton button = new JButton("Очистить корзину");
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				logger.info("Request to clear trash basket");
 				/* Запрос на очистку корзины */
 				lock.lock();
 				int trashIndex = listModelFolders.indexOf("Корзина");
@@ -613,10 +660,10 @@ public class MainWindow extends JFrame {
 				try {
 					socket = new Socket("localhost", 6789);
 				} catch (UnknownHostException e2) {
-					System.out.println("Unknown host");
+					logger.error("Unknown host", e2);
 					e2.printStackTrace();
 				} catch (IOException e2) {
-					System.out.println("IO");
+					logger.error("IO", e2);
 					e2.printStackTrace();
 				}
 
@@ -624,7 +671,7 @@ public class MainWindow extends JFrame {
 					out = new DataOutputStream(socket.getOutputStream());
 					in = new DataInputStream(socket.getInputStream());
 				} catch (IOException e2) {
-					System.out.println("stream error");
+					logger.error("Stream error", e2);
 					e2.printStackTrace();
 					try {
 						out.close();
@@ -636,30 +683,36 @@ public class MainWindow extends JFrame {
 				}
 
 				try {
+					logger.info("Senfing key");
 					/* Отправляем запрос на очистку корзины */
 					out.writeByte(11);
 					out.writeInt(key);
-
+					logger.info("Sent key");
 					/* Ждем ответ */
 					byte answer = in.readByte();
+					logger.info("Got answer");
 					if (answer == 0) {
+						logger.info("Trying to clear trash basket");
 						/* Если успешно, удаляем письма из корзины локально */
 						folders.get(trashIndex).getMessages().clear();
 						if (lstFolders.getSelectedIndex() == trashIndex) {
 							listModelMessages.clear();
 							taMessText.setText("");
 						}
-						
+						logger.info("Trash basket cleared");
 					} else if (answer == 3) {
+						logger.info("Wrong key. Closing window");
 						/* Выходим из основного окна */
 						messageChecker.setWorking(false);
 						Registration registration = new Registration();
 						registration.setVisible(true);
 						MainWindow.this.dispose();
 					} else {
+						logger.info("Server problems");
 						lblError.setText("Проблемы с сервером");
 					}
 				} catch (IOException er) {
+					logger.error("IO", er);
 					er.printStackTrace();
 				} finally {
 					lock.unlock();
@@ -680,10 +733,10 @@ public class MainWindow extends JFrame {
 		try {
 			socket = new Socket("localhost", 6789);
 		} catch (UnknownHostException e2) {
-			System.out.println("Unknown host");
+			logger.error("Unknown host", e2);
 			e2.printStackTrace();
 		} catch (IOException e2) {
-			System.out.println("IO");
+			logger.error("IO", e2);
 			e2.printStackTrace();
 		}
 
@@ -691,7 +744,7 @@ public class MainWindow extends JFrame {
 			out = new DataOutputStream(socket.getOutputStream());
 			in = new DataInputStream(socket.getInputStream());
 		} catch (IOException e2) {
-			System.out.println("stream error");
+			logger.error("Stream error", e2);
 			e2.printStackTrace();
 			try {
 				out.close();
@@ -703,20 +756,26 @@ public class MainWindow extends JFrame {
 		}
 
 		try {
+			logger.info("Sending request to get everything");
 			/* Отправляем запрос на получение всех папок и писем */
 			out.writeByte(3);
 			out.writeInt(key);
+			logger.info("Sent key");
 			/* Ждем ответ */
 			byte answer = in.readByte();
+			logger.info("Got answer");
 			if (answer == 3) {
+				logger.info("Wrong key. Close window");
 				/* Выходим из основного окна */
 				messageChecker.setWorking(false);
 				Registration registration = new Registration();
 				registration.setVisible(true);
 				MainWindow.this.dispose();
 			} else if (answer == 2) {
+				logger.info("Server problems");
 				taMessText.setText("Проблемы с сервером");
 			} else {
+				logger.info("Trying to get folders and messages");
 				/* Если успешно, получаем папки с сообщениями */
 				int length = in.readInt();
 				byte[] answerBytes = new byte[length];
@@ -724,8 +783,10 @@ public class MainWindow extends JFrame {
 					answerBytes[i] = in.readByte();
 				folders = (List<SimpleFolder>) Serializer
 						.deserialize(answerBytes);
+				logger.info("Got folders and messages");
 			}
 		} catch (IOException er) {
+			logger.error("IO", er);
 			er.printStackTrace();
 		} catch (ClassNotFoundException er) {
 			er.printStackTrace();
@@ -743,6 +804,7 @@ public class MainWindow extends JFrame {
 		for (SimpleFolder sf : folders) {
 			listModelFolders.add(folders.indexOf(sf), sf.getName());
 		}
+		logger.info("Creating new message checker");
 		/* Запускаем поток для проверки новых сообщений */
 		messageChecker = new NewMessageChecker();
 		messageChecker.setDaemon(true);
@@ -750,6 +812,7 @@ public class MainWindow extends JFrame {
 	}
 
 	private void drawMessages() {
+		logger.info("Drawing messages");
 		/* Прописовка сообщений при нажатии на папку */
 		int index = lstFolders.getSelectedIndex();
 		if (index > -1) {
@@ -834,6 +897,7 @@ public class MainWindow extends JFrame {
 			JButton btnSend = new JButton("Отправить");
 			btnSend.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					logger.info("Request to send mew message");
 					/* Отправляем сообщение */
 					lock.lock();
 					Socket socket = null;
@@ -843,10 +907,10 @@ public class MainWindow extends JFrame {
 					try {
 						socket = new Socket("localhost", 6789);
 					} catch (UnknownHostException e2) {
-						System.out.println("Unknown host");
+						logger.error("Unknown host", e2);
 						e2.printStackTrace();
 					} catch (IOException e2) {
-						System.out.println("IO");
+						logger.error("IO", e2);
 						e2.printStackTrace();
 					}
 
@@ -854,7 +918,7 @@ public class MainWindow extends JFrame {
 						out = new DataOutputStream(socket.getOutputStream());
 						in = new DataInputStream(socket.getInputStream());
 					} catch (IOException e2) {
-						System.out.println("stream error");
+						logger.error("Stream error", e2);
 						e2.printStackTrace();
 						try {
 							out.close();
@@ -866,6 +930,7 @@ public class MainWindow extends JFrame {
 					}
 
 					try {
+						logger.info("Creating data and trying to send to server");
 						/* Отправляем запрос на отправлку сообщения */
 						String[] requestInfo = {
 								fldTo.getText().toLowerCase().trim(),
@@ -876,9 +941,11 @@ public class MainWindow extends JFrame {
 						out.writeInt(key);
 						out.writeInt(requestBytes.length);
 						out.write(requestBytes);
-
+						logger.info("Sent data");
 						byte answer = in.readByte();
+						logger.info("Got answer");
 						if (answer == 0) {
+							logger.info("Trying to get new messages");
 							/* Если успешно */
 							int length = in.readInt();
 							byte[] answerBytes = new byte[length];
@@ -886,7 +953,7 @@ public class MainWindow extends JFrame {
 								answerBytes[i] = in.readByte();
 							Object[] messages = (Object[]) Serializer
 									.deserialize(answerBytes);
-
+							logger.info("Got messages");
 							lblErrorAbout.setText("");
 							lblErrorTo.setText("");
 							lblErrorMess.setText("");
@@ -900,6 +967,7 @@ public class MainWindow extends JFrame {
 								if (sf.getName().equals("Входящие"))
 									inFolder = sf;
 							}
+							logger.info("Adding messages");
 							/* Добавляем сообщения в локальные папки */
 							if (messages[0] != null)
 								outFolder
@@ -912,6 +980,7 @@ public class MainWindow extends JFrame {
 							/* Закрываем окно */
 							SendMessage.this.dispose();
 						} else if (answer == 1) {
+							logger.info("Trying to get mask");
 							/* Если неудачно, выводим информацию пользователю */
 							int length = in.readInt();
 							byte[] answerBytes = new byte[length];
@@ -919,11 +988,11 @@ public class MainWindow extends JFrame {
 								answerBytes[i] = in.readByte();
 							boolean[] data = (boolean[]) Serializer
 									.deserialize(answerBytes);
-
+							logger.info("Got mask");
 							lblErrorAbout.setText("");
 							lblErrorTo.setText("");
 							lblErrorMess.setText("");
-
+							logger.info("Writing errors");
 							if (!data[1])
 								lblErrorTo
 										.setText("Некорректный адресс получателя");
@@ -934,12 +1003,14 @@ public class MainWindow extends JFrame {
 								lblErrorMess.setText("Пустое сообщение");
 
 						} else if (answer == 2) {
+							logger.info("Server problems");
 							lblErrorAbout.setText("");
 							lblErrorTo.setText("");
 							lblErrorMess.setText("");
 
 							lblErrorMess.setText("Проблемы с сервером");
 						} else {
+							logger.info("Wrong key. Closing window");
 							/* Выходим из основного окна */
 							messageChecker.setWorking(false);
 							Registration registration = new Registration();
@@ -948,9 +1019,10 @@ public class MainWindow extends JFrame {
 							MainWindow.this.dispose();
 						}
 					} catch (IOException ex) {
-						System.out.println("IO error");
+						logger.error("IO error", ex);
 						ex.printStackTrace();
 					} catch (ClassNotFoundException er) {
+						logger.error("ClassNotFound", er);
 						er.printStackTrace();
 					} finally {
 						lock.unlock();
@@ -1023,6 +1095,7 @@ public class MainWindow extends JFrame {
 			JButton btnCreateFold = new JButton("Создать папку");
 			btnCreateFold.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					logger.info("Request to create folder");
 					/* Создание папки */
 					lock.lock();
 					String requestInfo = fldFoldName.getText().trim();
@@ -1033,10 +1106,10 @@ public class MainWindow extends JFrame {
 					try {
 						socket = new Socket("localhost", 6789);
 					} catch (UnknownHostException e2) {
-						System.out.println("Unknown host");
+						logger.error("Unknown host", e2);
 						e2.printStackTrace();
 					} catch (IOException e2) {
-						System.out.println("IO");
+						logger.error("IO", e2);
 						e2.printStackTrace();
 					}
 
@@ -1044,7 +1117,7 @@ public class MainWindow extends JFrame {
 						out = new DataOutputStream(socket.getOutputStream());
 						in = new DataInputStream(socket.getInputStream());
 					} catch (IOException e2) {
-						System.out.println("stream error");
+						logger.error("Stream error", e2);
 						e2.printStackTrace();
 						try {
 							out.close();
@@ -1056,15 +1129,19 @@ public class MainWindow extends JFrame {
 					}
 
 					try {
+						logger.info("Sending request to create folder");
 						/* Отправляем запрос на создание папки */
 						byte[] requestBytes = Serializer.serialize(requestInfo);
 						out.writeByte(7);
 						out.writeInt(key);
 						out.writeInt(requestBytes.length);
 						out.write(requestBytes);
+						logger.info("Sent request");
 						/* Ждем ответ */
 						byte answer = in.readByte();
+						logger.info("Got answer");
 						if (answer == 0) {
+							logger.info("Getting folder");
 							/* Если удачно, получаем папку */
 							int length = in.readInt();
 							byte[] answerBytes = new byte[length];
@@ -1072,6 +1149,7 @@ public class MainWindow extends JFrame {
 								answerBytes[i] = in.readByte();
 							SimpleFolder folder = (SimpleFolder) Serializer
 									.deserialize(answerBytes);
+							logger.info("Got folder");
 							/* Добавляем ее локально */
 							folders.add(folder);
 							listModelFolders.add(listModelFolders.size(),
@@ -1079,10 +1157,13 @@ public class MainWindow extends JFrame {
 							/* Закрываем окно */
 							CreateFold.this.dispose();
 						} else if (answer == 1) {
+							logger.info("Wrong name of folder");
 							lblError.setText("Неверное название папки");
 						} else if (answer == 2) {
+							logger.info("Server problems");
 							lblError.setText("Проблемы с сервером");
 						} else if (answer == 3) {
+							logger.info("Wrong key. CLosing window");
 							/* Выходим из основного окна */
 							messageChecker.setWorking(false);
 							Registration registration = new Registration();
@@ -1090,12 +1171,14 @@ public class MainWindow extends JFrame {
 							CreateFold.this.dispose();
 							MainWindow.this.dispose();
 						} else {
+							logger.info("Such a folder already exists");
 							lblError.setText("Папка с таким именем уже есть");
 						}
 					} catch (IOException ex) {
-						System.out.println("IO error");
+						logger.error("IO error", ex);
 						ex.printStackTrace();
 					} catch (ClassNotFoundException er) {
+						logger.error("ClassNotFound", er);
 						er.printStackTrace();
 					} finally {
 						lock.unlock();
@@ -1152,6 +1235,7 @@ public class MainWindow extends JFrame {
 			JButton btnMove = new JButton("Переместить");
 			btnMove.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					logger.info("Request to move message");
 					/* Перемещение письма */
 					lock.lock();
 					int selectedMoveFolder = lstMoveFolders.getSelectedIndex();
@@ -1176,10 +1260,10 @@ public class MainWindow extends JFrame {
 					try {
 						socket = new Socket("localhost", 6789);
 					} catch (UnknownHostException e2) {
-						System.out.println("Unknown host");
+						logger.error("Unknown host", e2);
 						e2.printStackTrace();
 					} catch (IOException e2) {
-						System.out.println("IO");
+						logger.error("IO", e2);
 						e2.printStackTrace();
 					}
 
@@ -1187,7 +1271,7 @@ public class MainWindow extends JFrame {
 						out = new DataOutputStream(socket.getOutputStream());
 						in = new DataInputStream(socket.getInputStream());
 					} catch (IOException e2) {
-						System.out.println("stream error");
+						logger.error("Stream error", e2);
 						e2.printStackTrace();
 						try {
 							out.close();
@@ -1198,15 +1282,20 @@ public class MainWindow extends JFrame {
 						}
 					}
 
-					try {/* Отправляем запрос на перемещение */
+					try {
+						logger.info("Sending request to move emssage");
+						/* Отправляем запрос на перемещение */
 						byte[] requestBytes = Serializer.serialize(requestInfo);
 						out.writeByte(9);
 						out.writeInt(key);
 						out.writeInt(requestBytes.length);
 						out.write(requestBytes);
+						logger.info("Sent request");
 						/* Ждем ответ */
 						byte answer = in.readByte();
+						logger.info("Got answer");
 						if (answer == 0) {
+							logger.info("Moving message");
 							/* Если успешно, перемещаем письмо локально */
 							String messageAppearance = listModelMessages
 									.get(selectedMessage);
@@ -1216,11 +1305,15 @@ public class MainWindow extends JFrame {
 							folders.get(selectedMoveFolder).addMessage(message);
 							dispose();
 							taMessText.setText("");
+							logger.info("Message is moved");
 						} else if (answer == 1) {
+							logger.info("COuldn't move");
 							lblError.setText("Невозможно переместить");
 						} else if (answer == 2) {
+							logger.info("Server problems");
 							lblError.setText("Проблемы с сервером");
 						} else if (answer == 3) {
+							logger.info("Wrong key. Closing window");
 							/* Выходим из основного окна */
 							messageChecker.setWorking(false);
 							Registration registration = new Registration();
@@ -1229,7 +1322,7 @@ public class MainWindow extends JFrame {
 							MainWindow.this.dispose();
 						}
 					} catch (IOException ex) {
-						System.out.println("IO error");
+						logger.error("IO error", ex);
 						ex.printStackTrace();
 					} finally {
 						lock.unlock();
@@ -1256,13 +1349,16 @@ public class MainWindow extends JFrame {
 
 		public void setWorking(boolean working) {
 			this.working = working;
+			logger.info("New message checker. Set working: " + working);
 		}
 
 		public void run() {
+			logger.info("New message checker started");
 			/* Находим папку Входящие */
 			SimpleFolder inputFolder = null;
 			for (SimpleFolder tmpFolder : folders) {
 				if (tmpFolder.getName().equals("Входящие")) {
+					logger.info("Folder input is found");
 					inputFolder = tmpFolder;
 					break;
 				}
@@ -1270,18 +1366,20 @@ public class MainWindow extends JFrame {
 
 			while (working) {
 				try {
+					logger.info("New message checker is going to turn in");
 					Thread.sleep(10000);
 				} catch (InterruptedException e) {
+					logger.error("Interrapted new message checker", e);
 					e.printStackTrace();
 				}
 				lock.lock();
 				try {
 					socket = new Socket("localhost", 6789);
 				} catch (UnknownHostException e2) {
-					System.out.println("Unknown host");
+					logger.error("Unknown host", e2);
 					e2.printStackTrace();
 				} catch (IOException e2) {
-					System.out.println("IO");
+					logger.error("IO", e2);
 					e2.printStackTrace();
 				}
 
@@ -1289,7 +1387,7 @@ public class MainWindow extends JFrame {
 					out = new DataOutputStream(socket.getOutputStream());
 					in = new DataInputStream(socket.getInputStream());
 				} catch (IOException e2) {
-					System.out.println("stream error");
+					logger.error("Stream error", e2);
 					e2.printStackTrace();
 					try {
 						out.close();
@@ -1301,13 +1399,17 @@ public class MainWindow extends JFrame {
 				}
 
 				try {
+					logger.info("Sending request to check new messages");
 					/* Отправляем запрос с количеством сообщений */
 					out.writeByte(10);
 					out.writeInt(key);
 					out.writeInt(inputFolder.getMessages().size());
+					logger.info("Sent request");
 					/* Ждем ответ */
 					byte answer = in.readByte();
+					logger.info("Got answer");
 					if (answer == 0) {
+						logger.info("Getting messages");
 						/* Если удачно, получаем сообщения и добавляем локально */
 						int length = in.readInt();
 						byte[] answerBytes = new byte[length];
@@ -1321,10 +1423,12 @@ public class MainWindow extends JFrame {
 						/* Выводим сообщения в выделенной папке */
 						drawMessages();
 					} else if (answer == 1) {
-
+						logger.info("There are not new messages");
 					} else if (answer == 2) {
+						logger.info("Server problems");
 						lblError.setText("Проблемы с сервером");
 					} else if (answer == 3) {
+						logger.info("Wrong key. Closing window");
 						/* Выходим из основного окна */
 						working = false;
 						Registration registration = new Registration();
@@ -1332,9 +1436,10 @@ public class MainWindow extends JFrame {
 						MainWindow.this.dispose();
 					}
 				} catch (IOException ex) {
-					System.out.println("IO error");
+					logger.error("IO error", ex);
 					ex.printStackTrace();
 				} catch (ClassNotFoundException er) {
+					logger.error("ClassNotFound", er);
 					er.printStackTrace();
 				} finally {
 					lock.unlock();

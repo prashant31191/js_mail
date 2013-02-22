@@ -556,12 +556,15 @@ public class Server {
 					int gotKey = in.readInt();
 					/* Получаем количество сообщений у пользователя */
 					int amount = in.readInt();
-					logger.info("Got key and amount of messages [" + socket.getPort() + "]");
+					logger.info("Got key and amount of messages ["
+							+ socket.getPort() + "]");
 					if (!Managing.sessionExists(gotKey)) {
-						logger.info("Key does not exist [" + socket.getPort() + "]");
+						logger.info("Key does not exist [" + socket.getPort()
+								+ "]");
 						out.writeByte(3);
 					} else {
-						logger.info("Checking if there are new messages [" + socket.getPort() + "]");
+						logger.info("Checking if there are new messages ["
+								+ socket.getPort() + "]");
 						/*
 						 * Если ключ есть в сессиях, проверяем есть ли новые
 						 * сообщения
@@ -569,7 +572,8 @@ public class Server {
 						int amountOfNew = Managing.hasNewMessages(amount,
 								Managing.getSessionUser(gotKey));
 						if (amountOfNew == -1) {
-							logger.info("Could not check [" + socket.getPort() + "]");
+							logger.info("Could not check [" + socket.getPort()
+									+ "]");
 							out.writeByte(2);
 						} else {
 							/*
@@ -577,24 +581,29 @@ public class Server {
 							 * пользователю
 							 */
 							if (amountOfNew == 0) {
-								logger.info("There are not new messages [" + socket.getPort() + "]");
+								logger.info("There are not new messages ["
+										+ socket.getPort() + "]");
 								out.writeByte(1);
 							} else {
-								logger.info("Trying to get messages [" + socket.getPort() + "]");
+								logger.info("Trying to get messages ["
+										+ socket.getPort() + "]");
 								List<SimpleMessage> newMessages = Managing
 										.getNewMessages(amountOfNew,
 												Managing.getSessionUser(gotKey));
 								if (newMessages == null) {
-									logger.info("Could not get messages [" + socket.getPort() + "]");
+									logger.info("Could not get messages ["
+											+ socket.getPort() + "]");
 									out.writeByte(2);
 								} else {
-									logger.info("Trying to send new messages to user [" + socket.getPort() + "]");
+									logger.info("Trying to send new messages to user ["
+											+ socket.getPort() + "]");
 									byte[] answerBytes = Serializer
 											.serialize(newMessages);
 									out.writeByte(0);
 									out.writeInt(answerBytes.length);
 									out.write(answerBytes);
-									logger.info("Sent messages [" + socket.getPort() + "]");
+									logger.info("Sent messages ["
+											+ socket.getPort() + "]");
 								}
 							}
 						}
@@ -603,25 +612,31 @@ public class Server {
 
 				/* Запрос на очистку корзины */
 				if (requestNumber == 11) {
-					logger.info("Request to clear trach basket [" + socket.getPort() + "]");
+					logger.info("Request to clear trach basket ["
+							+ socket.getPort() + "]");
 					logger.info("Trying to get key [" + socket.getPort() + "]");
 					/* Проверяем, есть ли такое ключ в сессиях */
 					int gotKey = in.readInt();
 					if (!Managing.sessionExists(gotKey)) {
-						logger.info("Key does not exist [" + socket.getPort() + "]");
+						logger.info("Key does not exist [" + socket.getPort()
+								+ "]");
 						out.writeByte(3);
 					} else {
-						logger.info("Updating session time [" + socket.getPort() + "]");
+						logger.info("Updating session time ["
+								+ socket.getPort() + "]");
 						Managing.undateSessionLastRequest(gotKey);
-						logger.info("Trying to clear trach basket [" + socket.getPort() + "]");
+						logger.info("Trying to clear trach basket ["
+								+ socket.getPort() + "]");
 						/* Если есть, пытаемся получить из БД данные */
 						boolean answer = Managing.clearTrash(Managing
 								.getSessionUser(gotKey));
 						if (!answer) {
-							logger.info("Could not clear trash basket [" + socket.getPort() + "]");
+							logger.info("Could not clear trash basket ["
+									+ socket.getPort() + "]");
 							out.writeByte(2);
-						}else {
-							logger.info("Trash basket is cleared [" + socket.getPort() + "]");
+						} else {
+							logger.info("Trash basket is cleared ["
+									+ socket.getPort() + "]");
 							out.writeByte(0);
 						}
 					}
@@ -684,7 +699,8 @@ public class Server {
 						sessionDate = session.getTime().getTime();
 						if (currentDate - sessionDate > 1000 * 60 * 5) {
 							/* Удаляем неактивного пользователя */
-							logger.info("Session for [" + session.getMail() + "] is deleted");
+							logger.info("Session for [" + session.getMail()
+									+ "] is deleted");
 							Managing.deleteSession(session.getId());
 						}
 					}
