@@ -542,7 +542,7 @@ public class Managing {
 					foundFolder = folder;
 					break;
 				}
-			/*Ищем письмо и удаляем связку в БД*/
+			/* Ищем письмо и удаляем связку в БД */
 			for (MessToFold messToFold : foundFolder.getMessToFolds()) {
 				foundMessage = messToFold.getMessage();
 				if (foundMessage.getAbout().equals(message.getAbout())
@@ -555,10 +555,10 @@ public class Managing {
 					break;
 				}
 			}
-			/*Проверяем, есть ли это сообщение у кого-нибудь другого*/
+			/* Проверяем, есть ли это сообщение у кого-нибудь другого */
 			List<MessToFold> messToFolds = foundMessage.getMessToFolds();
 			if (messToFolds.size() == 0) {
-				/*Если нет, удаляем сообщение из БД*/
+				/* Если нет, удаляем сообщение из БД */
 				List<MessToMail> messToMails = foundMessage.getMessToMails();
 				for (MessToMail messToMail : messToMails)
 					em.remove(messToMail);
@@ -741,6 +741,52 @@ public class Managing {
 					break;
 				}
 			}
+			trx.commit();
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			if (trx.isActive())
+				trx.rollback();
+			return false;
+		} finally {
+			emf.close();
+		}
+	}
+	
+	public static boolean clearTrash(String whose) {
+		EntityManagerFactory emf = Persistence
+				.createEntityManagerFactory("mail");
+		EntityManager em = emf.createEntityManager();
+		EntityTransaction trx = em.getTransaction();
+		try {
+			Message message = null;
+			trx.begin();
+			/*Находим почтовый адрес*/
+			Email email = em.find(Email.class, whose);
+			/*Ищем Корзину*/
+			Folder foundFolder = null;
+			for (Folder folder : email.getFolders())
+				if (folder.getName().equals("Корзина")) {
+					foundFolder = folder;
+					break;
+				}
+			/* Удаляем письма */
+			for (MessToFold messToFold : foundFolder.getMessToFolds()) {
+				message = messToFold.getMessage();
+				em.remove(messToFold);
+				trx.commit();
+				trx.begin();
+				/* Проверяем, есть ли это сообщение у кого-нибудь другого */
+				List<MessToFold> messToFolds = message.getMessToFolds();
+				if (messToFolds.size() == 0) {
+					/* Если нет, удаляем сообщение из БД */
+					List<MessToMail> messToMails = message.getMessToMails();
+					for (MessToMail messToMail : messToMails)
+						em.remove(messToMail);
+					em.remove(message);
+				}
+			}
+			
 			trx.commit();
 			return true;
 		} catch (Exception e) {

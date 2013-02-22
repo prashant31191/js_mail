@@ -185,7 +185,6 @@ public class Server {
 							out.write(answerBytes);
 						}
 					}
-
 				}
 				/*Запрос на отправку письма*/
 				if (requestNumber == 4) {
@@ -252,7 +251,7 @@ public class Server {
 							out.writeByte(2);
 					}
 				}
-				/*Запрос на удаление письма*/
+				/*Запрос на удаление писем*/
 				if (requestNumber == 6) {
 					int gotKey = in.readInt();
 					int length = in.readInt();
@@ -407,6 +406,26 @@ public class Server {
 							}
 						}
 					}
+				}
+				
+				/*Запрос на очистку корзины*/
+				if (requestNumber == 11) {
+					/*Проверяем, есть ли такое ключ в сессиях*/
+					int gotKey = in.readInt();
+					if (!Managing.sessionExists(gotKey))
+						out.writeByte(3);
+					else {
+						Managing.undateSessionLastRequest(gotKey);
+						/*Если есть, пытаемся получить из БД данные*/
+						boolean answer = Managing
+								.clearTrash(Managing.getSessionUser(gotKey));
+						if (!answer)
+							out.writeByte(2);
+						else {
+							out.writeByte(0);
+						}
+					}
+
 				}
 				/*Запрос на выход из системы*/
 				if (requestNumber == 0) {

@@ -213,7 +213,7 @@ public class Registration extends JFrame {
 					if (answer == 0) {
 						/*Если успешно, создаем окно с почтой*/
 						int key = in.readInt();
-						MainWindow mw = new MainWindow(key);
+						MainWindow mw = new MainWindow(key, requestInfo[0]);
 						mw.setVisible(true);
 						Registration.this.dispose();
 					} else if (answer == 2) {
@@ -287,7 +287,7 @@ public class Registration extends JFrame {
 					if (answer == 0) {
 						/*Если успешно, создаем окно с почной*/
 						int key = in.readInt();
-						MainWindow mw = new MainWindow(key);
+						MainWindow mw = new MainWindow(key, requestInfo[0] + "@mail.js");
 						mw.setVisible(true);
 						Registration.this.dispose();
 					} else if (answer == 1) {
