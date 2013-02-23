@@ -10,6 +10,7 @@ import java.util.Date;
  * @author Fomin
  * @version 1.0
  */
+@SuppressWarnings("serial")
 public class SimpleMessage implements Serializable, Comparable<SimpleMessage> {
 	private String from;
 	private String to;

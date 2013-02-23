@@ -31,6 +31,7 @@ import java.awt.Color;
  * @author Fomin
  * @version 1.0
  */
+@SuppressWarnings("serial")
 public class Registration extends JFrame {
 	private static final Logger logger = Logger.getLogger("Registration");
 
@@ -54,7 +55,7 @@ public class Registration extends JFrame {
 	private JLabel lblErrorSName;
 	private JLabel lblErrorDate;
 	private JLabel lblErrorNumber;
-	
+
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -78,61 +79,61 @@ public class Registration extends JFrame {
 		lblGfhjkm.setBounds(344, 15, 53, 14);
 		lblGfhjkm.setHorizontalAlignment(SwingConstants.LEFT);
 		contentPane.add(lblGfhjkm);
-		
+
 		lblErrorPair = new JLabel("");
 		lblErrorPair.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		lblErrorPair.setForeground(Color.RED);
 		lblErrorPair.setBounds(236, 32, 367, 14);
 		contentPane.add(lblErrorPair);
-		
+
 		lblErrorLogin = new JLabel("");
 		lblErrorLogin.setForeground(Color.RED);
 		lblErrorLogin.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		lblErrorLogin.setBounds(113, 107, 500, 14);
 		contentPane.add(lblErrorLogin);
-		
+
 		lblErrorPass1 = new JLabel("");
 		lblErrorPass1.setForeground(Color.RED);
 		lblErrorPass1.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		lblErrorPass1.setBounds(111, 152, 502, 14);
 		contentPane.add(lblErrorPass1);
-		
+
 		lblErrorPass2 = new JLabel("");
 		lblErrorPass2.setForeground(Color.RED);
 		lblErrorPass2.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		lblErrorPass2.setBounds(112, 187, 501, 14);
 		contentPane.add(lblErrorPass2);
-		
+
 		lblErrorPasses = new JLabel("");
 		lblErrorPasses.setForeground(Color.RED);
 		lblErrorPasses.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		lblErrorPasses.setBounds(111, 202, 502, 14);
 		contentPane.add(lblErrorPasses);
-		
+
 		lblErrorFName = new JLabel("");
 		lblErrorFName.setForeground(Color.RED);
 		lblErrorFName.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		lblErrorFName.setBounds(110, 246, 503, 14);
 		contentPane.add(lblErrorFName);
-		
+
 		lblErrorSName = new JLabel("");
 		lblErrorSName.setForeground(Color.RED);
 		lblErrorSName.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		lblErrorSName.setBounds(109, 284, 504, 14);
 		contentPane.add(lblErrorSName);
-		
+
 		lblErrorDate = new JLabel("");
 		lblErrorDate.setForeground(Color.RED);
 		lblErrorDate.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		lblErrorDate.setBounds(109, 318, 504, 14);
 		contentPane.add(lblErrorDate);
-		
+
 		lblErrorNumber = new JLabel("");
 		lblErrorNumber.setForeground(Color.RED);
 		lblErrorNumber.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		lblErrorNumber.setBounds(110, 354, 503, 14);
 		contentPane.add(lblErrorNumber);
-		
+
 		fldEnterMail = new JTextField();
 		fldEnterMail.setBounds(234, 12, 100, 20);
 		contentPane.add(fldEnterMail);
@@ -240,24 +241,35 @@ public class Registration extends JFrame {
 
 				try {
 					out = new DataOutputStream(socket.getOutputStream());
+				} catch (IOException e2) {
+					logger.error("Stream error", e2);
+					e2.printStackTrace();
+					try {
+						socket.close();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+				}
+
+				try {
 					in = new DataInputStream(socket.getInputStream());
 				} catch (IOException e2) {
 					logger.error("Stream error", e2);
 					e2.printStackTrace();
 					try {
 						out.close();
-						in.close();
 						socket.close();
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
 				}
+
 				/* Отправляем запрос на вход в систему */
 				try {
 					logger.info("Sending data to log in");
 					String[] requestInfo = {
 							fldEnterMail.getText().toLowerCase().trim(),
-							fldEnterPass.getText() };
+							new String(fldEnterPass.getPassword()) };
 
 					byte[] requestBytes = Serializer.serialize(requestInfo);
 					out.writeByte(2);
@@ -319,13 +331,23 @@ public class Registration extends JFrame {
 
 				try {
 					out = new DataOutputStream(socket.getOutputStream());
+				} catch (IOException e2) {
+					logger.error("Stream error", e2);
+					e2.printStackTrace();
+					try {
+						socket.close();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+				}
+
+				try {
 					in = new DataInputStream(socket.getInputStream());
 				} catch (IOException e2) {
 					logger.error("Stream error", e2);
 					e2.printStackTrace();
 					try {
 						out.close();
-						in.close();
 						socket.close();
 					} catch (IOException e1) {
 						e1.printStackTrace();
@@ -336,7 +358,8 @@ public class Registration extends JFrame {
 					logger.info("Sending request for registration");
 					/* Отправляем запрос на регистрацию */
 					String[] requestInfo = { fldLogin.getText().toLowerCase(),
-							fldFirstPass.getText(), fldSecPass.getText(),
+							new String(fldFirstPass.getPassword()),
+							new String(fldSecPass.getPassword()),
 							fldFirstName.getText().trim(),
 							fldSecName.getText().trim(),
 							fldBirthDate.getText().trim(),
@@ -360,7 +383,6 @@ public class Registration extends JFrame {
 					} else if (answer == 1) {
 						logger.info("Reading mask");
 						/* Если неуспешно, считываем маску */
-						StringBuilder sb = new StringBuilder();
 						int length = in.readInt();
 						byte[] answerBytes = new byte[length];
 						for (int i = 0; i < length; i++)
@@ -370,35 +392,42 @@ public class Registration extends JFrame {
 						logger.info("Printing errors");
 						/* Показываем пользователю причины */
 						if (!answers[1])
-							lblErrorLogin.setText("Некоректный логин. "
-									+ "(Минимальная длина 4 символа. Латинские буквы,"
-									+ " \".\", \"-\", \"_\")");
+							lblErrorLogin
+									.setText("Некоректный логин. "
+											+ "(Минимальная длина 4 символа. Латинские буквы,"
+											+ " \".\", \"-\", \"_\")");
 						if (!answers[2])
-							lblErrorPass1.setText("Некорректный пароль 1. "
-									+ "(Минимальная длина 8 символов. Латинские буквы,"
-									+ " \".\", \",\", \"-\", \"_\", \"%\", \"*\")");
+							lblErrorPass1
+									.setText("Некорректный пароль 1. "
+											+ "(Минимальная длина 8 символов. Латинские буквы,"
+											+ " \".\", \",\", \"-\", \"_\", \"%\", \"*\")");
 						if (!answers[3])
-							lblErrorPass2.setText("Некорректный пароль 2. "
-									+ "(Минимальная длина 8 символов. Латинские буквы,"
-									+ " \".\", \",\", \"-\", \"_\", \"%\", \"*\")");
+							lblErrorPass2
+									.setText("Некорректный пароль 2. "
+											+ "(Минимальная длина 8 символов. Латинские буквы,"
+											+ " \".\", \",\", \"-\", \"_\", \"%\", \"*\")");
 						if (!answers[4])
 							lblErrorPasses.setText("Пароли не совпадают.");
 						if (!answers[5])
-							lblErrorFName.setText("Некорректное имя. "
-									+ "(Минимальная длина 2 символа. Только русские и латинские буквы)");
+							lblErrorFName
+									.setText("Некорректное имя. "
+											+ "(Минимальная длина 2 символа. Только русские и латинские буквы)");
 						if (!answers[6])
-							lblErrorSName.setText("Некоректная фамилия. "
-									+ "(Минимальная длина 2 символа. Только русские и латинские буквы)");
+							lblErrorSName
+									.setText("Некоректная фамилия. "
+											+ "(Минимальная длина 2 символа. Только русские и латинские буквы)");
 						if (!answers[7])
 							lblErrorDate.setText("Некоректная дата рождения. "
 									+ "(Формат даты дд.мм.гггг)");
 						if (!answers[8])
-							lblErrorNumber.setText("Некоректный телефон. "
-									+ "(Минимальная длина 6 символов. Только цифры и знак + вначале)");
-//						taInfo.setText(sb.toString());
+							lblErrorNumber
+									.setText("Некоректный телефон. "
+											+ "(Минимальная длина 6 символов. Только цифры и знак + вначале)");
+						// taInfo.setText(sb.toString());
 					} else {
 						logger.info("Creation error");
-						lblErrorPair.setText("Ошибка при создании учетной записи");
+						lblErrorPair
+								.setText("Ошибка при создании учетной записи");
 					}
 				} catch (IOException er) {
 					logger.error("IO", er);
@@ -437,7 +466,7 @@ public class Registration extends JFrame {
 		btnClear.setBounds(423, 384, 91, 23);
 		contentPane.add(btnClear);
 	}
-	
+
 	private void clearErrorLabels() {
 		lblErrorPair.setText("");
 		lblErrorLogin.setText("");

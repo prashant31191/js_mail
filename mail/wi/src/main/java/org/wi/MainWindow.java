@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -41,6 +40,7 @@ import java.awt.event.MouseEvent;
  * @author Fomin
  * @version 1.0
  */
+@SuppressWarnings("serial")
 public class MainWindow extends JFrame {
 	private final Logger logger = Logger.getLogger("MainWindow");
 
@@ -59,7 +59,6 @@ public class MainWindow extends JFrame {
 	private JList<String> lstMessages;
 
 	private List<SimpleFolder> folders = null;
-	private List<SimpleMessage> messages = null;
 	private DefaultListModel<String> listModelMessages = new DefaultListModel<String>();
 	private DefaultListModel<String> listModelFolders = new DefaultListModel<String>();
 
@@ -76,38 +75,24 @@ public class MainWindow extends JFrame {
 
 		this.key = key;
 
-		Socket socket = null;
-		DataOutputStream out = null;
 		DataInputStream in = null;
+		DataOutputStream out = null;
+		Socket socket = getSocket();
+		if (socket != null) {
+			in = getInputStream(socket);
+			out = getOutputStream(socket);
+		}
 
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				/* Нажатие на закрытые окна */
 				lock.lock();
 				logger.info("Close window");
-				Socket socket = null;
+				
 				DataOutputStream out = null;
-				try {
-					socket = new Socket("localhost", 6789);
-				} catch (UnknownHostException e2) {
-					logger.error("Unknown host", e2);
-					e2.printStackTrace();
-				} catch (IOException e2) {
-					logger.error("IO", e2);
-					e2.printStackTrace();
-				}
-
-				try {
-					out = new DataOutputStream(socket.getOutputStream());
-				} catch (IOException e2) {
-					logger.error("Stream error", e2);
-					e2.printStackTrace();
-					try {
-						socket.close();
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					}
-				}
+				Socket socket = getSocket();
+				if (socket != null) 
+					out = getOutputStream(socket);
 
 				try {
 					logger.info("Sending key");
@@ -186,35 +171,12 @@ public class MainWindow extends JFrame {
 							 * Если письмо не прочитаено, отправляем запрос на
 							 * отметку как прочитанное
 							 */
-							Socket socket = null;
-							DataOutputStream out = null;
 							DataInputStream in = null;
-
-							try {
-								socket = new Socket("localhost", 6789);
-							} catch (UnknownHostException e2) {
-								logger.error("Unknown host", e2);
-								e2.printStackTrace();
-							} catch (IOException e2) {
-								logger.error("IO", e2);
-								e2.printStackTrace();
-							}
-
-							try {
-								out = new DataOutputStream(socket
-										.getOutputStream());
-								in = new DataInputStream(socket
-										.getInputStream());
-							} catch (IOException e2) {
-								logger.error("Stream error", e2);
-								e2.printStackTrace();
-								try {
-									out.close();
-									in.close();
-									socket.close();
-								} catch (IOException e1) {
-									e1.printStackTrace();
-								}
+							DataOutputStream out = null;
+							Socket socket = getSocket();
+							if (socket != null) {
+								in = getInputStream(socket);
+								out = getOutputStream(socket);
 							}
 
 							try {
@@ -307,33 +269,12 @@ public class MainWindow extends JFrame {
 					return;
 				SimpleFolder sFolder = folders.get(selectedFolder);
 
-				Socket socket = null;
-				DataOutputStream out = null;
 				DataInputStream in = null;
-
-				try {
-					socket = new Socket("localhost", 6789);
-				} catch (UnknownHostException e2) {
-					logger.error("Unknown host", e2);
-					e2.printStackTrace();
-				} catch (IOException e2) {
-					logger.error("IO", e2);
-					e2.printStackTrace();
-				}
-
-				try {
-					out = new DataOutputStream(socket.getOutputStream());
-					in = new DataInputStream(socket.getInputStream());
-				} catch (IOException e2) {
-					logger.error("Stream error", e2);
-					e2.printStackTrace();
-					try {
-						out.close();
-						in.close();
-						socket.close();
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					}
+				DataOutputStream out = null;
+				Socket socket = getSocket();
+				if (socket != null) {
+					in = getInputStream(socket);
+					out = getOutputStream(socket);
 				}
 
 				try {
@@ -415,33 +356,12 @@ public class MainWindow extends JFrame {
 						.getMessages().get(selectedMessage);
 				String folderName = listModelFolders.elementAt(selectedFolder);
 
-				Socket socket = null;
-				DataOutputStream out = null;
 				DataInputStream in = null;
-
-				try {
-					socket = new Socket("localhost", 6789);
-				} catch (UnknownHostException e2) {
-					logger.error("Unknown host", e2);
-					e2.printStackTrace();
-				} catch (IOException e2) {
-					logger.error("IO", e2);
-					e2.printStackTrace();
-				}
-
-				try {
-					out = new DataOutputStream(socket.getOutputStream());
-					in = new DataInputStream(socket.getInputStream());
-				} catch (IOException e2) {
-					logger.error("Stream error", e2);
-					e2.printStackTrace();
-					try {
-						out.close();
-						in.close();
-						socket.close();
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					}
+				DataOutputStream out = null;
+				Socket socket = getSocket();
+				if (socket != null) {
+					in = getInputStream(socket);
+					out = getOutputStream(socket);
 				}
 
 				try {
@@ -581,30 +501,13 @@ public class MainWindow extends JFrame {
 				logger.info("Logging out");
 				/* Выход из системы */
 				lock.lock();
-				Socket socket = null;
+				
 				DataOutputStream out = null;
-				try {
-					socket = new Socket("localhost", 6789);
-				} catch (UnknownHostException e2) {
-					logger.error("Unknown host", e2);
-					e2.printStackTrace();
-				} catch (IOException e2) {
-					logger.error("IO", e2);
-					e2.printStackTrace();
+				Socket socket = getSocket();
+				if (socket != null) {
+					out = getOutputStream(socket);
 				}
-
-				try {
-					out = new DataOutputStream(socket.getOutputStream());
-				} catch (IOException e2) {
-					logger.error("Stream error", e2);
-					e2.printStackTrace();
-					try {
-						socket.close();
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					}
-				}
-
+				
 				try {
 					logger.info("Sending request to log out");
 					/* Отправляем запрос на выход */
@@ -653,33 +556,12 @@ public class MainWindow extends JFrame {
 				if (numberOfMessages < 1)
 					return;
 
-				Socket socket = null;
-				DataOutputStream out = null;
 				DataInputStream in = null;
-
-				try {
-					socket = new Socket("localhost", 6789);
-				} catch (UnknownHostException e2) {
-					logger.error("Unknown host", e2);
-					e2.printStackTrace();
-				} catch (IOException e2) {
-					logger.error("IO", e2);
-					e2.printStackTrace();
-				}
-
-				try {
-					out = new DataOutputStream(socket.getOutputStream());
-					in = new DataInputStream(socket.getInputStream());
-				} catch (IOException e2) {
-					logger.error("Stream error", e2);
-					e2.printStackTrace();
-					try {
-						out.close();
-						in.close();
-						socket.close();
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					}
+				DataOutputStream out = null;
+				Socket socket = getSocket();
+				if (socket != null) {
+					in = getInputStream(socket);
+					out = getOutputStream(socket);
 				}
 
 				try {
@@ -754,30 +636,6 @@ public class MainWindow extends JFrame {
 		contentPane.add(button_1);
 
 		lock.lock();
-		try {
-			socket = new Socket("localhost", 6789);
-		} catch (UnknownHostException e2) {
-			logger.error("Unknown host", e2);
-			e2.printStackTrace();
-		} catch (IOException e2) {
-			logger.error("IO", e2);
-			e2.printStackTrace();
-		}
-
-		try {
-			out = new DataOutputStream(socket.getOutputStream());
-			in = new DataInputStream(socket.getInputStream());
-		} catch (IOException e2) {
-			logger.error("Stream error", e2);
-			e2.printStackTrace();
-			try {
-				out.close();
-				in.close();
-				socket.close();
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
-		}
 
 		try {
 			logger.info("Sending request to get everything");
@@ -835,6 +693,52 @@ public class MainWindow extends JFrame {
 		messageChecker.start();
 	}
 
+	private Socket getSocket() {
+		Socket socket = null;
+		try {
+			socket = new Socket("localhost", 6789);
+		} catch (UnknownHostException e2) {
+			logger.error("Unknown host", e2);
+			e2.printStackTrace();
+		} catch (IOException e2) {
+			logger.error("IO", e2);
+			e2.printStackTrace();
+		}
+		return socket;
+	}
+	
+	private DataInputStream getInputStream(Socket socket) {
+		DataInputStream in = null;
+		try {
+			in = new DataInputStream(socket.getInputStream());
+		} catch (IOException e2) {
+			logger.error("Stream error", e2);
+			e2.printStackTrace();
+			try {
+				socket.close();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
+		return in;
+	}
+	
+	private DataOutputStream getOutputStream(Socket socket) {
+		DataOutputStream out = null;
+		try {
+			out = new DataOutputStream(socket.getOutputStream());
+		} catch (IOException e2) {
+			logger.error("Stream error", e2);
+			e2.printStackTrace();
+			try {
+				socket.close();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
+		return out;
+	}
+	
 	private void drawMessages() {
 		logger.info("Drawing messages");
 		/* Прописовка сообщений при нажатии на папку */
@@ -924,33 +828,13 @@ public class MainWindow extends JFrame {
 					logger.info("Request to send mew message");
 					/* Отправляем сообщение */
 					lock.lock();
-					Socket socket = null;
-					DataOutputStream out = null;
+					
 					DataInputStream in = null;
-
-					try {
-						socket = new Socket("localhost", 6789);
-					} catch (UnknownHostException e2) {
-						logger.error("Unknown host", e2);
-						e2.printStackTrace();
-					} catch (IOException e2) {
-						logger.error("IO", e2);
-						e2.printStackTrace();
-					}
-
-					try {
-						out = new DataOutputStream(socket.getOutputStream());
-						in = new DataInputStream(socket.getInputStream());
-					} catch (IOException e2) {
-						logger.error("Stream error", e2);
-						e2.printStackTrace();
-						try {
-							out.close();
-							in.close();
-							socket.close();
-						} catch (IOException e1) {
-							e1.printStackTrace();
-						}
+					DataOutputStream out = null;
+					Socket socket = getSocket();
+					if (socket != null) {
+						in = getInputStream(socket);
+						out = getOutputStream(socket);
 					}
 
 					try {
@@ -996,6 +880,7 @@ public class MainWindow extends JFrame {
 							if (messages[0] != null)
 								outFolder
 										.addMessage((SimpleMessage) messages[0]);
+							@SuppressWarnings("unchecked")
 							List<SimpleMessage> incomeMessages = (List<SimpleMessage>) messages[1];
 							for (SimpleMessage sm : incomeMessages)
 								inFolder.addMessage(sm);
@@ -1088,7 +973,7 @@ public class MainWindow extends JFrame {
 			contentPane.add(lblMailmailjs);
 		}
 	}
-
+	
 	private class CreateFold extends JFrame {
 
 		private JPanel contentPane;
@@ -1124,33 +1009,13 @@ public class MainWindow extends JFrame {
 					/* Создание папки */
 					lock.lock();
 					String requestInfo = fldFoldName.getText().trim();
-					Socket socket = null;
-					DataOutputStream out = null;
+					
 					DataInputStream in = null;
-
-					try {
-						socket = new Socket("localhost", 6789);
-					} catch (UnknownHostException e2) {
-						logger.error("Unknown host", e2);
-						e2.printStackTrace();
-					} catch (IOException e2) {
-						logger.error("IO", e2);
-						e2.printStackTrace();
-					}
-
-					try {
-						out = new DataOutputStream(socket.getOutputStream());
-						in = new DataInputStream(socket.getInputStream());
-					} catch (IOException e2) {
-						logger.error("Stream error", e2);
-						e2.printStackTrace();
-						try {
-							out.close();
-							in.close();
-							socket.close();
-						} catch (IOException e1) {
-							e1.printStackTrace();
-						}
+					DataOutputStream out = null;
+					Socket socket = getSocket();
+					if (socket != null) {
+						in = getInputStream(socket);
+						out = getOutputStream(socket);
 					}
 
 					try {
@@ -1225,8 +1090,6 @@ public class MainWindow extends JFrame {
 	private class MoveFold extends JFrame {
 
 		private JPanel contentPane;
-		private int selectedFolder;
-		private int selectedMessage;
 
 		JList<String> lstMoveFolders;
 		private JLabel lblError;
@@ -1238,9 +1101,6 @@ public class MainWindow extends JFrame {
 			contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 			setContentPane(contentPane);
 			contentPane.setLayout(null);
-
-			this.selectedFolder = selectedFolder;
-			this.selectedMessage = selectedMessage;
 
 			JLabel label = new JLabel("Папки:");
 			label.setBounds(10, 11, 46, 14);
@@ -1255,6 +1115,7 @@ public class MainWindow extends JFrame {
 
 			lblError = new JLabel("");
 			lblError.setBounds(10, 136, 224, 14);
+			lblError.setForeground(Color.RED);
 			contentPane.add(lblError);
 
 			JButton btnMove = new JButton("Переместить");
@@ -1278,37 +1139,16 @@ public class MainWindow extends JFrame {
 					requestInfo[1] = folder;
 					requestInfo[2] = moveFolder;
 
-					Socket socket = null;
-					DataOutputStream out = null;
 					DataInputStream in = null;
-
-					try {
-						socket = new Socket("localhost", 6789);
-					} catch (UnknownHostException e2) {
-						logger.error("Unknown host", e2);
-						e2.printStackTrace();
-					} catch (IOException e2) {
-						logger.error("IO", e2);
-						e2.printStackTrace();
+					DataOutputStream out = null;
+					Socket socket = getSocket();
+					if (socket != null) {
+						in = getInputStream(socket);
+						out = getOutputStream(socket);
 					}
 
 					try {
-						out = new DataOutputStream(socket.getOutputStream());
-						in = new DataInputStream(socket.getInputStream());
-					} catch (IOException e2) {
-						logger.error("Stream error", e2);
-						e2.printStackTrace();
-						try {
-							out.close();
-							in.close();
-							socket.close();
-						} catch (IOException e1) {
-							e1.printStackTrace();
-						}
-					}
-
-					try {
-						logger.info("Sending request to move emssage");
+						logger.info("Sending request to move message");
 						/* Отправляем запрос на перемещение */
 						byte[] requestBytes = Serializer.serialize(requestInfo);
 						out.writeByte(9);
@@ -1322,8 +1162,6 @@ public class MainWindow extends JFrame {
 						if (answer == 0) {
 							logger.info("Moving message");
 							/* Если успешно, перемещаем письмо локально */
-							String messageAppearance = listModelMessages
-									.get(selectedMessage);
 							listModelMessages.remove(selectedMessage);
 							folders.get(selectedFolder).getMessages()
 									.remove(selectedMessage);
@@ -1369,9 +1207,6 @@ public class MainWindow extends JFrame {
 	private class NewMessageChecker extends Thread {
 		private final Logger nmcLogger = Logger.getLogger("NewMessageChecker");
 
-		Socket socket = null;
-		DataOutputStream out = null;
-		DataInputStream in = null;
 		private boolean working = true;
 
 		public void setWorking(boolean working) {
@@ -1381,6 +1216,7 @@ public class MainWindow extends JFrame {
 
 		public void run() {
 			nmcLogger.setLevel(Level.INFO);
+			
 			logger.info("New message checker started");
 			/* Находим папку Входящие */
 			SimpleFolder inputFolder = null;
@@ -1393,6 +1229,14 @@ public class MainWindow extends JFrame {
 			}
 
 			while (working) {
+				DataInputStream in = null;
+				DataOutputStream out = null;
+				Socket socket = getSocket();
+				if (socket != null) {
+					in = getInputStream(socket);
+					out = getOutputStream(socket);
+				}
+				
 				try {
 					nmcLogger.info("New message checker is going to turn in");
 					Thread.sleep(10000);
@@ -1401,31 +1245,7 @@ public class MainWindow extends JFrame {
 					e.printStackTrace();
 				}
 				lock.lock();
-				try {
-					socket = new Socket("localhost", 6789);
-				} catch (UnknownHostException e2) {
-					nmcLogger.error("Unknown host", e2);
-					e2.printStackTrace();
-				} catch (IOException e2) {
-					nmcLogger.error("IO", e2);
-					e2.printStackTrace();
-				}
-
-				try {
-					out = new DataOutputStream(socket.getOutputStream());
-					in = new DataInputStream(socket.getInputStream());
-				} catch (IOException e2) {
-					nmcLogger.error("Stream error", e2);
-					e2.printStackTrace();
-					try {
-						out.close();
-						in.close();
-						socket.close();
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					}
-				}
-
+				
 				try {
 					nmcLogger.info("Sending request to check new messages");
 					/* Отправляем запрос с количеством сообщений */
@@ -1443,6 +1263,7 @@ public class MainWindow extends JFrame {
 						byte[] answerBytes = new byte[length];
 						for (int i = 0; i < length; i++)
 							answerBytes[i] = in.readByte();
+						@SuppressWarnings("unchecked")
 						List<SimpleMessage> gotMessages = (List<SimpleMessage>) Serializer
 								.deserialize(answerBytes);
 

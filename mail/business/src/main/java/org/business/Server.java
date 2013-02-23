@@ -646,6 +646,7 @@ public class Server {
 				if (requestNumber == 0) {
 					logger.info("Request to log out [" + socket.getPort() + "]");
 					int gotKey = in.readInt();
+					logger.info("Got key");
 					if (Managing.sessionExists(gotKey)) {
 						Managing.deleteSession(gotKey);
 						logger.info("Key removed [" + socket.getPort() + "]");

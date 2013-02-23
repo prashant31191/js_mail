@@ -883,6 +883,7 @@ public class Managing {
 		return true;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static List<Session> getSessions() {
 		EntityManagerFactory emf = Persistence
 				.createEntityManagerFactory("mail");
