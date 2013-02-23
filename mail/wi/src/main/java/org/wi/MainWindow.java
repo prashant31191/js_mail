@@ -68,7 +68,7 @@ public class MainWindow extends JFrame {
 		logger.setLevel(Level.INFO);
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 731, 590);
+		setBounds(100, 100, 731, 594);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -550,7 +550,7 @@ public class MainWindow extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				logger.info("Opening window to send message");
 				/* Вызываем окно для отправки сообщения */
-				SendMessage sm = new SendMessage();
+				SendMessage sm = new SendMessage("");
 				sm.setVisible(true);
 			}
 		});
@@ -572,7 +572,7 @@ public class MainWindow extends JFrame {
 				move.setVisible(true);
 			}
 		});
-		btnMoveMess.setBounds(419, 216, 91, 23);
+		btnMoveMess.setBounds(383, 216, 127, 23);
 		contentPane.add(btnMoveMess);
 
 		JButton btnLogOut = new JButton("Выйти");
@@ -729,6 +729,30 @@ public class MainWindow extends JFrame {
 		button.setBounds(452, 8, 162, 23);
 		contentPane.add(button);
 
+		JButton button_1 = new JButton("Ответить");
+		button_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int selectedMessage = lstMessages.getSelectedIndex();
+				if (selectedMessage < 0) {
+					return;
+				}
+
+				int selectedFolder = lstFolders.getSelectedIndex();
+				SimpleMessage message = folders.get(selectedFolder)
+						.getMessages().get(selectedMessage);
+				if (!message.getTo().equals("Мне")) {
+					return;
+				}
+				
+				logger.info("Opening window Send message to response");
+				/* Вызываем окно для отправки сообщения */
+				SendMessage sm = new SendMessage(message.getFrom());
+				sm.setVisible(true);
+			}
+		});
+		button_1.setBounds(621, 538, 91, 23);
+		contentPane.add(button_1);
+
 		lock.lock();
 		try {
 			socket = new Socket("localhost", 6789);
@@ -848,7 +872,7 @@ public class MainWindow extends JFrame {
 		private JTextField fldAbout;
 		private JTextField fldTo;
 
-		public SendMessage() {
+		public SendMessage(String to) {
 			setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 			setBounds(100, 100, 450, 358);
 			contentPane = new JPanel();
@@ -1056,6 +1080,7 @@ public class MainWindow extends JFrame {
 			fldTo = new JTextField();
 			fldTo.setBounds(83, 47, 349, 20);
 			contentPane.add(fldTo);
+			fldTo.setText(to);
 			fldTo.setColumns(10);
 
 			JLabel lblMailmailjs = new JLabel("Меня");
@@ -1343,7 +1368,7 @@ public class MainWindow extends JFrame {
 
 	private class NewMessageChecker extends Thread {
 		private final Logger nmcLogger = Logger.getLogger("NewMessageChecker");
-		
+
 		Socket socket = null;
 		DataOutputStream out = null;
 		DataInputStream in = null;
