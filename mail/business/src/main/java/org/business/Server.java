@@ -75,12 +75,12 @@ public class Server {
 		private DataInputStream in = null;
 
 		/**
-		 * Public constructor for request hendler
+		 * Public constructor for request handler
 		 * 
 		 * @param socket
 		 *            Accepted socket
 		 */
-		public ConnectionRequestHandler(Socket socket) {
+		private ConnectionRequestHandler(Socket socket) {
 			this.socket = socket;
 		}
 
