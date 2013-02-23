@@ -7,8 +7,6 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
-import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.JTextField;
 import javax.swing.JButton;
@@ -20,8 +18,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
-
-import javax.swing.JTextArea;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -49,6 +45,16 @@ public class Registration extends JFrame {
 	private JTextField fldBirthDate;
 	private JTextField fldPhone;
 
+	private JLabel lblErrorPair;
+	private JLabel lblErrorLogin;
+	private JLabel lblErrorPass1;
+	private JLabel lblErrorPass2;
+	private JLabel lblErrorPasses;
+	private JLabel lblErrorFName;
+	private JLabel lblErrorSName;
+	private JLabel lblErrorDate;
+	private JLabel lblErrorNumber;
+	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -62,28 +68,82 @@ public class Registration extends JFrame {
 		logger.setLevel(Level.INFO);
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 343);
+		setBounds(100, 100, 631, 446);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
 		JLabel lblGfhjkm = new JLabel("Пароль:");
-		lblGfhjkm.setBounds(163, 14, 53, 14);
+		lblGfhjkm.setBounds(344, 15, 53, 14);
 		lblGfhjkm.setHorizontalAlignment(SwingConstants.LEFT);
 		contentPane.add(lblGfhjkm);
-
+		
+		lblErrorPair = new JLabel("");
+		lblErrorPair.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		lblErrorPair.setForeground(Color.RED);
+		lblErrorPair.setBounds(236, 32, 367, 14);
+		contentPane.add(lblErrorPair);
+		
+		lblErrorLogin = new JLabel("");
+		lblErrorLogin.setForeground(Color.RED);
+		lblErrorLogin.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		lblErrorLogin.setBounds(113, 107, 500, 14);
+		contentPane.add(lblErrorLogin);
+		
+		lblErrorPass1 = new JLabel("");
+		lblErrorPass1.setForeground(Color.RED);
+		lblErrorPass1.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		lblErrorPass1.setBounds(111, 152, 502, 14);
+		contentPane.add(lblErrorPass1);
+		
+		lblErrorPass2 = new JLabel("");
+		lblErrorPass2.setForeground(Color.RED);
+		lblErrorPass2.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		lblErrorPass2.setBounds(112, 187, 501, 14);
+		contentPane.add(lblErrorPass2);
+		
+		lblErrorPasses = new JLabel("");
+		lblErrorPasses.setForeground(Color.RED);
+		lblErrorPasses.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		lblErrorPasses.setBounds(111, 202, 502, 14);
+		contentPane.add(lblErrorPasses);
+		
+		lblErrorFName = new JLabel("");
+		lblErrorFName.setForeground(Color.RED);
+		lblErrorFName.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		lblErrorFName.setBounds(110, 246, 503, 14);
+		contentPane.add(lblErrorFName);
+		
+		lblErrorSName = new JLabel("");
+		lblErrorSName.setForeground(Color.RED);
+		lblErrorSName.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		lblErrorSName.setBounds(109, 284, 504, 14);
+		contentPane.add(lblErrorSName);
+		
+		lblErrorDate = new JLabel("");
+		lblErrorDate.setForeground(Color.RED);
+		lblErrorDate.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		lblErrorDate.setBounds(109, 318, 504, 14);
+		contentPane.add(lblErrorDate);
+		
+		lblErrorNumber = new JLabel("");
+		lblErrorNumber.setForeground(Color.RED);
+		lblErrorNumber.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		lblErrorNumber.setBounds(110, 354, 503, 14);
+		contentPane.add(lblErrorNumber);
+		
 		fldEnterMail = new JTextField();
-		fldEnterMail.setBounds(53, 11, 100, 20);
+		fldEnterMail.setBounds(234, 12, 100, 20);
 		contentPane.add(fldEnterMail);
 		fldEnterMail.setColumns(10);
 
-		JLabel lblEmail = new JLabel("e-mail:");
-		lblEmail.setBounds(10, 14, 46, 14);
+		JLabel lblEmail = new JLabel("E-mail:");
+		lblEmail.setBounds(191, 15, 46, 14);
 		contentPane.add(lblEmail);
 
 		fldEnterPass = new JPasswordField();
-		fldEnterPass.setBounds(214, 11, 106, 20);
+		fldEnterPass.setBounds(395, 12, 106, 20);
 		contentPane.add(fldEnterPass);
 		fldEnterPass.setColumns(10);
 
@@ -97,80 +157,72 @@ public class Registration extends JFrame {
 		contentPane.add(label_2);
 
 		fldLogin = new JTextField();
-		fldLogin.setBounds(77, 89, 100, 20);
+		fldLogin.setBounds(121, 86, 126, 20);
 		contentPane.add(fldLogin);
 		fldLogin.setColumns(10);
 
 		JLabel lblmailjs = new JLabel("@mail.js");
-		lblmailjs.setBounds(177, 92, 58, 14);
+		lblmailjs.setBounds(249, 90, 58, 14);
 		contentPane.add(lblmailjs);
 
 		JLabel label_3 = new JLabel("Пароль:");
-		label_3.setBounds(245, 92, 100, 14);
+		label_3.setBounds(10, 135, 100, 14);
 		contentPane.add(label_3);
 
 		fldFirstPass = new JPasswordField();
-		fldFirstPass.setBounds(346, 89, 86, 20);
+		fldFirstPass.setBounds(121, 132, 126, 20);
 		contentPane.add(fldFirstPass);
 		fldFirstPass.setColumns(10);
 
 		fldSecPass = new JPasswordField();
-		fldSecPass.setBounds(346, 120, 86, 20);
+		fldSecPass.setBounds(121, 167, 126, 20);
 		contentPane.add(fldSecPass);
 		fldSecPass.setColumns(10);
 
 		JLabel label_4 = new JLabel("Повторите пароль:");
-		label_4.setBounds(245, 123, 106, 14);
+		label_4.setBounds(10, 170, 115, 14);
 		contentPane.add(label_4);
 
 		fldFirstName = new JTextField();
-		fldFirstName.setBounds(77, 152, 100, 20);
+		fldFirstName.setBounds(120, 227, 127, 20);
 		contentPane.add(fldFirstName);
 		fldFirstName.setColumns(10);
 
 		fldSecName = new JTextField();
-		fldSecName.setBounds(77, 183, 100, 20);
+		fldSecName.setBounds(120, 264, 127, 20);
 		contentPane.add(fldSecName);
 		fldSecName.setColumns(10);
 
 		fldBirthDate = new JTextField();
-		fldBirthDate.setBounds(77, 214, 100, 20);
+		fldBirthDate.setBounds(120, 299, 127, 20);
 		contentPane.add(fldBirthDate);
 		fldBirthDate.setColumns(10);
 
 		fldPhone = new JTextField();
-		fldPhone.setBounds(77, 242, 100, 20);
+		fldPhone.setBounds(120, 333, 127, 20);
 		contentPane.add(fldPhone);
 		fldPhone.setColumns(10);
 
 		JLabel label_5 = new JLabel("Имя:");
-		label_5.setBounds(10, 155, 46, 14);
+		label_5.setBounds(10, 230, 188, 14);
 		contentPane.add(label_5);
 
 		JLabel label_6 = new JLabel("Фамилия:");
-		label_6.setBounds(10, 186, 67, 14);
+		label_6.setBounds(10, 267, 188, 14);
 		contentPane.add(label_6);
 
 		JLabel label_7 = new JLabel("Дата рождения:");
-		label_7.setBounds(10, 217, 67, 14);
+		label_7.setBounds(10, 302, 188, 14);
 		contentPane.add(label_7);
 
 		JLabel label_8 = new JLabel("Телефон:");
-		label_8.setBounds(10, 245, 67, 14);
+		label_8.setBounds(10, 336, 188, 14);
 		contentPane.add(label_8);
-
-		final JTextArea taInfo = new JTextArea();
-		taInfo.setLineWrap(true);
-		taInfo.setEditable(false);
-		taInfo.setForeground(Color.RED);
-		JScrollPane spInfo = new JScrollPane(taInfo);
-		spInfo.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		spInfo.setBounds(194, 151, 238, 111);
-		contentPane.add(spInfo);
 
 		JButton btnLogIn = new JButton("Войти");
 		btnLogIn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				clearErrorLabels();
 				logger.info("Requeat to log in");
 				Socket socket = null;
 				DataOutputStream out = null;
@@ -224,10 +276,10 @@ public class Registration extends JFrame {
 						Registration.this.dispose();
 					} else if (answer == 2) {
 						logger.info("Wrong pair");
-						taInfo.setText("- Неверная пара ел.адресс / пароль");
+						lblErrorPair.setText("Неверная пара E-mail / Пароль");
 					} else {
 						logger.info("Incorrect data");
-						taInfo.setText("- Некорректные входные данные");
+						lblErrorPair.setText("Некорректные входные данные");
 					}
 				} catch (IOException ex) {
 					logger.error("IO error", ex);
@@ -243,12 +295,13 @@ public class Registration extends JFrame {
 				}
 			}
 		});
-		btnLogIn.setBounds(341, 10, 91, 23);
+		btnLogIn.setBounds(522, 11, 91, 23);
 		contentPane.add(btnLogIn);
 
 		JButton btnSignUp = new JButton("Зарег-я");
 		btnSignUp.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				clearErrorLabels();
 				logger.info("Request for registration");
 				Socket socket = null;
 				DataOutputStream out = null;
@@ -317,31 +370,35 @@ public class Registration extends JFrame {
 						logger.info("Printing errors");
 						/* Показываем пользователю причины */
 						if (!answers[1])
-							sb.append("- Некоректный логин\n"
+							lblErrorLogin.setText("Некоректный логин. "
 									+ "(Минимальная длина 4 символа. Латинские буквы,"
-									+ " \".\", \"-\", \"_\")\n\n");
-						if (!answers[2] || !answers[3])
-							sb.append("- Некорректный пароль\n"
+									+ " \".\", \"-\", \"_\")");
+						if (!answers[2])
+							lblErrorPass1.setText("Некорректный пароль 1. "
 									+ "(Минимальная длина 8 символов. Латинские буквы,"
-									+ " \".\", \",\", \"-\", \"_\", \"%\", \"*\")\n\n");
+									+ " \".\", \",\", \"-\", \"_\", \"%\", \"*\")");
+						if (!answers[3])
+							lblErrorPass2.setText("Некорректный пароль 2. "
+									+ "(Минимальная длина 8 символов. Латинские буквы,"
+									+ " \".\", \",\", \"-\", \"_\", \"%\", \"*\")");
 						if (!answers[4])
-							sb.append("- Пароли не совпадают\n\n");
+							lblErrorPasses.setText("Пароли не совпадают.");
 						if (!answers[5])
-							sb.append("- Некорректное имя\n"
-									+ "(Минимальная длина 2 символа. Только русские и латинские буквы)\n\n");
+							lblErrorFName.setText("Некорректное имя. "
+									+ "(Минимальная длина 2 символа. Только русские и латинские буквы)");
 						if (!answers[6])
-							sb.append("- Некоректная фамилия\n"
-									+ "(Минимальная длина 2 символа. Только русские и латинские буквы)\n\n");
+							lblErrorSName.setText("Некоректная фамилия. "
+									+ "(Минимальная длина 2 символа. Только русские и латинские буквы)");
 						if (!answers[7])
-							sb.append("- Некоректная дата рождения\n"
-									+ "(Формат даты дд.мм.гггг)\n\n");
+							lblErrorDate.setText("Некоректная дата рождения. "
+									+ "(Формат даты дд.мм.гггг)");
 						if (!answers[8])
-							sb.append("- Некоректный телефон\n"
-									+ "(Минимальная длина 6 символов. Только цифры и знак + вначале)\n\n");
-						taInfo.setText(sb.toString());
+							lblErrorNumber.setText("Некоректный телефон. "
+									+ "(Минимальная длина 6 символов. Только цифры и знак + вначале)");
+//						taInfo.setText(sb.toString());
 					} else {
 						logger.info("Creation error");
-						taInfo.setText("Ошибка при создании учетной записи");
+						lblErrorPair.setText("Ошибка при создании учетной записи");
 					}
 				} catch (IOException er) {
 					logger.error("IO", er);
@@ -360,7 +417,7 @@ public class Registration extends JFrame {
 				}
 			}
 		});
-		btnSignUp.setBounds(341, 281, 91, 23);
+		btnSignUp.setBounds(519, 384, 91, 23);
 		contentPane.add(btnSignUp);
 
 		JButton btnClear = new JButton("Очистить");
@@ -377,8 +434,19 @@ public class Registration extends JFrame {
 				fldPhone.setText("");
 			}
 		});
-		btnClear.setBounds(245, 281, 91, 23);
+		btnClear.setBounds(423, 384, 91, 23);
 		contentPane.add(btnClear);
-
+	}
+	
+	private void clearErrorLabels() {
+		lblErrorPair.setText("");
+		lblErrorLogin.setText("");
+		lblErrorPass1.setText("");
+		lblErrorPass2.setText("");
+		lblErrorPasses.setText("");
+		lblErrorFName.setText("");
+		lblErrorSName.setText("");
+		lblErrorDate.setText("");
+		lblErrorNumber.setText("");
 	}
 }

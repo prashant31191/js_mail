@@ -42,7 +42,7 @@ import java.awt.event.MouseEvent;
  * @version 1.0
  */
 public class MainWindow extends JFrame {
-	private static final Logger logger = Logger.getLogger("MainWindow");
+	private final Logger logger = Logger.getLogger("MainWindow");
 
 	private JPanel contentPane;
 	private JLabel lblError;
@@ -1342,6 +1342,8 @@ public class MainWindow extends JFrame {
 	}
 
 	private class NewMessageChecker extends Thread {
+		private final Logger nmcLogger = Logger.getLogger("NewMessageChecker");
+		
 		Socket socket = null;
 		DataOutputStream out = null;
 		DataInputStream in = null;
@@ -1349,16 +1351,17 @@ public class MainWindow extends JFrame {
 
 		public void setWorking(boolean working) {
 			this.working = working;
-			logger.info("New message checker. Set working: " + working);
+			nmcLogger.info("New message checker. Set working: " + working);
 		}
 
 		public void run() {
+			nmcLogger.setLevel(Level.INFO);
 			logger.info("New message checker started");
 			/* Находим папку Входящие */
 			SimpleFolder inputFolder = null;
 			for (SimpleFolder tmpFolder : folders) {
 				if (tmpFolder.getName().equals("Входящие")) {
-					logger.info("Folder input is found");
+					nmcLogger.info("Folder input is found");
 					inputFolder = tmpFolder;
 					break;
 				}
@@ -1366,20 +1369,20 @@ public class MainWindow extends JFrame {
 
 			while (working) {
 				try {
-					logger.info("New message checker is going to turn in");
+					nmcLogger.info("New message checker is going to turn in");
 					Thread.sleep(10000);
 				} catch (InterruptedException e) {
-					logger.error("Interrapted new message checker", e);
+					nmcLogger.error("Interrapted new message checker", e);
 					e.printStackTrace();
 				}
 				lock.lock();
 				try {
 					socket = new Socket("localhost", 6789);
 				} catch (UnknownHostException e2) {
-					logger.error("Unknown host", e2);
+					nmcLogger.error("Unknown host", e2);
 					e2.printStackTrace();
 				} catch (IOException e2) {
-					logger.error("IO", e2);
+					nmcLogger.error("IO", e2);
 					e2.printStackTrace();
 				}
 
@@ -1387,7 +1390,7 @@ public class MainWindow extends JFrame {
 					out = new DataOutputStream(socket.getOutputStream());
 					in = new DataInputStream(socket.getInputStream());
 				} catch (IOException e2) {
-					logger.error("Stream error", e2);
+					nmcLogger.error("Stream error", e2);
 					e2.printStackTrace();
 					try {
 						out.close();
@@ -1399,17 +1402,17 @@ public class MainWindow extends JFrame {
 				}
 
 				try {
-					logger.info("Sending request to check new messages");
+					nmcLogger.info("Sending request to check new messages");
 					/* Отправляем запрос с количеством сообщений */
 					out.writeByte(10);
 					out.writeInt(key);
 					out.writeInt(inputFolder.getMessages().size());
-					logger.info("Sent request");
+					nmcLogger.info("Sent request");
 					/* Ждем ответ */
 					byte answer = in.readByte();
-					logger.info("Got answer");
+					nmcLogger.info("Got answer");
 					if (answer == 0) {
-						logger.info("Getting messages");
+						nmcLogger.info("Getting messages");
 						/* Если удачно, получаем сообщения и добавляем локально */
 						int length = in.readInt();
 						byte[] answerBytes = new byte[length];
@@ -1423,12 +1426,12 @@ public class MainWindow extends JFrame {
 						/* Выводим сообщения в выделенной папке */
 						drawMessages();
 					} else if (answer == 1) {
-						logger.info("There are not new messages");
+						nmcLogger.info("There are not new messages");
 					} else if (answer == 2) {
-						logger.info("Server problems");
+						nmcLogger.info("Server problems");
 						lblError.setText("Проблемы с сервером");
 					} else if (answer == 3) {
-						logger.info("Wrong key. Closing window");
+						nmcLogger.info("Wrong key. Closing window");
 						/* Выходим из основного окна */
 						working = false;
 						Registration registration = new Registration();
@@ -1436,10 +1439,10 @@ public class MainWindow extends JFrame {
 						MainWindow.this.dispose();
 					}
 				} catch (IOException ex) {
-					logger.error("IO error", ex);
+					nmcLogger.error("IO error", ex);
 					ex.printStackTrace();
 				} catch (ClassNotFoundException er) {
-					logger.error("ClassNotFound", er);
+					nmcLogger.error("ClassNotFound", er);
 					er.printStackTrace();
 				} finally {
 					lock.unlock();

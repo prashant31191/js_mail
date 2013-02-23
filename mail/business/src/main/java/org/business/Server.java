@@ -673,19 +673,24 @@ public class Server {
 
 	/* Поток для работы с сессиями */
 	private class SessionChecker extends Thread {
+		private final Logger scLogger = Logger.getLogger("SessionChecker");
+		
 		SessionChecker() {
 			super();
 			setDaemon(true);
 		}
 
 		public void run() {
+			scLogger.setLevel(Level.INFO);
+			
 			List<Session> sessions = null;
 			while (true) {
 				/* Ждем */
+				scLogger.info("Session checker is going to turn in");
 				try {
 					Thread.sleep(60000);
 				} catch (InterruptedException e) {
-					logger.error("Interrapted session checker", e);
+					scLogger.error("Interrapted session checker", e);
 					e.printStackTrace();
 				}
 				/* Берем все сессии */
@@ -693,13 +698,13 @@ public class Server {
 				if (sessions != null) {
 					long currentDate = System.currentTimeMillis();
 					long sessionDate = 0;
-					logger.info("Trying to get sessions");
+					scLogger.info("Trying to get sessions");
 					/* Просматриваем все сессии */
 					for (Session session : sessions) {
 						sessionDate = session.getTime().getTime();
 						if (currentDate - sessionDate > 1000 * 60 * 5) {
 							/* Удаляем неактивного пользователя */
-							logger.info("Session for [" + session.getMail()
+							scLogger.info("Session for [" + session.getMail()
 									+ "] is deleted");
 							Managing.deleteSession(session.getId());
 						}
