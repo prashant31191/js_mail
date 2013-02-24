@@ -20,7 +20,6 @@ import org.cc.*;
  */
 public class Server {
 	private static final Logger logger = Logger.getLogger("Server");
-	private final static int portNumber = 6789;
 
 	/**
 	 * Main method for starting server
@@ -30,7 +29,12 @@ public class Server {
 	public static void main(String[] args) {
 		logger.setLevel(Level.INFO);
 		try {
-			new Server().startServer();
+			if (args.length == 0)
+				new Server().startServer(6789);
+			else {
+				int portNumber = Integer.parseInt(args[0]);
+				new Server().startServer(portNumber);
+			}
 			logger.info("Server started");
 		} catch (Exception e) {
 			logger.error("I/O failure: ", e);
@@ -38,7 +42,7 @@ public class Server {
 		}
 	}
 
-	private void startServer() throws Exception {
+	private void startServer(int portNumber) throws Exception {
 		ServerSocket serverSocket = null;
 		boolean listening = true;
 
@@ -84,6 +88,7 @@ public class Server {
 			this.socket = socket;
 		}
 
+		@Override
 		public void run() {
 			logger.info("Client connected to socket: " + socket.toString());
 
@@ -687,6 +692,7 @@ public class Server {
 			setDaemon(true);
 		}
 
+		@Override
 		public void run() {
 			scLogger.setLevel(Level.INFO);
 			

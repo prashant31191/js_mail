@@ -30,7 +30,7 @@ public class ServerRequestOneTest {
 	@Before
 	public void beforeTest() {
 		try {
-			socket = new Socket("localhost", 6789);
+			socket = new Socket("localhost", 6701);
 		} catch (UnknownHostException e2) {
 			e2.printStackTrace();
 		} catch (IOException e2) {
@@ -112,7 +112,7 @@ public class ServerRequestOneTest {
 	@Test
 	public void requestOneCorrectDataDoubleTest() {
 		try {
-			String[] requestInfo = { "requestOne", "12341234", "12341234",
+			String[] requestInfo = { "requestOneD", "12341234", "12341234",
 					"Joe", "Johns", "12.12.1999", "1234321" };
 
 			byte[] requestBytes = Serializer.serialize(requestInfo);
@@ -121,6 +121,17 @@ public class ServerRequestOneTest {
 			out.write(requestBytes);
 
 			byte answer = in.readByte();
+			int key = in.readInt();
+			
+			afterTest();
+			beforeTest();
+
+			requestBytes = Serializer.serialize(requestInfo);
+			out.writeByte(1);
+			out.writeInt(requestBytes.length);
+			out.write(requestBytes);
+
+			answer = in.readByte();
 			Assert.assertTrue(answer == 2);
 
 		} catch (IOException ex) {
@@ -140,10 +151,11 @@ public class ServerRequestOneTest {
 	}
 
 	static class ServerThread extends Thread {
+		@Override
 		@SuppressWarnings("static-access")
 		public void run() {
 			Server server = new Server();
-			server.main(null);
+			server.main(new String[] {"6701"});
 		}
 	}
 }

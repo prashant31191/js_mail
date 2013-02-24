@@ -31,7 +31,7 @@ public class ServerRequestThreeTest {
 	@Before
 	public void beforeTest() {
 		try {
-			socket = new Socket("localhost", 6789);
+			socket = new Socket("localhost", 6703);
 		} catch (UnknownHostException e2) {
 			e2.printStackTrace();
 		} catch (IOException e2) {
@@ -125,10 +125,11 @@ public class ServerRequestThreeTest {
 	}
 
 	static class ServerThread extends Thread {
+		@Override
 		@SuppressWarnings("static-access")
 		public void run() {
 			Server server = new Server();
-			server.main(null);
+			server.main(new String[] {"6703"});
 		}
 	}
 }
