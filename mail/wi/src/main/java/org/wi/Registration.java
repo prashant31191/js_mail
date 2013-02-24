@@ -289,9 +289,12 @@ public class Registration extends JFrame {
 					} else if (answer == 2) {
 						logger.info("Wrong pair");
 						lblErrorPair.setText("Неверная пара E-mail / Пароль");
-					} else {
+					} else if (answer == 1) {
 						logger.info("Incorrect data");
 						lblErrorPair.setText("Некорректные входные данные");
+					} else {
+						logger.info("User is already online");
+						lblErrorPair.setText("Такой пользователь уже в сети");
 					}
 				} catch (IOException ex) {
 					logger.error("IO error", ex);
@@ -393,7 +396,7 @@ public class Registration extends JFrame {
 						/* Показываем пользователю причины */
 						if (!answers[1])
 							lblErrorLogin
-									.setText("Некоректный логин. "
+									.setText("Некорректный логин. "
 											+ "(Минимальная длина 4 символа. Латинские буквы,"
 											+ " \".\", \"-\", \"_\")");
 						if (!answers[2])
@@ -414,14 +417,14 @@ public class Registration extends JFrame {
 											+ "(Минимальная длина 2 символа. Только русские и латинские буквы)");
 						if (!answers[6])
 							lblErrorSName
-									.setText("Некоректная фамилия. "
+									.setText("Некорректная фамилия. "
 											+ "(Минимальная длина 2 символа. Только русские и латинские буквы)");
 						if (!answers[7])
-							lblErrorDate.setText("Некоректная дата рождения. "
+							lblErrorDate.setText("Некорректная дата рождения. "
 									+ "(Формат даты дд.мм.гггг)");
 						if (!answers[8])
 							lblErrorNumber
-									.setText("Некоректный телефон. "
+									.setText("Некорректный телефон. "
 											+ "(Минимальная длина 6 символов. Только цифры и знак + вначале)");
 						// taInfo.setText(sb.toString());
 					} else {

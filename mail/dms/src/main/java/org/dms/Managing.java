@@ -5,7 +5,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -343,8 +345,12 @@ public class Managing {
 		EntityTransaction trx = em.getTransaction();
 		boolean thereIsGoodGetter = false;
 		try {
-			String[] emails = data[0].trim().split(";");
-
+			String[] tmpEmails = data[0].trim().split(";");
+			/*Убераем дубликаты*/
+			Set<String> emails = new HashSet<String>();
+			for (String tmp : tmpEmails)
+				emails.add(tmp);
+			
 			trx.begin();
 			/*Находим почту пользователя и сервера*/
 			Email noreply = em.find(Email.class, "noreply@mail.js");
@@ -375,8 +381,8 @@ public class Managing {
 			for (String tmp : emails) {
 				Email emailTo = em.find(Email.class, tmp.trim());
 
-				if (emailTo == null || tmp.trim().equals("noreply@mail.js")
-						|| tmp.trim().equals(sender)) {
+				if (emailTo == null || tmp.trim().equals("noreply@mail.js")) {
+//						|| tmp.trim().equals(sender)) {
 					/*Если некорректный адрес получателя, формируем входящее сообщение*/
 					Message message = new Message();
 					message.setAbout("Ошибка отправки");
@@ -662,18 +668,14 @@ public class Managing {
 				trx.commit();
 				return 0;
 			}
+			
 			for (MessToFold messToFold : messToFolds) {
 				Message message = messToFold.getMessage();
-				List<MessToFold> mtfs = message.getMessToFolds();
-				if (mtfs.size() != 1) {
-					em.remove(messToFold);
-				} else {
-					List<MessToMail> mtms = message.getMessToMails();
-					for (MessToMail mtm : mtms)
-						em.remove(mtm);
-					em.remove(messToFold);
-					em.remove(message);
-				}
+				SimpleMessage sMessage = new SimpleMessage();
+				sMessage.setAbout(message.getAbout());
+				sMessage.setDate(message.getSentDate());
+				sMessage.setText(message.getText());
+				Managing.moveMessage(sMessage, sFolder.getName(), "Корзина", whose);
 			}
 			em.remove(foundFolder);
 			trx.commit();
@@ -922,5 +924,27 @@ public class Managing {
 		} finally {
 			emf.close();
 		}
+	}
+	
+	public static boolean userOnline(String user) {
+		
+		EntityManagerFactory emf = Persistence
+				.createEntityManagerFactory("mail");
+		EntityManager em = emf.createEntityManager();
+		List<Session> sessions;
+		try {	
+			sessions = em.createQuery("SELECT s FROM Session s").getResultList();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return true;
+		} finally {
+			emf.close();
+		}
+		for (Session session : sessions)
+			if (session.getMail().equals(user)) {
+				return true;
+			}
+		
+		return false;
 	}
 }

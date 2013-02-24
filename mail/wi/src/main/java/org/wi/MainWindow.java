@@ -88,10 +88,10 @@ public class MainWindow extends JFrame {
 				/* Нажатие на закрытые окна */
 				lock.lock();
 				logger.info("Close window");
-				
+
 				DataOutputStream out = null;
 				Socket socket = getSocket();
-				if (socket != null) 
+				if (socket != null)
 					out = getOutputStream(socket);
 
 				try {
@@ -290,7 +290,19 @@ public class MainWindow extends JFrame {
 					logger.info("Got answer");
 					if (answer == 0) {
 						logger.info("Trying to delete folder");
-						/* Если папка удалена, удаляем ее локально */
+						/*
+						 * Если папка удалена, удаляем ее локально и перемещаем
+						 * все в корзину
+						 */
+						SimpleFolder trash = null;
+						for (SimpleFolder folder : folders)
+							if (folder.getName().equals("Корзина")) {
+								trash = folder;
+								break;
+							}
+						for (SimpleMessage message : folders.get(selectedFolder).getMessages())
+							trash.addMessage(message);
+						
 						folders.remove(selectedFolder);
 						listModelFolders.remove(selectedFolder);
 						listModelMessages.removeAllElements();
@@ -501,13 +513,13 @@ public class MainWindow extends JFrame {
 				logger.info("Logging out");
 				/* Выход из системы */
 				lock.lock();
-				
+
 				DataOutputStream out = null;
 				Socket socket = getSocket();
 				if (socket != null) {
 					out = getOutputStream(socket);
 				}
-				
+
 				try {
 					logger.info("Sending request to log out");
 					/* Отправляем запрос на выход */
@@ -581,6 +593,7 @@ public class MainWindow extends JFrame {
 							listModelMessages.clear();
 							taMessText.setText("");
 						}
+						lblError.setText("");
 						logger.info("Trash basket cleared");
 					} else if (answer == 3) {
 						logger.info("Wrong key. Closing window");
@@ -625,7 +638,7 @@ public class MainWindow extends JFrame {
 				if (!message.getTo().equals("Мне")) {
 					return;
 				}
-				
+
 				logger.info("Opening window Send message to response");
 				/* Вызываем окно для отправки сообщения */
 				SendMessage sm = new SendMessage(message.getFrom());
@@ -706,7 +719,7 @@ public class MainWindow extends JFrame {
 		}
 		return socket;
 	}
-	
+
 	private DataInputStream getInputStream(Socket socket) {
 		DataInputStream in = null;
 		try {
@@ -722,7 +735,7 @@ public class MainWindow extends JFrame {
 		}
 		return in;
 	}
-	
+
 	private DataOutputStream getOutputStream(Socket socket) {
 		DataOutputStream out = null;
 		try {
@@ -738,7 +751,7 @@ public class MainWindow extends JFrame {
 		}
 		return out;
 	}
-	
+
 	private void drawMessages() {
 		logger.info("Drawing messages");
 		/* Прописовка сообщений при нажатии на папку */
@@ -828,7 +841,7 @@ public class MainWindow extends JFrame {
 					logger.info("Request to send mew message");
 					/* Отправляем сообщение */
 					lock.lock();
-					
+
 					DataInputStream in = null;
 					DataOutputStream out = null;
 					Socket socket = getSocket();
@@ -904,7 +917,7 @@ public class MainWindow extends JFrame {
 							logger.info("Writing errors");
 							if (!data[1])
 								lblErrorTo
-										.setText("Некорректный адресс получателя");
+										.setText("Некорректный адрес получателя");
 							if (!data[2])
 								lblErrorAbout
 										.setText("Некорректное поле \"Тема\"");
@@ -973,7 +986,7 @@ public class MainWindow extends JFrame {
 			contentPane.add(lblMailmailjs);
 		}
 	}
-	
+
 	private class CreateFold extends JFrame {
 
 		private JPanel contentPane;
@@ -1009,7 +1022,7 @@ public class MainWindow extends JFrame {
 					/* Создание папки */
 					lock.lock();
 					String requestInfo = fldFoldName.getText().trim();
-					
+
 					DataInputStream in = null;
 					DataOutputStream out = null;
 					Socket socket = getSocket();
@@ -1216,7 +1229,7 @@ public class MainWindow extends JFrame {
 
 		public void run() {
 			nmcLogger.setLevel(Level.INFO);
-			
+
 			logger.info("New message checker started");
 			/* Находим папку Входящие */
 			SimpleFolder inputFolder = null;
@@ -1236,7 +1249,7 @@ public class MainWindow extends JFrame {
 					in = getInputStream(socket);
 					out = getOutputStream(socket);
 				}
-				
+
 				try {
 					nmcLogger.info("New message checker is going to turn in");
 					Thread.sleep(10000);
@@ -1245,7 +1258,7 @@ public class MainWindow extends JFrame {
 					e.printStackTrace();
 				}
 				lock.lock();
-				
+
 				try {
 					nmcLogger.info("Sending request to check new messages");
 					/* Отправляем запрос с количеством сообщений */

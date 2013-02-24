@@ -185,16 +185,22 @@ public class Server {
 								requestInfo[1]);
 
 						if (userExists) {
-							logger.info("Trying to send session key ["
-									+ socket.getPort() + "]");
-							/* Если пользователь существует, отправляем ключ */
-							Random rand = new Random();
-							int key = rand.nextInt(1000000);
-							Managing.createSession(key, requestInfo[0]);
-							out.writeByte(0);
-							out.writeInt(key);
-							logger.info("Sent session key [" + socket.getPort()
-									+ "]");
+							logger.info("Checking if user is already online");
+							if (Managing.userOnline(requestInfo[0])) {
+								logger.info("User is already onine");
+								out.writeByte(3);
+							} else {
+								logger.info("Trying to send session key ["
+										+ socket.getPort() + "]");
+								/* Если пользователь существует, отправляем ключ */
+								Random rand = new Random();
+								int key = rand.nextInt(1000000);
+								Managing.createSession(key, requestInfo[0]);
+								out.writeByte(0);
+								out.writeInt(key);
+								logger.info("Sent session key ["
+										+ socket.getPort() + "]");
+							}
 						} else {
 							logger.info("Wrong user data [" + socket.getPort()
 									+ "]");

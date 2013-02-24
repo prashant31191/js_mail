@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd version="4.3" timestamp="2013-02-24T12:24:27.027">
+<file name="D:\Eclipse\rep\reposit\mail\wi\src\main\java\org\wi\MainWindow.java">
+<violation beginline="47" endline="47" begincolumn="17" endcolumn="35" rule="SingularField" ruleset="Design Rules" package="org.wi" class="MainWindow" variable="contentPane" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#SingularField" priority="4">
+Perhaps 'contentPane' could be replaced by a local variable.
+</violation>
+<violation beginline="94" endline="95" begincolumn="33" endcolumn="70" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.wi" class="MainWindow" method="windowClosing" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="105" endline="105" begincolumn="54" endcolumn="63" rule="AvoidDuplicateLiterals" ruleset="String and StringBuffer Rules" package="org.wi" class="MainWindow" method="windowClosing" externalInfoUrl="http://pmd.sourceforge.net/rules/strings.html#AvoidDuplicateLiterals" priority="3">
+The String literal &quot;IO error&quot; appears 6 times in this file; the first occurrence is on line 105
+</violation>
+<violation beginline="106" endline="106" begincolumn="41" endcolumn="60" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="MainWindow" method="windowClosing" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="113" endline="113" begincolumn="49" endcolumn="68" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="MainWindow" method="windowClosing" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="192" endline="192" begincolumn="77" endcolumn="88" rule="AvoidDuplicateLiterals" ruleset="String and StringBuffer Rules" package="org.wi" class="MainWindow" method="mouseClicked" externalInfoUrl="http://pmd.sourceforge.net/rules/strings.html#AvoidDuplicateLiterals" priority="3">
+The String literal &quot;Got answer&quot; appears 10 times in this file; the first occurrence is on line 192
+</violation>
+<violation beginline="221" endline="221" begincolumn="85" endcolumn="111" rule="AvoidDuplicateLiterals" ruleset="String and StringBuffer Rules" package="org.wi" class="MainWindow" method="mouseClicked" externalInfoUrl="http://pmd.sourceforge.net/rules/strings.html#AvoidDuplicateLiterals" priority="3">
+The String literal &quot;Wrong key. Closing window&quot; appears 8 times in this file; the first occurrence is on line 221
+</violation>
+<violation beginline="230" endline="230" begincolumn="65" endcolumn="84" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="MainWindow" method="mouseClicked" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="237" endline="237" begincolumn="73" endcolumn="92" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="MainWindow" method="mouseClicked" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="268" endline="269" begincolumn="33" endcolumn="47" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.wi" class="MainWindow" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="288" endline="288" begincolumn="53" endcolumn="66" rule="AvoidDuplicateLiterals" ruleset="String and StringBuffer Rules" package="org.wi" class="MainWindow" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/strings.html#AvoidDuplicateLiterals" priority="3">
+The String literal &quot;Sent request&quot; appears 4 times in this file; the first occurrence is on line 288
+</violation>
+<violation beginline="303" endline="303" begincolumn="61" endcolumn="77" rule="AvoidDuplicateLiterals" ruleset="String and StringBuffer Rules" package="org.wi" class="MainWindow" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/strings.html#AvoidDuplicateLiterals" priority="3">
+The String literal &quot;Server problems&quot; appears 9 times in this file; the first occurrence is on line 303
+</violation>
+<violation beginline="304" endline="304" begincolumn="66" endcolumn="86" rule="AvoidDuplicateLiterals" ruleset="String and StringBuffer Rules" package="org.wi" class="MainWindow" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/strings.html#AvoidDuplicateLiterals" priority="3">
+The String literal &quot;&u41f;&u440;&u43e;&u431;&u43b;&u435;&u43c;&u44b; &u441; &u441;&u435;&u440;&u432;&u435;&u440;&u43e;&u43c;&quot; appears 8 times in this file; the first occurrence is on line 304
+</violation>
+<violation beginline="315" endline="315" begincolumn="41" endcolumn="60" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="MainWindow" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="323" endline="323" begincolumn="49" endcolumn="68" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="MainWindow" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="351" endline="352" begincolumn="33" endcolumn="47" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.wi" class="MainWindow" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="368" endline="368" begincolumn="63" endcolumn="71" rule="AvoidDuplicateLiterals" ruleset="String and StringBuffer Rules" package="org.wi" class="MainWindow" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/strings.html#AvoidDuplicateLiterals" priority="3">
+The String literal &quot;&u41a;&u43e;&u440;&u437;&u438;&u43d;&u430;&quot; appears 4 times in this file; the first occurrence is on line 368
+</violation>
+<violation beginline="452" endline="452" begincolumn="41" endcolumn="60" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="MainWindow" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="460" endline="460" begincolumn="49" endcolumn="68" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="MainWindow" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="486" endline="487" begincolumn="33" endcolumn="47" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.wi" class="MainWindow" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="526" endline="526" begincolumn="41" endcolumn="60" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="MainWindow" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="533" endline="533" begincolumn="49" endcolumn="68" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="MainWindow" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="556" endline="557" begincolumn="33" endcolumn="47" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.wi" class="MainWindow" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="598" endline="598" begincolumn="41" endcolumn="60" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="MainWindow" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="606" endline="606" begincolumn="49" endcolumn="68" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="MainWindow" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="664" endline="665" begincolumn="33" endcolumn="71" rule="ForLoopsMustUseBraces" ruleset="Braces Rules" package="org.wi" class="MainWindow" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#ForLoopsMustUseBraces" priority="3">
+Avoid using for statements without curly braces
+</violation>
+<violation beginline="672" endline="672" begincolumn="25" endcolumn="44" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="MainWindow" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="674" endline="674" begincolumn="25" endcolumn="44" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="MainWindow" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="682" endline="682" begincolumn="33" endcolumn="52" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="MainWindow" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="702" endline="702" begincolumn="25" endcolumn="44" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="MainWindow" method="getSocket" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="705" endline="705" begincolumn="25" endcolumn="44" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="MainWindow" method="getSocket" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="716" endline="716" begincolumn="25" endcolumn="44" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="MainWindow" method="getInputStream" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="720" endline="720" begincolumn="33" endcolumn="52" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="MainWindow" method="getInputStream" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="732" endline="732" begincolumn="25" endcolumn="44" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="MainWindow" method="getOutputStream" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="736" endline="736" begincolumn="33" endcolumn="52" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="MainWindow" method="getOutputStream" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="860" endline="861" begincolumn="57" endcolumn="95" rule="ForLoopsMustUseBraces" ruleset="Braces Rules" package="org.wi" class="MainWindow$SendMessage" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#ForLoopsMustUseBraces" priority="3">
+Avoid using for statements without curly braces
+</violation>
+<violation beginline="873" endline="874" begincolumn="65" endcolumn="87" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.wi" class="MainWindow$SendMessage" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="875" endline="876" begincolumn="65" endcolumn="86" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.wi" class="MainWindow$SendMessage" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="880" endline="882" begincolumn="57" endcolumn="121" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.wi" class="MainWindow$SendMessage" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="885" endline="886" begincolumn="57" endcolumn="88" rule="ForLoopsMustUseBraces" ruleset="Braces Rules" package="org.wi" class="MainWindow$SendMessage" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#ForLoopsMustUseBraces" priority="3">
+Avoid using for statements without curly braces
+</violation>
+<violation beginline="896" endline="897" begincolumn="57" endcolumn="95" rule="ForLoopsMustUseBraces" ruleset="Braces Rules" package="org.wi" class="MainWindow$SendMessage" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#ForLoopsMustUseBraces" priority="3">
+Avoid using for statements without curly braces
+</violation>
+<violation beginline="905" endline="907" begincolumn="57" endcolumn="123" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.wi" class="MainWindow$SendMessage" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="908" endline="910" begincolumn="57" endcolumn="119" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.wi" class="MainWindow$SendMessage" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="911" endline="912" begincolumn="57" endcolumn="105" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.wi" class="MainWindow$SendMessage" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="932" endline="932" begincolumn="49" endcolumn="68" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="MainWindow$SendMessage" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="935" endline="935" begincolumn="49" endcolumn="68" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="MainWindow$SendMessage" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="943" endline="943" begincolumn="57" endcolumn="76" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="MainWindow$SendMessage" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="1038" endline="1039" begincolumn="57" endcolumn="95" rule="ForLoopsMustUseBraces" ruleset="Braces Rules" package="org.wi" class="MainWindow$CreateFold" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#ForLoopsMustUseBraces" priority="3">
+Avoid using for statements without curly braces
+</violation>
+<violation beginline="1069" endline="1069" begincolumn="49" endcolumn="68" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="MainWindow$CreateFold" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="1072" endline="1072" begincolumn="49" endcolumn="68" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="MainWindow$CreateFold" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="1080" endline="1080" begincolumn="57" endcolumn="76" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="MainWindow$CreateFold" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="1129" endline="1130" begincolumn="41" endcolumn="55" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.wi" class="MainWindow$MoveFold" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="1189" endline="1189" begincolumn="49" endcolumn="68" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="MainWindow$MoveFold" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="1197" endline="1197" begincolumn="57" endcolumn="76" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="MainWindow$MoveFold" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="1217" endline="1304" begincolumn="24" endcolumn="17" rule="NcssMethodCount" ruleset="Code Size Rules" package="org.wi" class="MainWindow$NewMessageChecker" externalInfoUrl="http://pmd.sourceforge.net/rules/codesize.html#NcssMethodCount" priority="3">
+The method run() has an NCSS line count of 66
+</violation>
+<violation beginline="1245" endline="1245" begincolumn="41" endcolumn="59" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="MainWindow$NewMessageChecker" method="run" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="1264" endline="1265" begincolumn="49" endcolumn="87" rule="ForLoopsMustUseBraces" ruleset="Braces Rules" package="org.wi" class="MainWindow$NewMessageChecker" method="run" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#ForLoopsMustUseBraces" priority="3">
+Avoid using for statements without curly braces
+</violation>
+<violation beginline="1270" endline="1271" begincolumn="49" endcolumn="89" rule="ForLoopsMustUseBraces" ruleset="Braces Rules" package="org.wi" class="MainWindow$NewMessageChecker" method="run" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#ForLoopsMustUseBraces" priority="3">
+Avoid using for statements without curly braces
+</violation>
+<violation beginline="1289" endline="1289" begincolumn="41" endcolumn="60" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="MainWindow$NewMessageChecker" method="run" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="1292" endline="1292" begincolumn="41" endcolumn="60" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="MainWindow$NewMessageChecker" method="run" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="1300" endline="1300" begincolumn="49" endcolumn="68" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="MainWindow$NewMessageChecker" method="run" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+</file>
+<file name="D:\Eclipse\rep\reposit\mail\wi\src\main\java\org\wi\Registration.java">
+<violation beginline="38" endline="38" begincolumn="17" endcolumn="35" rule="SingularField" ruleset="Design Rules" package="org.wi" class="Registration" variable="contentPane" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#SingularField" priority="4">
+Perhaps 'contentPane' could be replaced by a local variable.
+</violation>
+<violation beginline="84" endline="84" begincolumn="47" endcolumn="54" rule="AvoidDuplicateLiterals" ruleset="String and StringBuffer Rules" package="org.wi" class="Registration" externalInfoUrl="http://pmd.sourceforge.net/rules/strings.html#AvoidDuplicateLiterals" priority="3">
+The String literal &quot;Tahoma&quot; appears 10 times in this file; the first occurrence is on line 84
+</violation>
+<violation beginline="236" endline="236" begincolumn="41" endcolumn="60" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="Registration" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="239" endline="239" begincolumn="41" endcolumn="60" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="Registration" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="245" endline="245" begincolumn="54" endcolumn="67" rule="AvoidDuplicateLiterals" ruleset="String and StringBuffer Rules" package="org.wi" class="Registration" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/strings.html#AvoidDuplicateLiterals" priority="3">
+The String literal &quot;Stream error&quot; appears 4 times in this file; the first occurrence is on line 245
+</violation>
+<violation beginline="246" endline="246" begincolumn="41" endcolumn="60" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="Registration" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="250" endline="250" begincolumn="49" endcolumn="68" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="Registration" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="258" endline="258" begincolumn="41" endcolumn="60" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="Registration" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="263" endline="263" begincolumn="49" endcolumn="68" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="Registration" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="298" endline="298" begincolumn="41" endcolumn="60" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="Registration" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="305" endline="305" begincolumn="49" endcolumn="68" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="Registration" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="326" endline="326" begincolumn="41" endcolumn="60" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="Registration" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="329" endline="329" begincolumn="41" endcolumn="60" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="Registration" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="336" endline="336" begincolumn="41" endcolumn="60" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="Registration" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="340" endline="340" begincolumn="49" endcolumn="68" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="Registration" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="348" endline="348" begincolumn="41" endcolumn="60" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="Registration" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="353" endline="353" begincolumn="49" endcolumn="68" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="Registration" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="388" endline="389" begincolumn="49" endcolumn="87" rule="ForLoopsMustUseBraces" ruleset="Braces Rules" package="org.wi" class="Registration" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#ForLoopsMustUseBraces" priority="3">
+Avoid using for statements without curly braces
+</violation>
+<violation beginline="394" endline="398" begincolumn="49" endcolumn="115" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.wi" class="Registration" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="399" endline="403" begincolumn="49" endcolumn="136" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.wi" class="Registration" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="404" endline="408" begincolumn="49" endcolumn="136" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.wi" class="Registration" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="409" endline="410" begincolumn="49" endcolumn="103" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.wi" class="Registration" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="411" endline="414" begincolumn="49" endcolumn="157" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.wi" class="Registration" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="415" endline="418" begincolumn="49" endcolumn="157" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.wi" class="Registration" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="419" endline="421" begincolumn="49" endcolumn="102" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.wi" class="Registration" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="422" endline="425" begincolumn="49" endcolumn="155" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.wi" class="Registration" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="434" endline="434" begincolumn="41" endcolumn="60" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="Registration" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="437" endline="437" begincolumn="41" endcolumn="60" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="Registration" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="444" endline="444" begincolumn="49" endcolumn="68" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.wi" class="Registration" method="actionPerformed" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+</file>
+</pmd>

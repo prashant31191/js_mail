@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite failures="0" time="0.025" errors="0" skipped="0" tests="16" name="org.business.ValidationCorrectNameTest">
+<testsuite failures="0" time="0.037" errors="0" skipped="0" tests="16" name="org.business.ValidationCorrectNameTest">
   <properties>
     <property name="http.agent" value="Sonar"/>
     <property name="ROOT_LOGGER_LEVEL" value="INFO"/>
@@ -64,20 +64,20 @@
     <property name="sun.desktop" value="windows"/>
     <property name="sun.cpu.isalist" value="pentium_pro+mmx pentium_pro pentium+mmx pentium i486 i386 i86"/>
   </properties>
-  <testcase time="0" classname="org.business.ValidationCorrectNameTest" name="test[0]"/>
+  <testcase time="0.001" classname="org.business.ValidationCorrectNameTest" name="test[0]"/>
   <testcase time="0" classname="org.business.ValidationCorrectNameTest" name="test[1]"/>
   <testcase time="0" classname="org.business.ValidationCorrectNameTest" name="test[2]"/>
   <testcase time="0" classname="org.business.ValidationCorrectNameTest" name="test[3]"/>
   <testcase time="0" classname="org.business.ValidationCorrectNameTest" name="test[4]"/>
-  <testcase time="0" classname="org.business.ValidationCorrectNameTest" name="test[5]"/>
+  <testcase time="0.001" classname="org.business.ValidationCorrectNameTest" name="test[5]"/>
   <testcase time="0" classname="org.business.ValidationCorrectNameTest" name="test[6]"/>
-  <testcase time="0" classname="org.business.ValidationCorrectNameTest" name="test[7]"/>
+  <testcase time="0.001" classname="org.business.ValidationCorrectNameTest" name="test[7]"/>
   <testcase time="0" classname="org.business.ValidationCorrectNameTest" name="test[8]"/>
   <testcase time="0.001" classname="org.business.ValidationCorrectNameTest" name="test[9]"/>
-  <testcase time="0.001" classname="org.business.ValidationCorrectNameTest" name="test[10]"/>
-  <testcase time="0" classname="org.business.ValidationCorrectNameTest" name="test[11]"/>
+  <testcase time="0" classname="org.business.ValidationCorrectNameTest" name="test[10]"/>
+  <testcase time="0.001" classname="org.business.ValidationCorrectNameTest" name="test[11]"/>
   <testcase time="0" classname="org.business.ValidationCorrectNameTest" name="test[12]"/>
-  <testcase time="0" classname="org.business.ValidationCorrectNameTest" name="test[13]"/>
+  <testcase time="0.001" classname="org.business.ValidationCorrectNameTest" name="test[13]"/>
   <testcase time="0" classname="org.business.ValidationCorrectNameTest" name="test[14]"/>
-  <testcase time="0.002" classname="org.business.ValidationCorrectNameTest" name="test[15]"/>
+  <testcase time="0.003" classname="org.business.ValidationCorrectNameTest" name="test[15]"/>
 </testsuite>

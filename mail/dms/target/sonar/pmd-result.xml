@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd version="4.3" timestamp="2013-02-24T12:26:48.147">
+<file name="D:\Eclipse\rep\reposit\mail\dms\src\main\java\org\dms\Managing.java">
+<violation beginline="36" endline="121" begincolumn="23" endcolumn="9" rule="NcssMethodCount" ruleset="Code Size Rules" package="org.dms" class="Managing" externalInfoUrl="http://pmd.sourceforge.net/rules/codesize.html#NcssMethodCount" priority="3">
+The method createUser() has an NCSS line count of 67
+</violation>
+<violation beginline="38" endline="38" begincolumn="61" endcolumn="66" rule="AvoidDuplicateLiterals" ruleset="String and StringBuffer Rules" package="org.dms" class="Managing" method="createUser" externalInfoUrl="http://pmd.sourceforge.net/rules/strings.html#AvoidDuplicateLiterals" priority="3">
+The String literal &quot;mail&quot; appears 18 times in this file; the first occurrence is on line 38
+</violation>
+<violation beginline="46" endline="47" begincolumn="25" endcolumn="42" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.dms" class="Managing" method="createUser" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="59" endline="59" begincolumn="33" endcolumn="51" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.dms" class="Managing" method="createUser" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="74" endline="74" begincolumn="39" endcolumn="48" rule="AvoidDuplicateLiterals" ruleset="String and StringBuffer Rules" package="org.dms" class="Managing" method="createUser" externalInfoUrl="http://pmd.sourceforge.net/rules/strings.html#AvoidDuplicateLiterals" priority="3">
+The String literal &quot;&u412;&u445;&u43e;&u434;&u44f;&u449;&u438;&u435;&quot; appears 5 times in this file; the first occurrence is on line 74
+</violation>
+<violation beginline="91" endline="91" begincolumn="62" endcolumn="78" rule="AvoidDuplicateLiterals" ruleset="String and StringBuffer Rules" package="org.dms" class="Managing" method="createUser" externalInfoUrl="http://pmd.sourceforge.net/rules/strings.html#AvoidDuplicateLiterals" priority="3">
+The String literal &quot;noreply@mail.js&quot; appears 4 times in this file; the first occurrence is on line 91
+</violation>
+<violation beginline="113" endline="113" begincolumn="25" endcolumn="43" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.dms" class="Managing" method="createUser" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="114" endline="115" begincolumn="25" endcolumn="47" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.dms" class="Managing" method="createUser" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="141" endline="142" begincolumn="25" endcolumn="45" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.dms" class="Managing" method="checkUser" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="145" endline="145" begincolumn="33" endcolumn="44" rule="IfElseStmtsMustUseBraces" ruleset="Braces Rules" package="org.dms" class="Managing" method="checkUser" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfElseStmtsMustUseBraces" priority="3">
+Avoid using if...else statements without curly braces
+</violation>
+<violation beginline="147" endline="147" begincolumn="33" endcolumn="45" rule="IfElseStmtsMustUseBraces" ruleset="Braces Rules" package="org.dms" class="Managing" method="checkUser" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfElseStmtsMustUseBraces" priority="3">
+Avoid using if...else statements without curly braces
+</violation>
+<violation beginline="150" endline="150" begincolumn="25" endcolumn="43" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.dms" class="Managing" method="checkUser" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="177" endline="181" begincolumn="25" endcolumn="33" rule="ForLoopsMustUseBraces" ruleset="Braces Rules" package="org.dms" class="Managing" method="hasNewMessages" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#ForLoopsMustUseBraces" priority="3">
+Avoid using for statements without curly braces
+</violation>
+<violation beginline="184" endline="184" begincolumn="25" endcolumn="43" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.dms" class="Managing" method="hasNewMessages" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="213" endline="217" begincolumn="25" endcolumn="33" rule="ForLoopsMustUseBraces" ruleset="Braces Rules" package="org.dms" class="Managing" method="getNewMessages" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#ForLoopsMustUseBraces" priority="3">
+Avoid using for statements without curly braces
+</violation>
+<violation beginline="234" endline="235" begincolumn="41" endcolumn="91" rule="ForLoopsMustUseBraces" ruleset="Braces Rules" package="org.dms" class="Managing" method="getNewMessages" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#ForLoopsMustUseBraces" priority="3">
+Avoid using for statements without curly braces
+</violation>
+<violation beginline="243" endline="245" begincolumn="41" endcolumn="81" rule="ForLoopsMustUseBraces" ruleset="Braces Rules" package="org.dms" class="Managing" method="getNewMessages" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#ForLoopsMustUseBraces" priority="3">
+Avoid using for statements without curly braces
+</violation>
+<violation beginline="244" endline="245" begincolumn="49" endcolumn="81" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.dms" class="Managing" method="getNewMessages" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="254" endline="254" begincolumn="25" endcolumn="43" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.dms" class="Managing" method="getNewMessages" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="300" endline="301" begincolumn="49" endcolumn="99" rule="ForLoopsMustUseBraces" ruleset="Braces Rules" package="org.dms" class="Managing" method="getEverything" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#ForLoopsMustUseBraces" priority="3">
+Avoid using for statements without curly braces
+</violation>
+<violation beginline="309" endline="311" begincolumn="49" endcolumn="89" rule="ForLoopsMustUseBraces" ruleset="Braces Rules" package="org.dms" class="Managing" method="getEverything" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#ForLoopsMustUseBraces" priority="3">
+Avoid using for statements without curly braces
+</violation>
+<violation beginline="310" endline="311" begincolumn="57" endcolumn="89" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.dms" class="Managing" method="getEverything" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="322" endline="322" begincolumn="25" endcolumn="43" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.dms" class="Managing" method="getEverything" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="339" endline="473" begincolumn="23" endcolumn="9" rule="NcssMethodCount" ruleset="Code Size Rules" package="org.dms" class="Managing" externalInfoUrl="http://pmd.sourceforge.net/rules/codesize.html#NcssMethodCount" priority="3">
+The method sendMessage() has an NCSS line count of 102
+</violation>
+<violation beginline="358" endline="359" begincolumn="33" endcolumn="61" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.dms" class="Managing" method="sendMessage" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="360" endline="361" begincolumn="33" endcolumn="62" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.dms" class="Managing" method="sendMessage" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="436" endline="437" begincolumn="49" endcolumn="77" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.dms" class="Managing" method="sendMessage" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="459" endline="459" begincolumn="33" endcolumn="57" rule="IfElseStmtsMustUseBraces" ruleset="Braces Rules" package="org.dms" class="Managing" method="sendMessage" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfElseStmtsMustUseBraces" priority="3">
+Avoid using if...else statements without curly braces
+</violation>
+<violation beginline="465" endline="465" begincolumn="25" endcolumn="43" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.dms" class="Managing" method="sendMessage" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="466" endline="467" begincolumn="25" endcolumn="47" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.dms" class="Managing" method="sendMessage" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="509" endline="509" begincolumn="25" endcolumn="43" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.dms" class="Managing" method="setRead" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="510" endline="511" begincolumn="25" endcolumn="47" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.dms" class="Managing" method="setRead" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="540" endline="544" begincolumn="25" endcolumn="33" rule="ForLoopsMustUseBraces" ruleset="Braces Rules" package="org.dms" class="Managing" method="deleteMess" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#ForLoopsMustUseBraces" priority="3">
+Avoid using for statements without curly braces
+</violation>
+<violation beginline="563" endline="564" begincolumn="33" endcolumn="62" rule="ForLoopsMustUseBraces" ruleset="Braces Rules" package="org.dms" class="Managing" method="deleteMess" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#ForLoopsMustUseBraces" priority="3">
+Avoid using for statements without curly braces
+</violation>
+<violation beginline="570" endline="570" begincolumn="25" endcolumn="43" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.dms" class="Managing" method="deleteMess" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="571" endline="572" begincolumn="25" endcolumn="47" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.dms" class="Managing" method="deleteMess" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="605" endline="606" begincolumn="25" endcolumn="44" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.dms" class="Managing" method="createFolder" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="619" endline="619" begincolumn="25" endcolumn="43" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.dms" class="Managing" method="createFolder" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="620" endline="621" begincolumn="25" endcolumn="47" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.dms" class="Managing" method="createFolder" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="649" endline="653" begincolumn="25" endcolumn="33" rule="ForLoopsMustUseBraces" ruleset="Braces Rules" package="org.dms" class="Managing" method="deleteFolder" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#ForLoopsMustUseBraces" priority="3">
+Avoid using for statements without curly braces
+</violation>
+<violation beginline="672" endline="673" begincolumn="41" endcolumn="63" rule="ForLoopsMustUseBraces" ruleset="Braces Rules" package="org.dms" class="Managing" method="deleteFolder" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#ForLoopsMustUseBraces" priority="3">
+Avoid using for statements without curly braces
+</violation>
+<violation beginline="681" endline="681" begincolumn="25" endcolumn="43" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.dms" class="Managing" method="deleteFolder" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="682" endline="683" begincolumn="25" endcolumn="47" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.dms" class="Managing" method="deleteFolder" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="747" endline="747" begincolumn="25" endcolumn="43" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.dms" class="Managing" method="moveMessage" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="748" endline="749" begincolumn="25" endcolumn="47" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.dms" class="Managing" method="moveMessage" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="768" endline="772" begincolumn="25" endcolumn="33" rule="ForLoopsMustUseBraces" ruleset="Braces Rules" package="org.dms" class="Managing" method="clearTrash" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#ForLoopsMustUseBraces" priority="3">
+Avoid using for statements without curly braces
+</violation>
+<violation beginline="784" endline="785" begincolumn="41" endcolumn="70" rule="ForLoopsMustUseBraces" ruleset="Braces Rules" package="org.dms" class="Managing" method="clearTrash" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#ForLoopsMustUseBraces" priority="3">
+Avoid using for statements without curly braces
+</violation>
+<violation beginline="793" endline="793" begincolumn="25" endcolumn="43" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.dms" class="Managing" method="clearTrash" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="794" endline="795" begincolumn="25" endcolumn="47" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.dms" class="Managing" method="clearTrash" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="819" endline="819" begincolumn="25" endcolumn="43" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.dms" class="Managing" method="createSession" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="820" endline="821" begincolumn="25" endcolumn="47" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.dms" class="Managing" method="createSession" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="835" endline="836" begincolumn="25" endcolumn="42" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.dms" class="Managing" method="getSessionUser" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="838" endline="838" begincolumn="25" endcolumn="43" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.dms" class="Managing" method="getSessionUser" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="860" endline="860" begincolumn="25" endcolumn="43" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.dms" class="Managing" method="deleteSession" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="861" endline="862" begincolumn="25" endcolumn="47" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.dms" class="Managing" method="deleteSession" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="875" endline="876" begincolumn="25" endcolumn="45" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.dms" class="Managing" method="sessionExists" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="878" endline="878" begincolumn="25" endcolumn="43" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.dms" class="Managing" method="sessionExists" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="895" endline="895" begincolumn="25" endcolumn="43" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.dms" class="Managing" method="getSessions" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="918" endline="918" begincolumn="25" endcolumn="43" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.dms" class="Managing" method="undateSessionLastRequest" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="919" endline="920" begincolumn="25" endcolumn="47" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.dms" class="Managing" method="undateSessionLastRequest" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+</file>
+<file name="D:\Eclipse\rep\reposit\mail\dms\src\main\java\org\dms\User.java">
+<violation beginline="43" endline="43" begincolumn="29" endcolumn="34" rule="UnusedPrivateField" ruleset="Unused Code Rules" package="org.dms" class="User" variable="emails" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedPrivateField" priority="3">
+Avoid unused private fields such as 'emails'.
+</violation>
+</file>
+</pmd>

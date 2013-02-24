@@ -20,7 +20,7 @@ public class ManagingGetSessionsTest {
 	
 	@Test
 	public void getSessionsTest() {
-		Assert.assertNotNull(Managing.getSessionUser(key));
+		Assert.assertNotNull(Managing.getSessions());
 	}
 
 	

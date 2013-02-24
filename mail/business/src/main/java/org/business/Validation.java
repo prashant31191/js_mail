@@ -2,6 +2,7 @@ package org.business;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Validation class
@@ -140,12 +141,18 @@ public class Validation {
 			return false;
 		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
 		format.setLenient(false);
+		Date birthDate = null;
 		try {
-			format.parse(date.trim());
+			birthDate = format.parse(date.trim());
 		} catch (ParseException e) {
 			return false;
 		}
-
+		
+		Date currentDate = new Date(System.currentTimeMillis());
+		if (birthDate.compareTo(currentDate) > 0) {
+			return false;
+		}
+		
 		return true;
 	}
 

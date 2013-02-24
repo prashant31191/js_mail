@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd version="4.3" timestamp="2013-02-24T12:23:52.522">
+<file name="D:\Eclipse\rep\reposit\mail\business\src\main\java\org\business\Server.java">
+<violation beginline="37" endline="37" begincolumn="25" endcolumn="43" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.business" class="Server" method="main" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="41" endline="41" begincolumn="43" endcolumn="51" rule="SignatureDeclareThrowsException" ruleset="Strict Exception Rules" package="org.business" class="Server" method="startServer" externalInfoUrl="http://pmd.sourceforge.net/rules/strictexception.html#SignatureDeclareThrowsException" priority="3">
+A method/constructor shouldn't explicitly throw java.lang.Exception
+</violation>
+<violation beginline="87" endline="672" begincolumn="24" endcolumn="17" rule="NcssMethodCount" ruleset="Code Size Rules" package="org.business" class="Server$ConnectionRequestHandler" externalInfoUrl="http://pmd.sourceforge.net/rules/codesize.html#NcssMethodCount" priority="3">
+The method run() has an NCSS line count of 343
+</violation>
+<violation beginline="95" endline="95" begincolumn="33" endcolumn="51" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.business" class="Server$ConnectionRequestHandler" method="run" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="99" endline="99" begincolumn="41" endcolumn="60" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.business" class="Server$ConnectionRequestHandler" method="run" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="116" endline="117" begincolumn="41" endcolumn="80" rule="ForLoopsMustUseBraces" ruleset="Braces Rules" package="org.business" class="Server$ConnectionRequestHandler" method="run" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#ForLoopsMustUseBraces" priority="3">
+Avoid using for statements without curly braces
+</violation>
+<violation beginline="166" endline="167" begincolumn="41" endcolumn="80" rule="ForLoopsMustUseBraces" ruleset="Braces Rules" package="org.business" class="Server$ConnectionRequestHandler" method="run" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#ForLoopsMustUseBraces" priority="3">
+Avoid using for statements without curly braces
+</violation>
+<violation beginline="252" endline="253" begincolumn="41" endcolumn="80" rule="ForLoopsMustUseBraces" ruleset="Braces Rules" package="org.business" class="Server$ConnectionRequestHandler" method="run" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#ForLoopsMustUseBraces" priority="3">
+Avoid using for statements without curly braces
+</violation>
+<violation beginline="260" endline="260" begincolumn="61" endcolumn="82" rule="AvoidDuplicateLiterals" ruleset="String and StringBuffer Rules" package="org.business" class="Server$ConnectionRequestHandler" method="run" externalInfoUrl="http://pmd.sourceforge.net/rules/strings.html#AvoidDuplicateLiterals" priority="3">
+The String literal &quot;Key does not exist [&quot; appears 8 times in this file; the first occurrence is on line 260
+</violation>
+<violation beginline="322" endline="323" begincolumn="41" endcolumn="80" rule="ForLoopsMustUseBraces" ruleset="Braces Rules" package="org.business" class="Server$ConnectionRequestHandler" method="run" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#ForLoopsMustUseBraces" priority="3">
+Avoid using for statements without curly braces
+</violation>
+<violation beginline="333" endline="333" begincolumn="61" endcolumn="85" rule="AvoidDuplicateLiterals" ruleset="String and StringBuffer Rules" package="org.business" class="Server$ConnectionRequestHandler" method="run" externalInfoUrl="http://pmd.sourceforge.net/rules/strings.html#AvoidDuplicateLiterals" priority="3">
+The String literal &quot;Updating session time [&quot; appears 6 times in this file; the first occurrence is on line 333
+</violation>
+<violation beginline="365" endline="366" begincolumn="41" endcolumn="80" rule="ForLoopsMustUseBraces" ruleset="Braces Rules" package="org.business" class="Server$ConnectionRequestHandler" method="run" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#ForLoopsMustUseBraces" priority="3">
+Avoid using for statements without curly braces
+</violation>
+<violation beginline="407" endline="408" begincolumn="41" endcolumn="80" rule="ForLoopsMustUseBraces" ruleset="Braces Rules" package="org.business" class="Server$ConnectionRequestHandler" method="run" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#ForLoopsMustUseBraces" priority="3">
+Avoid using for statements without curly braces
+</violation>
+<violation beginline="467" endline="468" begincolumn="41" endcolumn="80" rule="ForLoopsMustUseBraces" ruleset="Braces Rules" package="org.business" class="Server$ConnectionRequestHandler" method="run" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#ForLoopsMustUseBraces" priority="3">
+Avoid using for statements without curly braces
+</violation>
+<violation beginline="510" endline="511" begincolumn="41" endcolumn="80" rule="ForLoopsMustUseBraces" ruleset="Braces Rules" package="org.business" class="Server$ConnectionRequestHandler" method="run" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#ForLoopsMustUseBraces" priority="3">
+Avoid using for statements without curly braces
+</violation>
+<violation beginline="657" endline="657" begincolumn="33" endcolumn="52" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.business" class="Server$ConnectionRequestHandler" method="run" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="660" endline="660" begincolumn="33" endcolumn="53" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.business" class="Server$ConnectionRequestHandler" method="run" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="668" endline="668" begincolumn="41" endcolumn="59" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.business" class="Server$ConnectionRequestHandler" method="run" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+<violation beginline="695" endline="695" begincolumn="41" endcolumn="59" rule="AvoidPrintStackTrace" ruleset="Java Logging Rules" package="org.business" class="Server$SessionChecker" method="run" externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#AvoidPrintStackTrace" priority="3">
+Avoid printStackTrace(); use a logger call instead.
+</violation>
+</file>
+<file name="D:\Eclipse\rep\reposit\mail\business\src\main\java\org\business\UserValidation.java">
+<violation beginline="51" endline="53" begincolumn="17" endcolumn="37" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.business" class="UserValidation" method="enterUserCheck" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+</file>
+<file name="D:\Eclipse\rep\reposit\mail\business\src\main\java\org\business\Validation.java">
+<violation beginline="23" endline="24" begincolumn="17" endcolumn="36" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.business" class="Validation" method="passwordsMatch" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="35" endline="36" begincolumn="17" endcolumn="37" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.business" class="Validation" method="fieldIsNotClear" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="49" endline="51" begincolumn="17" endcolumn="37" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.business" class="Validation" method="correctMailBegin" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="64" endline="67" begincolumn="17" endcolumn="37" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.business" class="Validation" method="correctMailAddress" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="79" endline="81" begincolumn="17" endcolumn="37" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.business" class="Validation" method="correctPassword" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="93" endline="95" begincolumn="17" endcolumn="37" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.business" class="Validation" method="correctName" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="107" endline="109" begincolumn="17" endcolumn="37" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.business" class="Validation" method="correctPhone" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="121" endline="122" begincolumn="17" endcolumn="37" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.business" class="Validation" method="correctFieldTo" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="126" endline="127" begincolumn="25" endcolumn="45" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.business" class="Validation" method="correctFieldTo" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="139" endline="140" begincolumn="17" endcolumn="37" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.business" class="Validation" method="correctDate" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="160" endline="161" begincolumn="17" endcolumn="37" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.business" class="Validation" method="correctAbout" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="172" endline="173" begincolumn="17" endcolumn="37" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.business" class="Validation" method="correctMessText" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+<violation beginline="185" endline="186" begincolumn="17" endcolumn="37" rule="IfStmtsMustUseBraces" ruleset="Braces Rules" package="org.business" class="Validation" method="correctFolder" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfStmtsMustUseBraces" priority="3">
+Avoid using if statements without curly braces
+</violation>
+</file>
+</pmd>
