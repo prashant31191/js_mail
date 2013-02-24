@@ -66,9 +66,9 @@
   </properties>
   <testcase time="0" classname="org.business.ValidationCorrectFieldToTest" name="test[0]"/>
   <testcase time="0" classname="org.business.ValidationCorrectFieldToTest" name="test[1]"/>
-  <testcase time="0" classname="org.business.ValidationCorrectFieldToTest" name="test[2]"/>
-  <testcase time="0.001" classname="org.business.ValidationCorrectFieldToTest" name="test[3]"/>
-  <testcase time="0.002" classname="org.business.ValidationCorrectFieldToTest" name="test[4]"/>
+  <testcase time="0.001" classname="org.business.ValidationCorrectFieldToTest" name="test[2]"/>
+  <testcase time="0.002" classname="org.business.ValidationCorrectFieldToTest" name="test[3]"/>
+  <testcase time="0.001" classname="org.business.ValidationCorrectFieldToTest" name="test[4]"/>
   <testcase time="0.001" classname="org.business.ValidationCorrectFieldToTest" name="test[5]"/>
-  <testcase time="0.001" classname="org.business.ValidationCorrectFieldToTest" name="test[6]"/>
+  <testcase time="0" classname="org.business.ValidationCorrectFieldToTest" name="test[6]"/>
 </testsuite>

@@ -755,6 +755,12 @@ public class Managing {
 		}
 	}
 	
+	/**
+	 * Clear trash basket
+	 * 
+	 * @param whose user's email
+	 * @return true in case trash basket was cleared
+	 */
 	public static boolean clearTrash(String whose) {
 		EntityManagerFactory emf = Persistence
 				.createEntityManagerFactory("mail");
@@ -801,6 +807,13 @@ public class Managing {
 		}
 	}
 	
+	/**
+	 * Creates session in BD
+	 * 
+	 * @param key Key 
+	 * @param whose User's email address
+	 * @return true in case session was created
+	 */
 	public static boolean createSession(int key, String whose) {
 		EntityManagerFactory emf = Persistence
 				.createEntityManagerFactory("mail");
@@ -827,6 +840,12 @@ public class Managing {
 		}
 	}
 	
+	/**
+	 * Gets email address of given session
+	 * 
+	 * @param key Key
+	 * @return String containing user's email address
+	 */
 	public static String getSessionUser(int key) {
 		EntityManagerFactory emf = Persistence
 				.createEntityManagerFactory("mail");
@@ -845,6 +864,12 @@ public class Managing {
 		return session.getMail();
 	}
 	
+	/**
+	 * Deletes session
+	 * 
+	 * @param key Key
+	 * @return true in case session was deleted
+	 */
 	public static boolean deleteSession(int key) {
 		EntityManagerFactory emf = Persistence
 				.createEntityManagerFactory("mail");
@@ -868,6 +893,12 @@ public class Managing {
 		}
 	}
 	
+	/**
+	 * Checks if session exists
+	 * 
+	 * @param key Key
+	 * @return true in case session exists
+	 */
 	public static boolean sessionExists(int key) {
 		EntityManagerFactory emf = Persistence
 				.createEntityManagerFactory("mail");
@@ -885,6 +916,11 @@ public class Managing {
 		return true;
 	}
 	
+	/**
+	 * Gets all sessions
+	 * 
+	 * @return List with current sessions
+	 */
 	@SuppressWarnings("unchecked")
 	public static List<Session> getSessions() {
 		EntityManagerFactory emf = Persistence
@@ -902,6 +938,12 @@ public class Managing {
 		return sessions;
 	}
 	
+	/**
+	 * Update session last request time
+	 * 
+	 * @param key Key
+	 * @return true in case session was updated
+	 */
 	public static boolean undateSessionLastRequest(int key) {
 		EntityManagerFactory emf = Persistence
 				.createEntityManagerFactory("mail");
@@ -926,6 +968,12 @@ public class Managing {
 		}
 	}
 	
+	/**
+	 * Checks if user is online
+	 * 
+	 * @param user User's email address
+	 * @return true in case user is online
+	 */
 	public static boolean userOnline(String user) {
 		
 		EntityManagerFactory emf = Persistence
