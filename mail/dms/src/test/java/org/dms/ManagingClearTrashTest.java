@@ -34,7 +34,7 @@ public class ManagingClearTrashTest {
 		}
 		SimpleMessage message = inputFolder.getMessages().get(0);
 		Managing.moveMessage(message, "Входящие", "Корзина",
-				"setReadTest@mail.js");
+				"clearTrashTest@mail.js");
 		Assert.assertTrue(Managing.clearTrash("clearTrashTest@mail.js"));
 	}
 }

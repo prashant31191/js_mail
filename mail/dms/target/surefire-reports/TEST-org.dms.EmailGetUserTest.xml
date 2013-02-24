@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite failures="0" time="0.006" errors="0" skipped="0" tests="1" name="org.dms.EmailGetUserTest">
+<testsuite failures="0" time="0.01" errors="0" skipped="0" tests="1" name="org.dms.EmailGetUserTest">
   <properties>
     <property name="http.agent" value="Sonar"/>
     <property name="ROOT_LOGGER_LEVEL" value="INFO"/>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite failures="0" time="10.096" errors="0" skipped="0" tests="2" name="org.dms.ManagingGetNewMessagesTest">
+<testsuite failures="0" time="6.655" errors="0" skipped="0" tests="2" name="org.dms.ManagingGetNewMessagesTest">
   <properties>
     <property name="http.agent" value="Sonar"/>
     <property name="ROOT_LOGGER_LEVEL" value="INFO"/>
@@ -64,6 +64,6 @@
     <property name="sun.desktop" value="windows"/>
     <property name="sun.cpu.isalist" value="pentium_pro+mmx pentium_pro pentium+mmx pentium i486 i386 i86"/>
   </properties>
-  <testcase time="0.934" classname="org.dms.ManagingGetNewMessagesTest" name="getNewMessagesIncorrectTest"/>
-  <testcase time="4.593" classname="org.dms.ManagingGetNewMessagesTest" name="hetNewMessagesCorrectUserTest"/>
+  <testcase time="0.847" classname="org.dms.ManagingGetNewMessagesTest" name="getNewMessagesIncorrectTest"/>
+  <testcase time="2.352" classname="org.dms.ManagingGetNewMessagesTest" name="hetNewMessagesCorrectUserTest"/>
 </testsuite>

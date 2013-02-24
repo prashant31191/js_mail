@@ -118,9 +118,8 @@ public class Server {
 					String[] requestInfo = (String[]) Serializer
 							.deserialize(requestBytes);
 					logger.info("Got reg data [" + socket.getPort() + "]");
-
 					boolean[] checkedData = new UserValidation()
-							.regDataCheck(requestInfo);
+						.regDataCheck(requestInfo);
 
 					if (!checkedData[0]) {
 						logger.info("Sending mask of reg data ["
@@ -657,6 +656,7 @@ public class Server {
 						Managing.deleteSession(gotKey);
 						logger.info("Key removed [" + socket.getPort() + "]");
 					}
+					out.writeByte(0);
 				}
 			} catch (IOException io) {
 				logger.error("IO", io);

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pmd version="4.3" timestamp="2013-02-24T12:27:22.297">
+<pmd version="4.3" timestamp="2013-02-24T21:37:25.421">
 <file name="D:\Eclipse\rep\reposit\mail\cc\src\main\java\org\cc\SimpleFolder.java">
 <violation beginline="42" endline="42" begincolumn="33" endcolumn="40" rule="IfElseStmtsMustUseBraces" ruleset="Braces Rules" package="org.cc" class="SimpleFolder" method="addMessage" externalInfoUrl="http://pmd.sourceforge.net/rules/braces.html#IfElseStmtsMustUseBraces" priority="3">
 Avoid using if...else statements without curly braces

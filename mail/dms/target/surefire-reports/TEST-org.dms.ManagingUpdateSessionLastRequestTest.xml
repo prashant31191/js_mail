@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite failures="0" time="3.048" errors="0" skipped="0" tests="2" name="org.dms.ManagingUpdateSessionLastRequestTest">
+<testsuite failures="0" time="2.386" errors="0" skipped="0" tests="2" name="org.dms.ManagingUpdateSessionLastRequestTest">
   <properties>
     <property name="http.agent" value="Sonar"/>
     <property name="ROOT_LOGGER_LEVEL" value="INFO"/>
@@ -64,6 +64,6 @@
     <property name="sun.desktop" value="windows"/>
     <property name="sun.cpu.isalist" value="pentium_pro+mmx pentium_pro pentium+mmx pentium i486 i386 i86"/>
   </properties>
-  <testcase time="0.688" classname="org.dms.ManagingUpdateSessionLastRequestTest" name="getSessionExistsCorrectTest"/>
-  <testcase time="0.905" classname="org.dms.ManagingUpdateSessionLastRequestTest" name="sessionExistsIncorrectTest"/>
+  <testcase time="0.587" classname="org.dms.ManagingUpdateSessionLastRequestTest" name="getSessionExistsCorrectTest"/>
+  <testcase time="0.856" classname="org.dms.ManagingUpdateSessionLastRequestTest" name="sessionExistsIncorrectTest"/>
 </testsuite>

@@ -88,11 +88,14 @@ public class MainWindow extends JFrame {
 				/* Нажатие на закрытые окна */
 				lock.lock();
 				logger.info("Close window");
-
+				
+				DataInputStream in = null;
 				DataOutputStream out = null;
 				Socket socket = getSocket();
-				if (socket != null)
+				if (socket != null) {
 					out = getOutputStream(socket);
+					in = getInputStream(socket);
+				}
 
 				try {
 					logger.info("Sending key");
@@ -101,12 +104,14 @@ public class MainWindow extends JFrame {
 					out.writeByte(0);
 					out.writeInt(key);
 					logger.info("Sent key");
+					in.readByte();
 				} catch (IOException ex) {
 					logger.error("IO error", ex);
 					ex.printStackTrace();
 				} finally {
 					lock.unlock();
 					try {
+						in.close();
 						out.close();
 						socket.close();
 					} catch (IOException e1) {
@@ -134,6 +139,7 @@ public class MainWindow extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				taMessText.setText("");
+				lblError.setText("");
 				drawMessages();
 			}
 		});
@@ -147,6 +153,7 @@ public class MainWindow extends JFrame {
 		lstMessages.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				lblError.setText("");
 				/* Клик по сообщению */
 				logger.info("Click on message");
 				lock.lock();
@@ -278,7 +285,7 @@ public class MainWindow extends JFrame {
 				}
 
 				try {
-					logger.info("Trying to send request for deleting folder");
+					logger.info("Trying to send request to delete folder");
 					/* Отправляем запрос на удаление */
 					byte[] requestBytes = Serializer.serialize(sFolder);
 					out.writeByte(8);
@@ -514,10 +521,12 @@ public class MainWindow extends JFrame {
 				/* Выход из системы */
 				lock.lock();
 
+				DataInputStream in = null;
 				DataOutputStream out = null;
 				Socket socket = getSocket();
 				if (socket != null) {
 					out = getOutputStream(socket);
+					in = getInputStream(socket);
 				}
 
 				try {
@@ -527,7 +536,8 @@ public class MainWindow extends JFrame {
 					messageChecker.setWorking(false);
 					out.writeByte(0);
 					out.writeInt(key);
-
+					in.readByte();
+					
 					logger.info("Closing window");
 					/* Выходим из основного окна */
 					Registration registration = new Registration();
@@ -539,6 +549,7 @@ public class MainWindow extends JFrame {
 				} finally {
 					lock.unlock();
 					try {
+						in.close();
 						out.close();
 						socket.close();
 					} catch (IOException e1) {

@@ -228,7 +228,7 @@ public class Managing {
 				sm.setDate(message.getSentDate());
 				sm.setAbout(message.getAbout());
 				sm.setText(message.getText());
-				if (message.getEmail().getEaddress().equals(mail)) {
+				if (message.getEmail().getEaddress().equals(mail.getEaddress())) {
 					/*Формирование сообщение, если оно от пользователя*/
 					sm.setFrom("Меня");
 					List<MessToMail> messToMail = message.getMessToMails();
@@ -974,6 +974,7 @@ public class Managing {
 	 * @param user User's email address
 	 * @return true in case user is online
 	 */
+	@SuppressWarnings("unchecked")
 	public static boolean userOnline(String user) {
 		
 		EntityManagerFactory emf = Persistence

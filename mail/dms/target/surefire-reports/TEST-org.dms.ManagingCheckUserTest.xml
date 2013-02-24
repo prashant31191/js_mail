@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite failures="0" time="14.03" errors="0" skipped="0" tests="2" name="org.dms.ManagingCheckUserTest">
+<testsuite failures="0" time="13.289" errors="0" skipped="0" tests="2" name="org.dms.ManagingCheckUserTest">
   <properties>
     <property name="http.agent" value="Sonar"/>
     <property name="ROOT_LOGGER_LEVEL" value="INFO"/>
@@ -64,6 +64,6 @@
     <property name="sun.desktop" value="windows"/>
     <property name="sun.cpu.isalist" value="pentium_pro+mmx pentium_pro pentium+mmx pentium i486 i386 i86"/>
   </properties>
-  <testcase time="0.801" classname="org.dms.ManagingCheckUserTest" name="checkIncorrectUser"/>
-  <testcase time="3.108" classname="org.dms.ManagingCheckUserTest" name="checkCorrectUser"/>
+  <testcase time="0.837" classname="org.dms.ManagingCheckUserTest" name="checkIncorrectUser"/>
+  <testcase time="3.012" classname="org.dms.ManagingCheckUserTest" name="checkCorrectUser"/>
 </testsuite>
